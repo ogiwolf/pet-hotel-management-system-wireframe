@@ -1282,13 +1282,14 @@
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 
-                // 生成詳細時間段 (每30分鐘一個時段)
+                // 生成詳細時間段 (每15分鐘一個時段)
                 const timeSlots = generateTimeSlots(selectedPackage);
                 
                 // 生成房間列表 (模擬5個房間)
                 const rooms = Array.from({length: 5}, (_, i) => ({
                     id: i + 1,
-                    name: `${selectedRoom.name} - ${i + 1}號房`,
+                    name: `${selectedRoom.name}`,
+                    roomNumber: `${i + 1}號房`,
                     type: selectedRoom.name
                 }));
 
@@ -1303,37 +1304,33 @@
                             ${selectedPackage.name} - ${selectedRoom.name}
                         </div>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm border-collapse">
-                            <thead>
-                                <tr class="border-b-2">
-                                    <th class="p-2 text-left sticky left-0 bg-white border-r" style="min-width: 120px;">房間</th>
-                                    ${timeSlots.map((slot, index) => `
-                                        <th class="p-1 text-center border-r text-xs" style="min-width: 35px;">
-                                            ${index % 4 === 0 ? `<div class="font-medium">${slot.startTime}</div>` : `<div class="text-gray-400">${slot.startTime.split(':')[1]}</div>`}
-                                        </th>
-                                    `).join('')}
-                                </tr>
-                            </thead>
-                            <tbody>
+                    <div class="overflow-y-auto max-h-96">
+                        <div class="flex">
+                            <!-- 時間軸 -->
+                            <div class="flex-shrink-0 w-16 bg-gray-50 border-r">
+                                <div class="h-10 border-b bg-white flex items-center justify-center text-xs font-medium">時間</div>
+                                ${timeSlots.map((slot, index) => `
+                                    <div class="h-8 border-b flex items-center justify-center text-xs ${index % 4 === 0 ? 'font-medium text-gray-800' : 'text-gray-500'}" style="min-height: 32px;">
+                                        ${index % 4 === 0 ? slot.startTime : slot.startTime.split(':')[1]}
+                                    </div>
+                                `).join('')}
+                            </div>
+                            
+                            <!-- 房間列 -->
+                            ${rooms.map(room => `
+                                <div class="flex-1 border-r min-w-0">
+                                    <div class="h-10 border-b bg-white flex items-center justify-center text-xs font-medium px-1">
+                                        <div class="text-center w-full">
+                                            <div class="text-xs font-medium">${room.roomNumber}</div>
+                                        </div>
+                                    </div>
+                                    ${generateVerticalRoomTimeline(currentDate, room, timeSlots, selectedPackage, today)}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
                 `;
 
-                // 為每個房間生成一行
-                rooms.forEach(room => {
-                    calendarHTML += '<tr class="border-b">';
-                    calendarHTML += `<td class="p-2 font-medium border-r sticky left-0 bg-white">
-                        <div class="text-sm">${room.name}</div>
-                        <div class="text-xs text-gray-500">房間 ${room.id}</div>
-                    </td>`;
-                    
-                    // 生成這個房間的時間軸
-                    const roomTimelineHTML = generateRoomTimeline(currentDate, room, timeSlots, selectedPackage, today);
-                    calendarHTML += roomTimelineHTML;
-                    
-                    calendarHTML += '</tr>';
-                });
-
-                calendarHTML += '</tbody></table></div>';
                 return calendarHTML;
             }
 
@@ -1502,6 +1499,116 @@
                                 data-package-id="${selectedPackage.id}">
                                 ${cellContent}
                             </td>
+                        `;
+                    }
+                }
+                
+                return timelineHTML;
+            }
+
+            function generateVerticalRoomTimeline(currentDate, room, timeSlots, selectedPackage, today) {
+                const dateStr = currentDate.toISOString().split('T')[0];
+                
+                // 獲取該房間的所有預訂
+                const roomBookings = getRoomBookings(dateStr, room.id);
+                
+                // 創建時段狀態陣列
+                const slotStates = timeSlots.map((slot, index) => {
+                    const isCurrentTime = currentDate.toDateString() === today.toDateString() && isCurrentTimeSlot(slot.startTime, slot.endTime);
+                    const booking = roomBookings.find(b => 
+                        isTimeSlotOverlap(b.timeSlot, `${slot.startTime}-${slot.endTime}`)
+                    );
+                    
+                    return {
+                        slot,
+                        index,
+                        isCurrentTime,
+                        booking,
+                        isBooked: !!booking,
+                        processed: false
+                    };
+                });
+                
+                let timelineHTML = '';
+                
+                for (let i = 0; i < slotStates.length; i++) {
+                    const currentState = slotStates[i];
+                    
+                    if (currentState.processed) {
+                        continue;
+                    }
+                    
+                    if (currentState.isBooked) {
+                        // 處理預訂時段
+                        const bookingSpan = calculateBookingSpan(currentState.booking.timeSlot, timeSlots, i);
+                        
+                        // 標記相關時段為已處理
+                        for (let j = i; j < i + bookingSpan && j < slotStates.length; j++) {
+                            slotStates[j].processed = true;
+                        }
+                        
+                        const blockHeight = bookingSpan * 32; // 每個時段32px高度
+                        
+                        timelineHTML += `
+                            <div class="border-b bg-red-400 cursor-pointer relative flex items-center justify-center text-center" 
+                                 style="height: ${blockHeight}px; min-height: 32px;"
+                                 data-date="${dateStr}"
+                                 data-time-slot="${currentState.booking.timeSlot}"
+                                 data-room-id="${room.id}"
+                                 data-package-id="${selectedPackage.id}">
+                                <div class="px-2">
+                                    <div class="text-xs text-white font-medium leading-tight" style="font-size: 10px;">
+                                        ${currentState.booking.customer}
+                                    </div>
+                                    <div class="text-xs text-red-100 leading-tight" style="font-size: 9px;">
+                                        ${currentState.booking.timeSlot}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        // 處理可預訂時段 - 尋找連續的可預訂時段
+                        let availableSpan = 1;
+                        let hasCurrentTime = currentState.isCurrentTime;
+                        
+                        // 計算連續的可預訂時段數量
+                        for (let j = i + 1; j < slotStates.length; j++) {
+                            if (slotStates[j].isBooked || slotStates[j].processed) {
+                                break;
+                            }
+                            availableSpan++;
+                            if (slotStates[j].isCurrentTime) {
+                                hasCurrentTime = true;
+                            }
+                        }
+                        
+                        // 標記相關時段為已處理
+                        for (let j = i; j < i + availableSpan && j < slotStates.length; j++) {
+                            slotStates[j].processed = true;
+                        }
+                        
+                        const blockHeight = availableSpan * 32; // 每個時段32px高度
+                        
+                        // 計算時間範圍顯示
+                        const startTime = currentState.slot.startTime;
+                        const endTime = timeSlots[i + availableSpan - 1]?.endTime || currentState.slot.endTime;
+                        const timeRange = availableSpan > 1 ? `${startTime}-${endTime}` : `${startTime}-${currentState.slot.endTime}`;
+                        
+                        timelineHTML += `
+                            <div class="border-b bg-green-100 hover:bg-green-200 cursor-pointer relative flex items-center justify-center text-center" 
+                                 style="height: ${blockHeight}px; min-height: 32px;"
+                                 data-date="${dateStr}"
+                                 data-time-slot="${timeRange}"
+                                 data-room-id="${room.id}"
+                                 data-package-id="${selectedPackage.id}">
+                                <div class="px-2">
+                                    <div class="text-xs text-green-700 font-medium" style="font-size: 9px;">
+                                        可預訂
+                                    </div>
+                                    ${availableSpan > 2 ? `<div class="text-xs text-green-600 leading-tight" style="font-size: 8px;">${timeRange}</div>` : ''}
+                                </div>
+                                ${hasCurrentTime ? '<div class="absolute left-0 top-0 w-full h-1 bg-green-500 current-time-line"></div>' : ''}
+                            </div>
                         `;
                     }
                 }
