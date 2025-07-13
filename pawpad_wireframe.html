@@ -1,0 +1,1911 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paw Pad App</title>
+    <!-- 引入新設計的字體 -->
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link rel="stylesheet" as="style" onload="this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?display=swap&family=Noto+Sans:wght@400;500;700;900&family=Plus+Jakarta+Sans:wght@400;500;700;800" />
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 匹配新設計的基礎樣式 */
+        body {
+            font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;
+            background-color: #f0f2f5; /* 整體背景色 */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .phone-mockup {
+            width: 375px;
+            min-height: 667px;
+            background-color: #fff;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .content-area {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-bottom: 80px; /* 為底部導航預留空間 */
+        }
+
+        /* 隱藏滾動條 */
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* 新設計風格的按鈕 */
+        .btn-main {
+             display: flex;
+             cursor: pointer;
+             align-items: center;
+             justify-content: center;
+             overflow: hidden;
+             border-radius: 9999px; /* rounded-full */
+             height: 48px; /* h-12 */
+             padding-left: 24px; /* px-6 */
+             padding-right: 24px;
+             background-color: #181111;
+             color: #ffffff;
+             font-size: 1rem; /* text-base */
+             font-weight: 700; /* font-bold */
+             line-height: 1.5; /* leading-normal */
+             border: none;
+             width: 100%;
+        }
+        .btn-main:hover {
+            background-color: #333;
+        }
+        
+        /* 表單輸入框樣式 */
+        .form-input-styled {
+            width: 100%;
+            border-radius: 0.5rem; /* rounded-lg */
+            color: #181111;
+            border: 1px solid #e5e7eb;
+            background-color: #f9fafb;
+            padding: 0.75rem;
+            font-size: 1rem;
+        }
+        .form-input-styled:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #181111;
+            border-color: #181111;
+        }
+        
+        /* 卡片樣式 */
+        .listing-card {
+            display: flex;
+            align-items: stretch;
+            justify-content: space-between;
+            gap: 1rem; /* gap-4 */
+            border-radius: 0.75rem; /* rounded-xl */
+            padding: 1rem; /* p-4 */
+            border: 1px solid #f4f0f0;
+            background-color: #fff;
+        }
+        
+        .listing-card .info-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem; /* gap-4 */
+            flex: 2 1 0%;
+        }
+        
+        .listing-card .image-section {
+            width: 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            aspect-ratio: 1 / 1;
+            background-size: cover;
+            border-radius: 0.75rem; /* rounded-xl */
+            flex: 1.5 1 0%;
+        }
+        
+        /* 底部導航項目 */
+        .nav-item .icon-wrapper { color: #886364; }
+        .nav-item p { color: #886364; }
+        .nav-item.active .icon-wrapper { color: #181111; }
+        .nav-item.active p { color: #181111; }
+
+        /* 模態框樣式 */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 2000;
+        }
+        .modal-content {
+            background: #fff; padding: 20px; border-radius: 15px; width: 90%; max-width: 360px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        .calendar-day {
+            padding: 8px 0; border-radius: 8px; cursor: pointer; transition: background-color 0.2s, color 0.2s;
+        }
+        .calendar-day.selected { background-color: #181111; color: #fff; }
+        .calendar-day.in-range { background-color: #e5e7eb; color: #181111; border-radius: 0; }
+        .calendar-day.range-start { background-color: #181111; color: #fff; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+        .calendar-day.range-end { background-color: #181111; color: #fff; border-top-left-radius: 0; border-bottom-left-radius: 0; }
+        .calendar-day.disabled { color: #ccc; cursor: not-allowed; }
+        
+        /* 服務類型切換 */
+        .service-type-toggle button {
+            transition: all 0.2s ease-in-out;
+        }
+        .service-type-toggle button.active {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            color: #181111;
+        }
+        .service-type-toggle button:not(.active) {
+            color: #886364;
+        }
+        
+        /* 方案樣式 */
+        .package-item {
+            border: 2px solid #f4f0f0;
+            transition: all 0.2s ease-in-out;
+        }
+        .package-item.selected {
+            border-color: #181111;
+            background-color: #f9fafb;
+        }
+        .package-item.unavailable {
+            opacity: 0.5;
+            background-color: #f9fafb;
+            cursor: not-allowed;
+        }
+        
+        /* Toggle Switch */
+        .toggle-switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 28px; }
+        .toggle-slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .toggle-slider { background-color: #181111; }
+        input:checked + .toggle-slider:before { transform: translateX(22px); }
+        
+        /* 管理行事曆樣式 */
+        .mgmt-calendar-cell.blocked {
+            background-image: repeating-linear-gradient(45deg, #e5e7eb, #e5e7eb 5px, #f9fafb 5px, #f9fafb 10px);
+        }
+
+        /* 當前時間線動畫 */
+        .current-time-line {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="phone-mockup">
+        <!-- 主內容區域 -->
+        <div id="main-content" class="content-area no-scrollbar">
+
+            <!-- 所有頁面容器 -->
+            <div id="home-page" class="page-content"></div>
+            <div id="search-result-page" class="page-content hidden"></div>
+            <div id="detail-page" class="page-content hidden"></div>
+            <div id="favorites-page" class="page-content hidden"></div>
+            <div id="orders-page" class="page-content hidden"></div>
+            <div id="user-center-page" class="page-content hidden"></div>
+            <div id="merchant-dashboard-page" class="page-content hidden"></div>
+            <div id="room-management-page" class="page-content hidden"></div>
+            <div id="package-management-page" class="page-content hidden"></div>
+            <div id="chat-page" class="page-content hidden"></div>
+            <div id="calendar-management-page" class="page-content hidden"></div>
+        </div>
+
+        <!-- 全螢幕模態框 (用於新增/編輯) -->
+        <div id="form-modal" class="absolute inset-0 bg-gray-50 z-20 hidden page-content no-scrollbar">
+            <!-- 內容由JS動態生成 -->
+        </div>
+
+        <!-- 日曆 Modal -->
+        <div id="calendar-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <!-- 日曆內容由JS生成 -->
+            </div>
+        </div>
+
+        <!-- 底部導覽列 -->
+        <div class="absolute bottom-0 left-0 right-0 z-10">
+            <div class="flex gap-2 border-t border-[#f4f0f0] bg-white px-4 pb-3 pt-2">
+                <a class="nav-item flex flex-1 flex-col items-center justify-end gap-1 cursor-pointer" data-page="home">
+                    <div class="icon-wrapper flex h-8 items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M224,115.55V208a16,16,0,0,1-16,16H168a16,16,0,0,1-16-16V168a8,8,0,0,0-8-8H112a8,8,0,0,0-8,8v40a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V115.55a16,16,0,0,1,5.17-11.78l80-75.48.11-.11a16,16,0,0,1,21.53,0,1.14,1.14,0,0,0,.11.11l80,75.48A16,16,0,0,1,224,115.55Z"></path></svg></div>
+                    <p class="text-xs font-medium leading-normal tracking-[0.015em]">首頁</p>
+                </a>
+                <a class="nav-item flex flex-1 flex-col items-center justify-end gap-1 cursor-pointer" data-page="favorites">
+                    <div class="icon-wrapper flex h-8 items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M184,32H72A16,16,0,0,0,56,48V224a8,8,0,0,0,12.24,6.78L128,193.43l59.77,37.35A8,8,0,0,0,200,224V48A16,16,0,0,0,184,32Zm0,16V161.57l-51.77-32.35a8,8,0,0,0-8.48,0L72,161.56V48Z"></path></svg></div>
+                    <p class="text-xs font-medium leading-normal tracking-[0.015em]">我的收藏</p>
+                </a>
+                <a class="nav-item flex flex-1 flex-col items-center justify-end gap-1 cursor-pointer" data-page="orders">
+                    <div class="icon-wrapper flex h-8 items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M208,48H48A16,16,0,0,0,32,64V192a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V64A16,16,0,0,0,208,48Zm-40,96H88a8,8,0,0,1,0-16h80a8,8,0,0,1,0,16Zm0-32H88a8,8,0,0,1,0-16h80a8,8,0,0,1,0,16Z"></path></svg></div>
+                    <p class="text-xs font-medium leading-normal tracking-[0.015em]">訂單</p>
+                </a>
+                <a class="nav-item flex flex-1 flex-col items-center justify-end gap-1 cursor-pointer" data-page="account">
+                    <div class="icon-wrapper flex h-8 items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"></path></svg></div>
+                    <p class="text-xs font-medium leading-normal tracking-[0.015em]">我的帳戶</p>
+                </a>
+            </div>
+            <div class="h-5 bg-white"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- 狀態與資料 ---
+            let isUserMerchant = false;
+            let currentCalendarDate = new Date();
+            let selectedCheckinDate = null;
+            let selectedCheckoutDate = null;
+            let isSelectingCheckin = true;
+            let managementCalendarDate = new Date();
+            let currentManagementRoomId = 1;
+            let managementViewMode = 'daily'; // 'daily' or 'hourly'
+
+
+            const mockOrders = [
+                { id: 1, name: '快樂爪子旅館', date: '2025/07/10 - 2025/07/12', pet: '1 犬', total: 1600, status: 'pending' },
+                { id: 2, name: '貓語天堂', date: '2025/06/01 - 2025/06/05', pet: '2 貓', total: 3250, status: 'completed' },
+                { id: 3, name: '寵物樂園', date: '2025/05/20 - 2025/05/22', pet: '1 犬', total: 1800, status: 'cancelled' },
+                { id: 4, name: '汪星人度假村', date: '2025-07-01 - 2025-07-03', pet: '1 犬', total: 2850, status: 'pending' },
+                { id: 5, name: '快樂爪子旅館', date: '2025-04-10 - 2025-04-12', pet: '1 貓', total: 1300, status: 'completed' },
+            ];
+            
+            let mockRoomTypes = [
+                { id: 1, name: '標準犬房', description: '舒適的標準房，適合中小型犬。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 5, status: 'active' },
+                { id: 2, name: '豪華貓別墅', description: '寬敞的豪華別墅，附有貓跳台與獨立通風。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 3, status: 'active' },
+                { id: 3, name: '小型寵物寄宿籠', description: '安全舒適的寄宿籠，適合兔子、倉鼠等。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 10, status: 'disabled' },
+                { id: 4, name: '陽光豪華雙人房', description: '附有陽台的雙寵物豪華房。', imageUrl: 'https://images.unsplash.com/photo-1574158622682-e40e69841006?q=80&w=600', stock: 2, status: 'active' }
+            ];
+            
+            let mockPackages = [
+                { id: 101, roomId: 1, name: '標準日租方案', description: '提供標準舒適過夜寄宿服務。', type: 'overnight', basePrice: 800, min: 1, max: 30, quota: 3, status: 'active', startDate: '', endDate: '', color: 'bg-blue-400' },
+                { id: 102, roomId: 1, name: '安親方案A', description: '日間安親，四小時方案。', type: 'daycare', basePrice: 150, daycareLengths: '4', startTime: '09:00', endTime: '18:00', overtimeRate: 180, quota: 2, status: 'active', startDate: '', endDate: '', color: 'bg-green-400' },
+                { id: 103, roomId: 1, name: '安親方案B', description: '日間安親，八小時方案。', type: 'daycare', basePrice: 120, daycareLengths: '8', startTime: '09:00', endTime: '18:00', overtimeRate: 150, quota: 1, status: 'disabled', startDate: '', endDate: '', color: 'bg-yellow-400' },
+                { id: 201, roomId: 2, name: '豪華貓別墅日租', description: '專屬豪華空間，貓咪最愛。', type: 'overnight', basePrice: 1500, min: 1, max: 15, quota: 3, status: 'active', startDate: '', endDate: '', color: 'bg-pink-400' },
+            ];
+            
+            let mockBookings = [
+                { id: 1, roomId: 1, packageId: 101, customer: '陳先生', startDate: '2025-07-10', endDate: '2025-07-12' },
+                { id: 2, roomId: 2, packageId: 201, customer: '林小姐', startDate: '2025-07-15', endDate: '2025-07-18' },
+                { id: 3, roomId: 1, packageId: 101, customer: '王小姐', startDate: '2025-07-20', endDate: '2025-07-25' },
+                { id: 4, roomId: 1, packageId: 102, customer: '李先生', startDate: '2025-07-05', endDate: '2025-07-05' },
+                { id: 5, roomId: 2, packageId: 201, customer: '張太太', startDate: '2025-07-01', endDate: '2025-07-03' },
+                { id: 6, roomId: 1, packageId: 102, customer: '吳先生', startDate: '2025-07-14', endDate: '2025-07-14' },
+                { id: 7, roomId: 4, customer: '蔡小姐', startDate: '2025-07-22', endDate: '2025-07-23' },
+                { id: 8, roomId: 4, customer: '鄭先生', startDate: '2025-07-08', endDate: '2025-07-11' },
+                { id: 9, roomId: 1, packageId: 101, customer: '趙小姐', startDate: '2025-07-10', endDate: '2025-07-11' },
+            ];
+
+            // --- 元素選擇 ---
+            const navItems = document.querySelectorAll('.nav-item');
+            const mainContent = document.getElementById('main-content');
+            const pages = {
+                home: document.getElementById('home-page'),
+                searchResult: document.getElementById('search-result-page'),
+                detail: document.getElementById('detail-page'),
+                favorites: document.getElementById('favorites-page'),
+                orders: document.getElementById('orders-page'),
+                account: document.getElementById('user-center-page'),
+                chat: document.getElementById('chat-page'),
+                merchantDashboard: document.getElementById('merchant-dashboard-page'),
+                roomManagement: document.getElementById('room-management-page'),
+                packageManagement: document.getElementById('package-management-page'),
+                calendarManagement: document.getElementById('calendar-management-page'),
+            };
+            const calendarModal = document.getElementById('calendar-modal');
+            const formModal = document.getElementById('form-modal');
+
+            // --- 核心功能：頁面切換 ---
+            function showPage(pageKey, state = {}) {
+                Object.values(pages).forEach(page => page && page.classList.add('hidden'));
+                
+                const targetPage = pages[pageKey];
+                if (targetPage) {
+                    targetPage.classList.remove('hidden');
+                    if (pageKey === 'detail') renderDetailPage(state);
+                    if (pageKey === 'orders') renderOrdersPage();
+                    if (pageKey === 'account') renderUserCenterPage();
+                    if (pageKey === 'merchantDashboard') renderMerchantDashboard();
+                    if (pageKey === 'roomManagement') renderRoomListPage();
+                    if (pageKey === 'packageManagement') renderPackageListPage(state.roomId);
+                    if (pageKey === 'chat') renderChatPage();
+                    if (pageKey === 'home') renderHomePage();
+                    if (pageKey === 'favorites') renderFavoritesPage();
+                    if (pageKey === 'calendarManagement') renderCalendarManagementPage();
+                }
+                updateNavActiveState(pageKey);
+            }
+
+            function updateNavActiveState(activePageKey) {
+                navItems.forEach(item => {
+                    const page = item.dataset.page;
+                    item.classList.toggle('active', page === activePageKey);
+                });
+            }
+
+            // --- 渲染函式 ---
+            function renderHomePage() {
+                const container = pages.home;
+                container.innerHTML = `
+                <!-- 頁首 -->
+                <div class="flex items-center bg-white p-4 pb-2 justify-between sticky top-0 z-10 border-b border-gray-100">
+                    <div class="flex w-12 items-center justify-start">
+                        <button id="chat-icon-button" class="flex cursor-pointer items-center justify-center rounded-full h-12 bg-transparent text-[#181111] min-w-0 p-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M216,48H40A16,16,0,0,0,24,64V224a15.84,15.84,0,0,0,9.37,14.66A16,16,0,0,0,40,240a15.82,15.82,0,0,0,10.63-4.37L82.37,204H216a16,16,0,0,0,16-16V64A16,16,0,0,0,216,48ZM128,144a8,8,0,1,1,8-8A8,8,0,0,1,128,144Zm40,0a8,8,0,1,1,8-8A8,8,0,0,1,168,144ZM88,144a8,8,0,1,1,8-8A8,8,0,0,1,88,144Z"></path></svg>
+                        </button>
+                    </div>
+                    <h2 class="text-[#181111] text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Paw Pad</h2>
+                    <div class="flex w-12 items-center justify-end">
+                        <button id="profile-icon-button" class="flex cursor-pointer items-center justify-center rounded-full h-12 bg-transparent text-[#181111] min-w-0 p-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                <!-- 搜尋框 -->
+                <div class="px-4 py-3">
+                    <div class="flex w-full flex-1 items-stretch rounded-xl h-12">
+                        <div class="text-[#886364] flex border-none bg-[#f4f0f0] items-center justify-center pl-4 rounded-l-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path></svg>
+                        </div>
+                        <input id="home-search-input" placeholder="搜尋地點、寵物旅館或保母..." class="form-input-styled placeholder:text-[#886364] px-4 rounded-l-none pl-2 text-base font-normal leading-normal" />
+                    </div>
+                </div>
+                
+                <!-- 廣告橫幅 -->
+                <div class="px-4 mb-4">
+                    <div class="relative w-full bg-center bg-no-repeat aspect-[2/1] bg-cover rounded-xl flex flex-col justify-end p-4 text-white" style='background-image: linear-gradient(to top, rgba(0,0,0,0.6), transparent), url("https://images.unsplash.com/photo-1552053831-71594a27632d?q=80&w=1000");'>
+                         <h3 class="font-bold text-lg">夏日優惠</h3>
+                         <p class="text-sm">立即預訂，享 85 折優惠！</p>
+                    </div>
+                </div>
+
+                <!-- 推薦區塊 -->
+                <h2 class="text-[#181111] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-2">推薦給您</h2>
+                <div class="px-4 space-y-4">
+                    <div class="listing-card cursor-pointer">
+                        <div class="info-section">
+                            <div class="flex flex-col gap-1">
+                                <p class="text-[#886364] text-sm font-normal leading-normal">⭐️ 4.8 • 120 則評價</p>
+                                <p class="text-[#181111] text-base font-bold leading-tight">快樂爪子旅館</p>
+                                <p class="text-[#886364] text-sm font-normal leading-normal">台北市 • 接受犬、貓</p>
+                            </div>
+                            <div class="flex min-w-[84px] max-w-[480px] items-center justify-center overflow-hidden rounded-full h-8 px-4 bg-[#f4f0f0] text-[#181111] text-sm font-medium leading-normal w-fit">
+                                <span class="truncate">$800/晚 起</span>
+                            </div>
+                        </div>
+                        <div class="image-section" style='background-image: url("https://images.unsplash.com/photo-1548681528-6a5c45b66b42?q=80&w=600");'></div>
+                    </div>
+                     <div class="listing-card cursor-pointer">
+                        <div class="info-section">
+                            <div class="flex flex-col gap-1">
+                                <p class="text-[#886364] text-sm font-normal leading-normal">⭐️ 4.9 • 150 則評價</p>
+                                <p class="text-[#181111] text-base font-bold leading-tight">貓語天堂</p>
+                                <p class="text-[#886364] text-sm font-normal leading-normal">新北市 • 僅接受貓</p>
+                            </div>
+                            <div class="flex min-w-[84px] max-w-[480px] items-center justify-center overflow-hidden rounded-full h-8 px-4 bg-[#f4f0f0] text-[#181111] text-sm font-medium leading-normal w-fit">
+                                <span class="truncate">$650/晚 起</span>
+                            </div>
+                        </div>
+                        <div class="image-section" style='background-image: url("https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?q=80&w=800");'></div>
+                    </div>
+                     <div class="listing-card cursor-pointer">
+                        <div class="info-section">
+                            <div class="flex flex-col gap-1">
+                                <p class="text-[#886364] text-sm font-normal leading-normal">⭐️ 4.7 • 85 則評價</p>
+                                <p class="text-[#181111] text-base font-bold leading-tight">汪星人度假村</p>
+                                <p class="text-[#886364] text-sm font-normal leading-normal">台中市 • 僅接受犬</p>
+                            </div>
+                            <div class="flex min-w-[84px] max-w-[480px] items-center justify-center overflow-hidden rounded-full h-8 px-4 bg-[#f4f0f0] text-[#181111] text-sm font-medium leading-normal w-fit">
+                                <span class="truncate">$950/晚 起</span>
+                            </div>
+                        </div>
+                        <div class="image-section" style='background-image: url("https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=600");'></div>
+                    </div>
+                </div>
+                `;
+            }
+            
+            function renderChatPage() {
+                pages.chat.innerHTML = `
+                 <h1 class="text-2xl font-bold mb-4 text-center text-[#181111] p-4">訊息中心</h1>
+                 <div class="space-y-3 px-4">
+                    <!-- 置頂聊天項目 -->
+                    <div class="bg-blue-50 p-3 rounded-xl border border-blue-200 flex items-center gap-4 cursor-pointer">
+                        <div class="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-lg flex-shrink-0">P</div>
+                        <div class="flex-1 overflow-hidden">
+                            <div class="flex justify-between items-start">
+                                <p class="font-bold text-[#181111]">Paw Pad 官方客服</p>
+                                <span class="text-xs font-semibold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full flex-shrink-0">置頂</span>
+                            </div>
+                            <div class="flex justify-between items-end mt-1">
+                                <p class="text-sm text-[#886364] truncate">歡迎使用！有任何問題隨時與我們聯繫。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 一般聊天項目 -->
+                    <div class="bg-white p-3 rounded-xl border border-gray-100 flex items-center gap-4 cursor-pointer hover:bg-gray-50">
+                        <img src="https://images.unsplash.com/photo-1548681528-6a5c45b66b42?q=80&w=100" class="w-12 h-12 rounded-full object-cover flex-shrink-0">
+                        <div class="flex-1 overflow-hidden">
+                            <div class="flex justify-between items-start">
+                                <p class="font-bold text-[#181111]">快樂爪子旅館</p>
+                                <p class="text-xs text-[#886364]">昨天</p>
+                            </div>
+                            <div class="flex justify-between items-end mt-1">
+                                <p class="text-sm text-[#886364] truncate">好的，您的預訂已確認！</p>
+                                <span class="bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">2</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-3 rounded-xl border border-gray-100 flex items-center gap-4 cursor-pointer hover:bg-gray-50">
+                        <img src="https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?q=80&w=100" class="w-12 h-12 rounded-full object-cover flex-shrink-0">
+                        <div class="flex-1 overflow-hidden">
+                            <div class="flex justify-between items-start">
+                                <p class="font-bold text-[#181111]">貓語天堂</p>
+                                <p class="text-xs text-[#886364]">2天前</p>
+                            </div>
+                            <div class="flex justify-between items-end mt-1">
+                                <p class="text-sm text-[#886364] truncate">不客氣！</p>
+                            </div>
+                        </div>
+                    </div>
+                 </div>`;
+            }
+
+            function renderDetailPage() {
+                pages.detail.innerHTML = `
+                <div class="p-4 space-y-4">
+                    <h1 class="text-2xl font-bold text-center text-[#181111]">快樂爪子旅館</h1>
+                    <div class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover rounded-xl" style='background-image: url("https://images.unsplash.com/photo-1548681528-6a5c45b66b42?q=80&w=600");'></div>
+                    
+                    <div class="p-4 rounded-xl border border-gray-100 bg-white">
+                         <p class="text-[#181111] text-lg font-bold">關於</p>
+                         <p class="text-[#886364] text-sm mt-2">提供最溫馨舒適的環境，讓您的寵物如同在家一般自在。我們有專業的照護人員與寬敞的活動空間。</p>
+                    </div>
+
+                    <div id="booking-module" class="p-4 rounded-xl border border-gray-100 bg-white">
+                        <h2 class="text-lg font-bold text-[#181111] mb-4">預訂資訊</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">入住/退房日期</label>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <input type="text" id="checkin-date" placeholder="入住日期" readonly class="form-input-styled text-center p-2 cursor-pointer">
+                                    <span>-</span>
+                                    <input type="text" id="checkout-date" placeholder="退房日期" readonly class="form-input-styled text-center p-2 cursor-pointer">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">服務類型</label>
+                                <div class="service-type-toggle flex bg-[#f4f0f0] rounded-full p-1 mt-1">
+                                    <button class="flex-1 py-2 text-sm font-medium rounded-full active" data-service-type="overnight">寄宿 (過夜)</button>
+                                    <button class="flex-1 py-2 text-sm font-medium rounded-full" data-service-type="daycare">日間安親</button>
+                                </div>
+                            </div>
+
+                            <div id="overnight-booking-options">
+                                <h3 class="text-sm font-medium text-[#886364] mt-4 mb-2">房型與方案</h3>
+                                <div class="space-y-3">
+                                    <div class="p-3 rounded-lg border-2 border-transparent">
+                                        <p class="font-bold text-sm">標準房 (小型犬)</p>
+                                        <div class="package-item mt-2 p-3 rounded-lg cursor-pointer selected" data-price="800">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-sm">日租方案</span>
+                                                <span class="font-bold text-sm">NT$ 800 / 晚</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                     <div class="p-3 rounded-lg border-2 border-transparent">
+                                        <p class="font-bold text-sm">豪華套房 (中大型犬)</p>
+                                        <div class="package-item mt-2 p-3 rounded-lg cursor-pointer" data-price="1500">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-sm">日租方案</span>
+                                                <span class="font-bold text-sm">NT$ 1500 / 晚</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-3 rounded-lg border-2 border-transparent unavailable">
+                                        <p class="font-bold text-sm text-gray-400">貓咪專屬空間 (已滿)</p>
+                                        <div class="package-item mt-2 p-3 rounded-lg" data-price="700">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-sm">日租方案</span>
+                                                <span class="font-bold text-sm">NT$ 700 / 晚</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="daycare-booking-options" class="hidden">
+                                <h3 class="text-sm font-medium text-[#886364] mt-4 mb-2">選擇安親時段 (可多選)</h3>
+                                <div class="flex flex-wrap gap-2 mt-1">
+                                    <button class="daycare-time-btn" data-price="600">09:00 - 13:00</button>
+                                    <button class="daycare-time-btn" data-price="600">13:00 - 17:00</button>
+                                    <button class="daycare-time-btn" data-price="700">17:00 - 21:00</button>
+                                    <button class="daycare-time-btn" data-price="960">09:00 - 17:00 (8hr)</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">寵物數量</label>
+                                 <div class="flex items-center border-2 border-[#f4f0f0] rounded-full p-1 mt-1 w-fit">
+                                    <button id="decrease-pet-count" class="px-3 py-1 text-lg font-bold">-</button>
+                                    <input type="text" id="pet-count" value="1" readonly class="w-10 text-center bg-transparent font-bold">
+                                    <button id="increase-pet-count" class="px-3 py-1 text-lg font-bold">+</button>
+                                </div>
+                            </div>
+
+                            <div class="border-t pt-4 mt-4">
+                                <h3 class="text-sm font-medium text-[#886364] mb-2">加購服務</h3>
+                                <div class="space-y-2">
+                                    <label class="flex items-center justify-between"><span class="text-gray-700 text-sm">寵物洗澡 (NT$ 300)</span><input type="checkbox" data-price="300" class="addon-service rounded text-black focus:ring-black"></label>
+                                    <label class="flex items-center justify-between"><span class="text-gray-700 text-sm">專人陪玩 (NT$ 200)</span><input type="checkbox" data-price="200" class="addon-service rounded text-black focus:ring-black"></label>
+                                </div>
+                            </div>
+                            <div class="border-t pt-4 mt-4 flex justify-between items-center">
+                                 <span id="total-price-display" class="text-lg font-bold text-[#181111]">請選擇日期</span>
+                                 <button class="btn-main h-10 px-5 text-sm">立即訂房</button>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="p-4 rounded-xl border border-gray-100 bg-white">
+                         <p class="text-[#181111] text-lg font-bold">用戶評價</p>
+                         <div class="mt-2 space-y-3">
+                            <div class="border-b pb-2">
+                                <p class="font-bold text-sm">王小明 <span class="text-xs text-gray-500 ml-2">⭐️⭐️⭐️⭐️⭐️</span></p>
+                                <p class="text-[#886364] text-sm mt-1">環境很乾淨，狗狗玩得很開心！</p>
+                            </div>
+                             <div class="border-b pb-2">
+                                <p class="font-bold text-sm">陳太太 <span class="text-xs text-gray-500 ml-2">⭐️⭐️⭐️⭐️</span></p>
+                                <p class="text-[#886364] text-sm mt-1">貓咪很適應，只是房間隔音可以再加強。</p>
+                            </div>
+                         </div>
+                    </div>
+                </div>`;
+                
+                const style = document.createElement('style');
+                style.innerHTML = `
+                    .daycare-time-btn { padding: 6px 12px; border-radius: 9999px; background-color: #f4f0f0; color: #886364; font-size: 0.875rem; transition: all 0.2s; border:none; }
+                    .daycare-time-btn.active { background-color: #181111; color: white; }
+                `;
+                document.head.appendChild(style);
+
+                attachBookingModuleListeners();
+            }
+
+            function renderUserCenterPage() {
+                const container = pages.account;
+                container.innerHTML = `
+                <h1 class="text-2xl font-bold mb-6 text-center text-[#181111]">我的帳戶</h1>
+                <div class="flex flex-col items-center mb-6">
+                    <img src="https://images.unsplash.com/photo-1548142813-c348350df52b?q=80&w=400" alt="使用者頭像" class="w-24 h-24 rounded-full object-cover mb-4 border-4 border-white shadow-lg">
+                    <h2 class="text-xl font-bold text-[#181111]">James</h2>
+                    <p class="text-sm text-[#886364]">user@email.com</p>
+                </div>
+                <div class="space-y-2" id="user-options-list">
+                     <!-- 選項由JS生成 -->
+                </div>
+                `;
+                updateUserCenterOptions();
+            }
+
+            function updateUserCenterOptions() {
+                const container = document.getElementById('user-options-list');
+                if (!container) return;
+                let optionsHTML = `
+                    <div class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center cursor-pointer"><span>我的資料</span><span class="text-[#886364]">></span></div>
+                    <div class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center cursor-pointer"><span>設定</span><span class="text-[#886364]">></span></div>`;
+                
+                if (isUserMerchant) {
+                    optionsHTML += `<div id="merchant-entry" class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center cursor-pointer"><span>商家專區</span><span class="text-[#886364]">></span></div>`;
+                } else {
+                    optionsHTML += `<div id="become-merchant" class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center cursor-pointer"><span>成為商家</span><span class="text-blue-600 font-bold">立即申請</span></div>`;
+                }
+                container.innerHTML = optionsHTML + `<div class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center cursor-pointer text-red-600"><span>登出</span></div>`;
+            }
+
+            function renderOrdersPage() {
+                const container = pages.orders;
+                container.innerHTML = `
+                    <div class="p-4">
+                        <h1 class="text-2xl font-bold mb-4 text-center text-[#181111]">我的訂單</h1>
+                        <div class="flex justify-around bg-[#f4f0f0] rounded-full p-1 mb-5">
+                            <button class="order-filter-btn flex-1 py-2 text-sm font-medium rounded-full" data-filter="pending">進行中</button>
+                            <button class="order-filter-btn flex-1 py-2 text-sm font-medium rounded-full" data-filter="completed">已完成</button>
+                            <button class="order-filter-btn flex-1 py-2 text-sm font-medium rounded-full" data-filter="cancelled">已取消</button>
+                        </div>
+                        <div id="order-list" class="space-y-4">
+                            <!-- 訂單卡片由JS生成 -->
+                        </div>
+                    </div>
+                `;
+                renderOrders('pending');
+            }
+
+            function renderOrders(filter) {
+                const container = document.getElementById('order-list');
+                const filterButtons = document.querySelectorAll('.order-filter-btn');
+                
+                if (!container || !filterButtons) return;
+
+                filterButtons.forEach(btn => {
+                    btn.classList.toggle('bg-[#181111]', btn.dataset.filter === filter);
+                    btn.classList.toggle('text-white', btn.dataset.filter === filter);
+                    btn.classList.toggle('text-[#886364]', btn.dataset.filter !== filter);
+                });
+
+                const filteredOrders = mockOrders.filter(order => order.status === filter);
+                if (filteredOrders.length === 0) {
+                    container.innerHTML = `<p class="text-center text-[#886364]">沒有${filter === 'pending' ? '進行中' : filter === 'completed' ? '已完成' : '已取消'}的訂單。</p>`;
+                    return;
+                }
+                container.innerHTML = filteredOrders.map(order => {
+                    let statusBadge;
+                    switch(order.status) {
+                        case 'pending': statusBadge = `<span class="text-xs font-bold text-white bg-amber-500 px-2 py-1 rounded-full">進行中</span>`; break;
+                        case 'completed': statusBadge = `<span class="text-xs font-bold text-white bg-emerald-500 px-2 py-1 rounded-full">已完成</span>`; break;
+                        case 'cancelled': statusBadge = `<span class="text-xs font-bold text-white bg-red-500 px-2 py-1 rounded-full">已取消</span>`; break;
+                    }
+                    return `
+                        <div class="bg-white p-4 rounded-xl border border-gray-100">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold text-base text-[#181111]">${order.name}</h3>
+                                ${statusBadge}
+                            </div>
+                            <p class="text-sm text-[#886364] mb-1">日期: ${order.date}</p>
+                            <p class="text-sm text-[#886364] mb-3">寵物: ${order.pet}</p>
+                            <div class="flex justify-between items-center mt-3 border-t pt-3">
+                                <span class="text-base font-bold text-[#181111]">總計: NT$ ${order.total.toLocaleString()}</span>
+                                <button class="py-2 px-4 bg-[#181111] text-white rounded-full text-sm">查看詳情</button>
+                            </div>
+                        </div>`;
+                }).join('');
+            }
+            
+            function renderFavoritesPage() {
+                const container = pages.favorites;
+                container.innerHTML = `
+                <div class="p-4">
+                    <h1 class="text-2xl font-bold mb-4 text-center text-[#181111]">我的收藏</h1>
+                    <div class="space-y-4">
+                        <div class="listing-card">
+                            <div class="info-section">
+                                <div class="flex flex-col gap-1">
+                                    <p class="text-[#886364] text-sm font-normal leading-normal">⭐️ 4.9 • 150 則評價</p>
+                                    <p class="text-[#181111] text-base font-bold leading-tight">貓語天堂</p>
+                                    <p class="text-[#886364] text-sm font-normal leading-normal">新北市 • 僅接受貓</p>
+                                </div>
+                                <button class="text-sm text-red-600 w-fit">移除收藏</button>
+                            </div>
+                            <div class="image-section" style='background-image: url("https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?q=80&w=800");'></div>
+                        </div>
+                         <div class="listing-card">
+                            <div class="info-section">
+                                <div class="flex flex-col gap-1">
+                                    <p class="text-[#886364] text-sm font-normal leading-normal">⭐️ 4.7 • 85 則評價</p>
+                                    <p class="text-[#181111] text-base font-bold leading-tight">汪星人度假村</p>
+                                    <p class="text-[#886364] text-sm font-normal leading-normal">台中市 • 僅接受犬</p>
+                                </div>
+                                 <button class="text-sm text-red-600 w-fit">移除收藏</button>
+                            </div>
+                            <div class="image-section" style='background-image: url("https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=600");'></div>
+                        </div>
+                         <div class="p-4 text-center text-[#886364]">沒有更多收藏了。</div>
+                    </div>
+                </div>
+                `;
+            }
+
+            function renderMerchantDashboard() {
+                const container = pages.merchantDashboard;
+                container.innerHTML = `
+                <div class="p-4 space-y-4">
+                    <h1 class="text-2xl font-bold text-center text-[#181111]">商家專區</h1>
+                    <!-- 儀表板概覽 -->
+                    <div class="p-4 rounded-xl border border-gray-100 bg-white">
+                        <h2 class="text-lg font-bold text-[#181111] mb-4">儀表板概覽</h2>
+                        <div class="grid grid-cols-2 gap-3 text-sm mb-4">
+                            <div class="p-3 bg-blue-50 rounded-lg">待處理訂單: <span class="font-bold text-blue-700">5</span></div>
+                            <div class="p-3 bg-green-50 rounded-lg">今日入住: <span class="font-bold text-green-700">2</span></div>
+                            <div class="p-3 bg-yellow-50 rounded-lg col-span-2">本月營收: <span class="font-bold text-yellow-700">NT$ 15,000</span></div>
+                        </div>
+                        <button id="manage-calendar-btn" class="btn-main h-10 px-5 text-sm w-full">管理行事曆</button>
+                    </div>
+
+                    <!-- 房型與方案管理 -->
+                    <div id="manage-rooms-link" class="p-4 rounded-xl border border-gray-100 bg-white cursor-pointer hover:bg-gray-50">
+                        <h2 class="text-lg font-bold text-[#181111] mb-2">房型與方案管理</h2>
+                        <div class="flex justify-between items-center">
+                            <p class="text-sm text-[#886364]">管理您的房型與價格方案</p>
+                            <span class="text-[#886364]">></span>
+                        </div>
+                    </div>
+                     <!-- 訂單管理 -->
+                    <div class="p-4 rounded-xl border border-gray-100 bg-white cursor-pointer hover:bg-gray-50">
+                        <h2 class="text-lg font-bold text-[#181111] mb-2">訂單管理</h2>
+                        <div class="flex justify-between items-center">
+                            <p class="text-sm text-[#886364]">查看與確認所有訂單</p>
+                            <span class="text-[#886364]">></span>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }
+
+            function renderRoomListPage() {
+                const container = pages.roomManagement;
+                container.innerHTML = `
+                    <div class="p-4">
+                        <div class="flex justify-between items-center">
+                            <h1 class="text-2xl font-bold text-[#181111]">房型管理</h1>
+                            <button id="add-new-room-btn" class="btn-main h-10 px-5 text-sm w-auto">＋ 新增房型</button>
+                        </div>
+                        <div class="space-y-4 mt-4">
+                            ${mockRoomTypes.map(room => `
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <div class="flex gap-4">
+                                        <img src="${room.imageUrl}" class="w-20 h-20 rounded-lg object-cover">
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-start">
+                                                <h3 class="font-bold text-[#181111] truncate">${room.name}</h3>
+                                                <span class="text-xs font-semibold ${room.status === 'active' ? 'text-green-600 bg-green-100' : 'text-gray-600 bg-gray-100'} px-2 py-0.5 rounded-full">${room.status === 'active' ? '啟用中' : '已禁用'}</span>
+                                            </div>
+                                            <p class="text-sm text-[#886364] mt-1 truncate">${room.description}</p>
+                                            <p class="text-sm font-bold text-[#181111] mt-2">總庫存: ${room.stock} 間</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-end gap-2 mt-3">
+                                        <button class="py-1 px-3 bg-red-100 text-red-600 rounded-full text-xs font-medium">刪除</button>
+                                        <button class="edit-room-btn py-1 px-3 bg-gray-200 text-gray-800 rounded-full text-xs font-medium" data-room-id="${room.id}">編輯</button>
+                                        <button class="manage-packages-btn py-1 px-3 bg-[#181111] text-white rounded-full text-xs font-medium" data-room-id="${room.id}">管理方案</button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                         <div class="pt-4 mt-2">
+                            <button id="back-to-dashboard-btn" class="flex cursor-pointer items-center justify-center w-full h-12 rounded-full bg-gray-200 text-[#181111] font-bold">返回商家專區</button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            function renderPackageListPage(roomId) {
+                const container = pages.packageManagement;
+                const room = mockRoomTypes.find(r => r.id === roomId);
+                if (!room) {
+                    container.innerHTML = '<div class="p-4 text-center text-red-500">找不到該房型資訊。</div>';
+                    return;
+                }
+
+                const roomPackages = mockPackages.filter(p => p.roomId === roomId);
+
+                container.innerHTML = `
+                    <div class="p-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <h1 class="text-xl font-bold text-[#181111]">管理 ${room.name} 的方案</h1>
+                            <button id="add-new-package-btn" class="btn-main h-10 px-5 text-sm w-auto" data-room-id="${roomId}">＋ 新增方案</button>
+                        </div>
+                        <div class="space-y-4 mt-4">
+                            ${roomPackages.length > 0 ? roomPackages.map(pkg => `
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <div class="flex gap-4 items-center">
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-start">
+                                                <h3 class="font-bold text-[#181111]">${pkg.name}</h3>
+                                                <span class="text-xs font-semibold ${pkg.status === 'active' ? 'text-green-600 bg-green-100' : 'text-gray-600 bg-gray-100'} px-2 py-0.5 rounded-full">${pkg.status === 'active' ? '啟用中' : '已禁用'}</span>
+                                            </div>
+                                            <p class="text-sm text-[#886364] mt-1">計價: ${pkg.type === 'overnight' ? '天' : '小時'}</p>
+                                            <p class="text-sm font-bold text-[#181111] mt-2">
+                                                ${pkg.type === 'overnight' ? `NT$ ${pkg.basePrice} / 晚` : `NT$ ${pkg.basePrice} / 小時`}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-end gap-2 mt-3">
+                                        <button class="py-1 px-3 bg-red-100 text-red-600 rounded-full text-xs font-medium">刪除</button>
+                                        <button class="edit-package-btn py-1 px-3 bg-gray-200 text-gray-800 rounded-full text-xs font-medium" data-package-id="${pkg.id}" data-room-id="${roomId}">編輯</button>
+                                    </div>
+                                </div>
+                            `).join('') : `
+                                <div class="p-4 text-center text-[#886364] border border-dashed rounded-xl">此房型目前沒有任何方案。點擊「新增方案」建立第一個吧！</div>
+                            `}
+                        </div>
+                        <div class="pt-4 mt-2">
+                            <button id="back-to-room-list-btn" class="flex cursor-pointer items-center justify-center w-full h-12 rounded-full bg-gray-200 text-[#181111] font-bold">返回房型列表</button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            function renderPackageForm(roomId, packageId) {
+                const room = mockRoomTypes.find(r => r.id === roomId);
+                const packageData = packageId ? mockPackages.find(p => p.id === packageId) : null;
+                const isEditing = !!packageData;
+
+                formModal.innerHTML = `
+                    <div class="p-4 overflow-y-auto max-h-full">
+                        <div class="flex justify-between items-center mb-4 sticky top-0 bg-gray-50 py-2 z-10">
+                            <button id="cancel-form-btn" class="text-lg font-bold p-2">&lt; 返回</button>
+                            <h1 class="text-xl font-bold text-[#181111] flex-1 text-center">${isEditing ? '編輯方案' : '新增方案'}</h1>
+                            <div class="w-20"></div>
+                        </div>
+                        <div class="space-y-4 px-2">
+                            <div class="bg-gray-100 p-3 rounded-lg text-sm text-gray-700">
+                                為房型 <strong>"${room.name}"</strong> 設定方案
+                            </div>
+
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">方案名稱</label>
+                                <input type="text" class="form-input-styled mt-1" id="package-name" value="${isEditing ? packageData.name : ''}" placeholder="例如：標準日租方案">
+                            </div>
+
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">方案描述</label>
+                                <textarea class="form-input-styled mt-1 h-24" id="package-description" placeholder="詳細說明方案內容...">${isEditing ? packageData.description || '' : ''}</textarea>
+                            </div>
+
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">計價單位</label>
+                                <div class="flex space-x-4 mt-1">
+                                    <label class="flex items-center">
+                                        <input type="radio" name="pricing-unit" value="overnight" class="h-4 w-4 text-[#181111] focus:ring-[#181111]" ${isEditing && packageData.type === 'overnight' ? 'checked' : !isEditing ? 'checked' : ''} ${isEditing ? 'disabled' : ''}>
+                                        <span class="ml-2 text-sm">天 (過夜寄宿)</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="pricing-unit" value="daycare" class="h-4 w-4 text-[#181111] focus:ring-[#181111]" ${isEditing && packageData.type === 'daycare' ? 'checked' : ''} ${isEditing ? 'disabled' : ''}>
+                                        <span class="ml-2 text-sm">小時 (日間安親)</span>
+                                    </label>
+                                </div>
+                                ${isEditing ? '<p class="text-xs text-red-500 mt-1">計價單位儲存後不可修改。</p>' : ''}
+                            </div>
+
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">基礎價格</label>
+                                <input type="number" class="form-input-styled mt-1" id="base-price" value="${isEditing ? packageData.basePrice : ''}" min="0" placeholder="例如：800">
+                            </div>
+
+                            <div id="overnight-specific-fields" class="${!isEditing || packageData.type === 'overnight' ? '' : 'hidden'}">
+                                <label class="text-sm font-medium text-[#886364]">最短預訂天數</label>
+                                <input type="number" class="form-input-styled mt-1" id="min-days" value="${isEditing && packageData.type === 'overnight' ? packageData.min : 1}" min="1">
+                                <label class="text-sm font-medium text-[#886364] mt-2">最長預訂天數 (選填)</label>
+                                <input type="number" class="form-input-styled mt-1" id="max-days" value="${isEditing && packageData.type === 'overnight' && packageData.max ? packageData.max : ''}" min="1">
+                            </div>
+
+                            <div id="daycare-specific-fields" class="${isEditing && packageData.type === 'daycare' ? '' : 'hidden'}">
+                                <label class="text-sm font-medium text-[#886364]">可選安親時長 (小時)</label>
+                                <p class="text-xs text-gray-500 mb-1">輸入逗號分隔的時長選項，例如 "2,4,8"</p>
+                                <input type="text" class="form-input-styled mt-1" id="daycare-lengths" value="${isEditing && packageData.type === 'daycare' && packageData.daycareLengths ? packageData.daycareLengths : ''}" placeholder="例如：2,4,8">
+                                
+                                <label class="text-sm font-medium text-[#886364] mt-4">每日可預訂時段</label>
+                                <p class="text-xs text-gray-500 mb-1">設定此方案每天可接受預訂的起始與結束時間</p>
+                                <div class="flex gap-2 mt-1">
+                                    <input type="time" class="form-input-styled" id="start-time" value="${isEditing && packageData.startTime ? packageData.startTime : '09:00'}">
+                                    <span>-</span>
+                                    <input type="time" class="form-input-styled" id="end-time" value="${isEditing && packageData.endTime ? packageData.endTime : '18:00'}">
+                                </div>
+                                
+                                <label class="text-sm font-medium text-[#886364] mt-4">超時費率 (每小時)</label>
+                                <input type="number" class="form-input-styled mt-1" id="overtime-rate" value="${isEditing && packageData.overtimeRate ? packageData.overtimeRate : ''}" min="0" placeholder="例如：100">
+                            </div>
+                            
+                            <div class="border-t pt-4">
+                                <h3 class="text-sm font-bold text-[#181111] mb-2">上架與排程設定</h3>
+                                <div class="space-y-2">
+                                     <label class="flex items-center"><input type="radio" name="schedule-mode" value="permanent" class="h-4 w-4 text-black focus:ring-black" checked> <span class="ml-2 text-sm">永久有效</span></label>
+                                     <label class="flex items-center"><input type="radio" name="schedule-mode" value="date-range" class="h-4 w-4 text-black focus:ring-black"> <span class="ml-2 text-sm">指定日期</span></label>
+                                     <label class="flex items-center"><input type="radio" name="schedule-mode" value="recurring" class="h-4 w-4 text-black focus:ring-black"> <span class="ml-2 text-sm">循環顯示</span></label>
+                                </div>
+                            </div>
+                            
+                            <div id="date-range-fields" class="hidden pl-6 space-y-2 border-l-2 ml-2">
+                                <label class="text-sm font-medium text-[#886364]">方案有效日期範圍</label>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <input type="date" id="package-start-date" class="form-input-styled text-center p-2" value="${isEditing ? packageData.startDate : ''}">
+                                    <span>-</span>
+                                    <input type="date" id="package-end-date" class="form-input-styled text-center p-2" value="${isEditing ? packageData.endDate : ''}">
+                                </div>
+                            </div>
+                            
+                            <div id="recurring-fields" class="hidden pl-6 space-y-4 border-l-2 ml-2">
+                                <div>
+                                    <label class="text-sm font-medium text-[#886364]">選擇循環星期</label>
+                                    <div class="grid grid-cols-4 gap-2 mt-1">
+                                        ${['日', '一', '二', '三', '四', '五', '六'].map(day => `<label class="flex items-center text-sm"><input type="checkbox" class="h-4 w-4 rounded border-gray-300"> <span class="ml-1">${day}</span></label>`).join('')}
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-[#886364]">展示時長</label>
+                                    <select class="form-input-styled mt-1"><option>一個月</option><option>三個月</option><option>半年</option><option>一年</option></select>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-[#886364]">排除日期區間 (選填)</label>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <input type="date" class="form-input-styled text-center p-2">
+                                        <span>-</span>
+                                        <input type="date" class="form-input-styled text-center p-2">
+                                    </div>
+                                    <button class="text-xs text-blue-600 mt-1">+ 新增排除區間</button>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-between items-center border-t pt-4">
+                                <label class="text-sm font-medium text-[#886364]">啟用狀態</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="package-status-toggle" ${!isEditing || packageData.status === 'active' ? 'checked' : ''}>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <button class="btn-main" id="save-package-btn" data-room-id="${roomId}" data-package-id="${packageId || ''}">儲存方案</button>
+                        </div>
+                    </div>
+                `;
+                formModal.classList.remove('hidden');
+                attachPackageFormListeners();
+            }
+            
+            function attachPackageFormListeners() {
+                const pricingUnitRadios = formModal.querySelectorAll('input[name="pricing-unit"]');
+                pricingUnitRadios.forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        const overnightFields = formModal.querySelector('#overnight-specific-fields');
+                        const daycareFields = formModal.querySelector('#daycare-specific-fields');
+                        overnightFields.classList.toggle('hidden', this.value !== 'overnight');
+                        daycareFields.classList.toggle('hidden', this.value !== 'daycare');
+                    });
+                });
+                
+                const scheduleModeRadios = formModal.querySelectorAll('input[name="schedule-mode"]');
+                scheduleModeRadios.forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        const dateRangeFields = formModal.querySelector('#date-range-fields');
+                        const recurringFields = formModal.querySelector('#recurring-fields');
+                        dateRangeFields.classList.toggle('hidden', this.value !== 'date-range');
+                        recurringFields.classList.toggle('hidden', this.value !== 'recurring');
+                    });
+                });
+            }
+
+            function renderRoomForm(roomId) {
+                const roomData = roomId ? mockRoomTypes.find(r => r.id === roomId) : null;
+                const isEditing = !!roomData;
+                
+                formModal.innerHTML = `
+                    <div class="p-4 overflow-y-auto max-h-full">
+                         <div class="flex justify-between items-center mb-4 sticky top-0 bg-gray-50 py-2 z-10">
+                            <button id="cancel-form-btn" class="text-lg font-bold p-2">&lt; 返回</button>
+                            <h1 class="text-xl font-bold text-[#181111] flex-1 text-center">${isEditing ? '編輯房型' : '新增房型'}</h1>
+                            <div class="w-20"></div>
+                        </div>
+                        <div class="space-y-4 px-2">
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">房型名稱</label>
+                                <input type="text" class="form-input-styled mt-1" value="${isEditing ? roomData.name : ''}">
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">房型描述</label>
+                                <textarea class="form-input-styled mt-1 h-24">${isEditing ? roomData.description : ''}</textarea>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">圖片上傳</label>
+                                <div class="mt-1 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                                    <div class="text-center">
+                                        <p class="mt-1 text-sm leading-6 text-gray-600">拖曳或點擊上傳</p>
+                                    </div>
+                                </div>
+                            </div>
+                             <div>
+                                <label class="text-sm font-medium text-[#886364]">適用寵物種類</label>
+                                <div class="space-y-2 mt-2">
+                                    <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-black focus:ring-black" name="pet-type" value="dog"> <span class="ml-2 text-sm">狗</span></label>
+                                    <div id="dog-size-options" class="hidden pl-6 space-y-2">
+                                         <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300"> <span class="ml-2 text-sm">小型犬 (0-10公斤)</span></label>
+                                         <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300"> <span class="ml-2 text-sm">中型犬 (10-20公斤)</span></label>
+                                         <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300"> <span class="ml-2 text-sm">大型犬 (20公斤以上)</span></label>
+                                    </div>
+                                    <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300"> <span class="ml-2 text-sm">貓</span></label>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-sm font-medium text-[#886364]">可容納寵物數</label>
+                                    <input type="number" class="form-input-styled mt-1" value="${isEditing ? 1 : 1}">
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-[#886364]">房型總庫存</label>
+                                    <input type="number" class="form-input-styled mt-1" value="${isEditing ? roomData.stock : 1}">
+                                </div>
+                            </div>
+                             <div class="flex justify-between items-center">
+                                <label class="text-sm font-medium text-[#886364]">啟用狀態</label>
+                                <label class="toggle-switch"><input type="checkbox" ${isEditing && roomData.status === 'active' ? 'checked' : !isEditing ? 'checked' : ''}><span class="toggle-slider"></span></label>
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                             <button class="btn-main">儲存房型</button>
+                        </div>
+                    </div>
+                `;
+                formModal.classList.remove('hidden');
+            }
+
+
+            // --- 日曆功能 ---
+            function openCalendar() {
+                calendarModal.classList.remove('hidden');
+                renderCalendar();
+            }
+
+            function renderCalendar() {
+                const content = calendarModal.querySelector('.modal-content');
+                content.innerHTML = `
+                    <div class="flex justify-between items-center mb-4">
+                        <button id="prev-month" class="p-2 rounded-full hover:bg-gray-100">&lt;</button>
+                        <h3 class="font-bold">${currentCalendarDate.getFullYear()}年 ${currentCalendarDate.getMonth() + 1}月</h3>
+                        <button id="next-month" class="p-2 rounded-full hover:bg-gray-100">&gt;</button>
+                    </div>
+                    <div class="grid grid-cols-7 text-center text-sm text-[#886364] mb-2">
+                        <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+                    </div>
+                    <div id="calendar-days" class="grid grid-cols-7 text-center text-sm gap-1"></div>
+                    <div class="flex justify-end gap-2 mt-4">
+                        <button id="calendar-cancel" class="py-2 px-4 rounded-full bg-gray-200 text-sm">取消</button>
+                        <button id="calendar-confirm" class="py-2 px-4 rounded-full bg-[#181111] text-white text-sm">確定</button>
+                    </div>`;
+
+                const daysGrid = document.getElementById('calendar-days');
+                const firstDay = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth(), 1).getDay();
+                const daysInMonth = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth() + 1, 0).getDate();
+                
+                for (let i = 0; i < firstDay; i++) {
+                    daysGrid.innerHTML += `<div></div>`;
+                }
+
+                for (let i = 1; i <= daysInMonth; i++) {
+                    const dayDate = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth(), i);
+                    const today = new Date(); today.setHours(0,0,0,0);
+                    let classes = 'calendar-day';
+                    if (dayDate < today) classes += ' disabled';
+                    if (selectedCheckinDate && dayDate.getTime() === selectedCheckinDate.getTime()) classes += ' range-start';
+                    if (selectedCheckoutDate && dayDate.getTime() === selectedCheckoutDate.getTime()) classes += ' range-end';
+                    if (selectedCheckinDate && selectedCheckoutDate && dayDate > selectedCheckinDate && dayDate < selectedCheckoutDate) classes += ' in-range';
+                    
+                    daysGrid.innerHTML += `<div class="${classes}" data-date="${dayDate.toISOString().split('T')[0]}">${i}</div>`;
+                }
+            }
+            
+            function handleDateClick(e) {
+                if (!e.target.matches('.calendar-day:not(.disabled)')) return;
+                const clickedDate = new Date(e.target.dataset.date);
+                if (isSelectingCheckin || clickedDate < selectedCheckinDate) {
+                    selectedCheckinDate = clickedDate;
+                    selectedCheckoutDate = null;
+                    isSelectingCheckin = false;
+                } else {
+                    selectedCheckoutDate = clickedDate;
+                    isSelectingCheckin = true;
+                }
+                renderCalendar();
+            }
+
+            function updatePrice() {
+                const priceDisplay = document.getElementById('total-price-display');
+                if (!priceDisplay) return;
+
+                let total = 0;
+                const activeService = document.querySelector('.service-type-toggle button.active').dataset.serviceType;
+                
+                if (activeService === 'overnight') {
+                    const selectedPackage = document.querySelector('#overnight-booking-options .package-item.selected');
+                    if (selectedPackage && selectedCheckinDate && selectedCheckoutDate && selectedCheckoutDate > selectedCheckinDate) {
+                        const basePrice = parseInt(selectedPackage.dataset.price);
+                        const nights = Math.ceil((selectedCheckoutDate - selectedCheckinDate) / (1000 * 60 * 60 * 24));
+                        total = basePrice * nights;
+                    } else {
+                         priceDisplay.textContent = '請選擇有效日期與方案';
+                         return;
+                    }
+                } else { // daycare
+                    document.querySelectorAll('.daycare-time-btn.active').forEach(btn => {
+                        total += parseInt(btn.dataset.price);
+                    });
+                }
+                
+                const petCount = parseInt(document.getElementById('pet-count').value);
+                total *= petCount;
+
+                document.querySelectorAll('.addon-service:checked').forEach(cb => {
+                    total += parseInt(cb.dataset.price);
+                });
+
+                priceDisplay.textContent = `總計: NT$ ${total.toLocaleString()}`;
+            }
+            
+            function renderCalendarManagementPage() {
+                const container = pages.calendarManagement;
+                const activeRooms = mockRoomTypes.filter(room => room.status === 'active');
+                const selectedRoom = activeRooms.find(r => r.id === currentManagementRoomId) || activeRooms[0];
+                const roomPackages = mockPackages.filter(p => p.roomId === selectedRoom.id && p.status === 'active');
+                const selectedPackage = roomPackages[0] || null;
+                
+                if (!selectedRoom) {
+                    container.innerHTML = `
+                        <div class="p-4">
+                            <div class="flex justify-between items-center mb-4">
+                                <button id="back-to-dashboard-btn" class="text-lg p-2 font-bold">&lt;</button>
+                                <h1 class="text-xl font-bold text-[#181111]">管理行事曆</h1>
+                                <div class="w-8"></div>
+                            </div>
+                            <div class="text-center text-gray-500 mt-20">
+                                <p>您還沒有建立任何房型</p>
+                                <button class="btn-main mt-4" onclick="showPage('roomManagement')">前往建立房型</button>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="p-4">
+                        <!-- 頁面標題與返回按鈕 -->
+                        <div class="flex justify-between items-center mb-4">
+                            <button id="back-to-dashboard-btn" class="text-lg p-2 font-bold">&lt;</button>
+                            <h1 class="text-xl font-bold text-[#181111]">管理行事曆</h1>
+                            <div class="w-8"></div>
+                        </div>
+
+                        <!-- 房型選擇 -->
+                        <div class="mb-4">
+                            <label class="text-sm font-medium text-[#886364] mb-2 block">選擇房型</label>
+                            <select id="room-type-select" class="form-input-styled">
+                                ${activeRooms.map(room => `
+                                    <option value="${room.id}" ${room.id === selectedRoom.id ? 'selected' : ''}>
+                                        ${room.name}
+                                    </option>
+                                `).join('')}
+                            </select>
+                        </div>
+
+                        <!-- 方案選擇 -->
+                        <div class="mb-4">
+                            <label class="text-sm font-medium text-[#886364] mb-2 block">選擇方案</label>
+                            <select id="package-select" class="form-input-styled">
+                                ${roomPackages.map(pkg => `
+                                    <option value="${pkg.id}" ${pkg.id === (selectedPackage?.id || 0) ? 'selected' : ''}>
+                                        ${pkg.name}
+                                    </option>
+                                `).join('')}
+                            </select>
+                        </div>
+
+                        <!-- 日曆區域 -->
+                        <div id="calendar-container" class="bg-white rounded-xl border border-gray-100 p-4">
+                            ${renderCalendarView(selectedPackage, selectedRoom)}
+                        </div>
+                    </div>
+                `;
+
+                // 綁定事件監聽器
+                attachCalendarManagementListeners();
+            }
+
+            function renderCalendarView(selectedPackage, selectedRoom) {
+                if (!selectedPackage) {
+                    return `
+                        <div class="text-center text-gray-500 py-8">
+                            <p>此房型還沒有任何方案</p>
+                            <button class="btn-main mt-4" onclick="showPage('packageManagement', {roomId: ${selectedRoom.id}})">前往建立方案</button>
+                        </div>
+                    `;
+                }
+
+                const isOvernight = selectedPackage.type === 'overnight';
+                const currentDate = managementCalendarDate;
+                
+                if (isOvernight) {
+                    return renderMonthlyCalendar(currentDate, selectedPackage, selectedRoom);
+                } else {
+                    return renderWeeklyCalendar(currentDate, selectedPackage, selectedRoom);
+                }
+            }
+
+            function renderMonthlyCalendar(currentDate, selectedPackage, selectedRoom) {
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth();
+                const firstDay = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                let calendarHTML = `
+                    <div class="mb-4">
+                        <div class="flex justify-between items-center">
+                            <button id="prev-month-manage" class="p-2 rounded-full hover:bg-gray-100">&lt;</button>
+                            <h3 class="font-bold text-lg">${year}年 ${month + 1}月</h3>
+                            <button id="next-month-manage" class="p-2 rounded-full hover:bg-gray-100">&gt;</button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-7 text-center text-sm text-[#886364] mb-2">
+                        <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+                    </div>
+                    <div class="grid grid-cols-7 gap-1">
+                `;
+
+                // 填充月初空白
+                for (let i = 0; i < firstDay; i++) {
+                    calendarHTML += '<div class="h-16"></div>';
+                }
+
+                // 生成日期格子
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const date = new Date(year, month, day);
+                    const isPast = date < today;
+                    const stockInfo = calculateDailyStock(date, selectedRoom, selectedPackage);
+                    const stockClass = getStockColorClass(stockInfo.available);
+                    
+                    calendarHTML += `
+                        <div class="calendar-day-cell h-16 border border-gray-200 rounded-lg p-1 cursor-pointer ${isPast ? 'opacity-50' : ''} ${stockClass}" 
+                             data-date="${date.toISOString().split('T')[0]}" 
+                             data-room-id="${selectedRoom.id}" 
+                             data-package-id="${selectedPackage.id}">
+                            <div class="text-xs font-medium">${day}</div>
+                            <div class="text-xs ${stockInfo.available === 0 ? 'text-red-600' : 'text-gray-600'}">
+                                ${stockInfo.available > 0 ? `剩 ${stockInfo.available}` : '已滿'}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                calendarHTML += '</div>';
+                return calendarHTML;
+            }
+
+            function renderWeeklyCalendar(currentDate, selectedPackage, selectedRoom) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                // 生成詳細時間段 (每30分鐘一個時段)
+                const timeSlots = generateTimeSlots(selectedPackage);
+                
+                // 生成房間列表 (模擬5個房間)
+                const rooms = Array.from({length: 5}, (_, i) => ({
+                    id: i + 1,
+                    name: `${selectedRoom.name} - ${i + 1}號房`,
+                    type: selectedRoom.name
+                }));
+
+                let calendarHTML = `
+                    <div class="mb-4">
+                        <div class="flex justify-between items-center">
+                            <button id="prev-week-manage" class="p-2 rounded-full hover:bg-gray-100">&lt;</button>
+                            <h3 class="font-bold text-lg">${formatDate(currentDate)} 時間表</h3>
+                            <button id="next-week-manage" class="p-2 rounded-full hover:bg-gray-100">&gt;</button>
+                        </div>
+                        <div class="text-sm text-gray-600 text-center">
+                            ${selectedPackage.name} - ${selectedRoom.name}
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm border-collapse">
+                            <thead>
+                                <tr class="border-b-2">
+                                    <th class="p-2 text-left sticky left-0 bg-white border-r" style="min-width: 120px;">房間</th>
+                                    ${timeSlots.map((slot, index) => `
+                                        <th class="p-1 text-center border-r text-xs" style="min-width: 35px;">
+                                            ${index % 4 === 0 ? `<div class="font-medium">${slot.startTime}</div>` : `<div class="text-gray-400">${slot.startTime.split(':')[1]}</div>`}
+                                        </th>
+                                    `).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                // 為每個房間生成一行
+                rooms.forEach(room => {
+                    calendarHTML += '<tr class="border-b">';
+                    calendarHTML += `<td class="p-2 font-medium border-r sticky left-0 bg-white">
+                        <div class="text-sm">${room.name}</div>
+                        <div class="text-xs text-gray-500">房間 ${room.id}</div>
+                    </td>`;
+                    
+                    // 生成這個房間的時間軸
+                    const roomTimelineHTML = generateRoomTimeline(currentDate, room, timeSlots, selectedPackage, today);
+                    calendarHTML += roomTimelineHTML;
+                    
+                    calendarHTML += '</tr>';
+                });
+
+                calendarHTML += '</tbody></table></div>';
+                return calendarHTML;
+            }
+
+            function generateTimeSlots(selectedPackage) {
+                const slots = [];
+                const startTime = selectedPackage.startTime || '07:00';
+                const endTime = selectedPackage.endTime || '22:00';
+                
+                // 解析開始和結束時間
+                const [startHour, startMin] = startTime.split(':').map(Number);
+                const [endHour, endMin] = endTime.split(':').map(Number);
+                
+                // 轉換為分鐘總數以便計算
+                let currentMinutes = startHour * 60 + startMin;
+                const endMinutes = endHour * 60 + endMin;
+                const slotDuration = 15; // 改為15分鐘一個時段，提供更高精度
+                
+                while (currentMinutes < endMinutes) {
+                    const nextMinutes = currentMinutes + slotDuration;
+                    
+                    if (nextMinutes > endMinutes) {
+                        break;
+                    }
+                    
+                    // 轉換回小時:分鐘格式
+                    const startH = Math.floor(currentMinutes / 60);
+                    const startM = currentMinutes % 60;
+                    const endH = Math.floor(nextMinutes / 60);
+                    const endM = nextMinutes % 60;
+                    
+                    const startTimeStr = `${startH.toString().padStart(2, '0')}:${startM.toString().padStart(2, '0')}`;
+                    const endTimeStr = `${endH.toString().padStart(2, '0')}:${endM.toString().padStart(2, '0')}`;
+                    
+                    slots.push({
+                        startTime: startTimeStr,
+                        endTime: endTimeStr,
+                        display: `${startTimeStr}`,
+                        minutes: currentMinutes // 添加分鐘數便於計算
+                    });
+                    
+                    currentMinutes = nextMinutes;
+                }
+                
+                return slots;
+            }
+
+            function isPastTime(timeStr) {
+                const now = new Date();
+                const [hour, min] = timeStr.split(':').map(Number);
+                const timeToCheck = new Date();
+                timeToCheck.setHours(hour, min, 0, 0);
+                return now > timeToCheck;
+            }
+
+            function isCurrentTimeSlot(startTime, endTime) {
+                const now = new Date();
+                const currentMinutes = now.getHours() * 60 + now.getMinutes();
+                
+                const [startHour, startMin] = startTime.split(':').map(Number);
+                const [endHour, endMin] = endTime.split(':').map(Number);
+                
+                const startMinutes = startHour * 60 + startMin;
+                const endMinutes = endHour * 60 + endMin;
+                
+                return currentMinutes >= startMinutes && currentMinutes < endMinutes;
+            }
+
+            function generateRoomTimeline(currentDate, room, timeSlots, selectedPackage, today) {
+                const dateStr = currentDate.toISOString().split('T')[0];
+                
+                // 獲取該房間的所有預訂
+                const roomBookings = getRoomBookings(dateStr, room.id);
+                
+                let timelineHTML = '';
+                let skipSlots = 0; // 用於跳過已被合併的時段
+                
+                for (let index = 0; index < timeSlots.length; index++) {
+                    const slot = timeSlots[index];
+                    
+                    // 如果這個時段已被前面的預訂合併，跳過
+                    if (skipSlots > 0) {
+                        skipSlots--;
+                        continue;
+                    }
+                    
+                    const isCurrentTime = currentDate.toDateString() === today.toDateString() && isCurrentTimeSlot(slot.startTime, slot.endTime);
+                    
+                    // 檢查是否有預訂覆蓋這個時段
+                    const booking = roomBookings.find(b => 
+                        isTimeSlotOverlap(b.timeSlot, `${slot.startTime}-${slot.endTime}`)
+                    );
+                    
+                    if (booking) {
+                        // 計算這個預訂跨越多少個時段
+                        const bookingSpan = calculateBookingSpan(booking.timeSlot, timeSlots, index);
+                        skipSlots = bookingSpan - 1; // 跳過後續的時段
+                        
+                        // 生成跨越多個時段的預訂格子
+                        timelineHTML += `
+                            <td class="border-r border-gray-200 h-10 cursor-pointer relative bg-red-400" 
+                                colspan="${bookingSpan}"
+                                data-date="${dateStr}"
+                                data-time-slot="${booking.timeSlot}"
+                                data-room-id="${room.id}"
+                                data-package-id="${selectedPackage.id}">
+                                <div class="text-xs text-white text-center font-medium leading-tight px-1" style="font-size: 10px;">
+                                    ${booking.customer}
+                                </div>
+                                <div class="text-xs text-red-100 text-center leading-tight px-1" style="font-size: 9px;">
+                                    ${booking.timeSlot}
+                                </div>
+                            </td>
+                        `;
+                    } else {
+                        // 生成空的可預訂格子
+                        let cellClass = 'border-r border-gray-200 h-10 cursor-pointer relative bg-green-100 hover:bg-green-200';
+                        let cellContent = '<div class="text-xs text-green-700 text-center mt-2" style="font-size: 9px;">可預訂</div>';
+                        
+                        // 添加當前時間線
+                        if (isCurrentTime) {
+                            cellContent += '<div class="absolute inset-0 border-l-4 border-green-500 current-time-line pointer-events-none"></div>';
+                            cellContent += '<div class="absolute top-0 left-0 w-1 h-full bg-green-500 current-time-line pointer-events-none"></div>';
+                        }
+                        
+                        timelineHTML += `
+                            <td class="${cellClass}"
+                                data-date="${dateStr}"
+                                data-time-slot="${slot.startTime}-${slot.endTime}"
+                                data-room-id="${room.id}"
+                                data-package-id="${selectedPackage.id}">
+                                ${cellContent}
+                            </td>
+                        `;
+                    }
+                }
+                
+                return timelineHTML;
+            }
+
+            function getRoomBookings(dateStr, roomId) {
+                // 模擬預訂資料 (支援分鐘級精度)
+                const mockBookings = [
+                    { roomId: 1, date: dateStr, timeSlot: '09:07-10:23', customer: '王小明', pet: '黃金獵犬' },
+                    { roomId: 1, date: dateStr, timeSlot: '14:15-15:45', customer: '李小華', pet: '英短貓' },
+                    { roomId: 2, date: dateStr, timeSlot: '10:12-11:58', customer: '陳大同', pet: '柴犬' },
+                    { roomId: 2, date: dateStr, timeSlot: '15:20-17:35', customer: '周雅婷', pet: '貴賓狗' },
+                    { roomId: 3, date: dateStr, timeSlot: '08:05-09:40', customer: '張美玲', pet: '波斯貓' },
+                    { roomId: 3, date: dateStr, timeSlot: '13:25-14:55', customer: '劉志明', pet: '哈士奇' },
+                    { roomId: 4, date: dateStr, timeSlot: '11:18-12:52', customer: '吳佳蓉', pet: '博美犬' },
+                    { roomId: 4, date: dateStr, timeSlot: '16:08-18:33', customer: '蔡明宏', pet: '米克斯' },
+                    { roomId: 5, date: dateStr, timeSlot: '09:42-11:28', customer: '林雅文', pet: '摺耳貓' },
+                    { roomId: 5, date: dateStr, timeSlot: '14:37-15:59', customer: '許志豪', pet: '拉布拉多' },
+                ];
+                
+                return mockBookings.filter(b => b.roomId === roomId && b.date === dateStr);
+            }
+
+            function calculateBookingSpan(bookingTimeSlot, timeSlots, startIndex) {
+                const [bookingStart, bookingEnd] = bookingTimeSlot.split('-');
+                const bookingStartMinutes = timeToMinutes(bookingStart);
+                const bookingEndMinutes = timeToMinutes(bookingEnd);
+                
+                let span = 0;
+                for (let i = startIndex; i < timeSlots.length; i++) {
+                    const slot = timeSlots[i];
+                    const slotStartMinutes = timeToMinutes(slot.startTime);
+                    const slotEndMinutes = timeToMinutes(slot.endTime);
+                    
+                    // 如果時段與預訂有重疊，增加跨度
+                    if (slotStartMinutes < bookingEndMinutes && slotEndMinutes > bookingStartMinutes) {
+                        span++;
+                    } else if (slotStartMinutes >= bookingEndMinutes) {
+                        // 如果時段開始時間已經超過預訂結束時間，停止計算
+                        break;
+                    }
+                }
+                
+                return Math.max(1, span); // 至少跨越1個時段
+            }
+
+            function timeToMinutes(timeStr) {
+                const [hour, min] = timeStr.split(':').map(Number);
+                return hour * 60 + min;
+            }
+
+            function getRoomBookingInfo(date, timeSlot, room, selectedPackage) {
+                // 模擬預訂資料 - 根據房間ID和時間段生成一些預訂
+                const dateStr = date.toISOString().split('T')[0];
+                const timeKey = `${timeSlot.startTime}-${timeSlot.endTime}`;
+                
+                // 獲取房間預訂
+                const roomBookings = getRoomBookings(dateStr, room.id);
+                
+                // 檢查是否有預訂衝突
+                const booking = roomBookings.find(b => 
+                    isTimeSlotOverlap(b.timeSlot, timeKey)
+                );
+                
+                if (booking) {
+                    return {
+                        isBooked: true,
+                        customerName: booking.customer,
+                        petInfo: booking.pet,
+                        timeSlot: booking.timeSlot
+                    };
+                }
+                
+                return {
+                    isBooked: false,
+                    customerName: null,
+                    petInfo: null,
+                    timeSlot: null
+                };
+            }
+
+            function isTimeSlotOverlap(bookedSlot, checkSlot) {
+                // 簡化的時間重疊檢查
+                const [bookedStart, bookedEnd] = bookedSlot.split('-');
+                const [checkStart, checkEnd] = checkSlot.split('-');
+                
+                const bookedStartMin = timeToMinutes(bookedStart);
+                const bookedEndMin = timeToMinutes(bookedEnd);
+                const checkStartMin = timeToMinutes(checkStart);
+                const checkEndMin = timeToMinutes(checkEnd);
+                
+                // 檢查是否有重疊
+                return !(bookedEndMin <= checkStartMin || bookedStartMin >= checkEndMin);
+            }
+
+            function calculateDailyStock(date, room, package) {
+                // 模擬計算邏輯
+                const totalStock = room.stock;
+                const bookings = mockBookings.filter(b => 
+                    b.roomId === room.id && 
+                    new Date(b.startDate) <= date && 
+                    new Date(b.endDate) >= date
+                );
+                const bookedCount = bookings.length;
+                return {
+                    total: totalStock,
+                    booked: bookedCount,
+                    available: Math.max(0, totalStock - bookedCount)
+                };
+            }
+
+            function calculateHourlyStock(date, timeSlot, room, package) {
+                // 模擬計算邏輯
+                const totalStock = room.stock;
+                
+                // 處理新的時間段格式
+                let timeSlotKey;
+                if (typeof timeSlot === 'object') {
+                    timeSlotKey = `${timeSlot.startTime}-${timeSlot.endTime}`;
+                } else {
+                    timeSlotKey = timeSlot;
+                }
+                
+                const bookings = mockBookings.filter(b => 
+                    b.roomId === room.id && 
+                    new Date(b.startDate).toDateString() === date.toDateString()
+                );
+                
+                // 根據時間段和日期計算預訂數量
+                const bookedCount = Math.min(bookings.length, Math.floor(Math.random() * 3)); // 模擬時段預訂
+                
+                return {
+                    total: totalStock,
+                    booked: bookedCount,
+                    available: Math.max(0, totalStock - bookedCount)
+                };
+            }
+
+            function getStockColorClass(available) {
+                if (available === 0) return 'bg-red-100';
+                if (available <= 2) return 'bg-yellow-100';
+                return 'bg-green-100';
+            }
+
+            function formatDate(date) {
+                return `${date.getMonth() + 1}/${date.getDate()}`;
+            }
+
+            function updateCalendarView(isRoomChange = false) {
+                const roomId = currentManagementRoomId;
+                const selectedRoom = mockRoomTypes.find(r => r.id === roomId);
+                const roomPackages = mockPackages.filter(p => p.roomId === roomId && p.status === 'active');
+                
+                const packageSelect = document.getElementById('package-select');
+                let packageId;
+                
+                if (isRoomChange) {
+                    // 房型改變時，更新方案選擇列表並選擇第一個
+                    if (packageSelect) {
+                        packageSelect.innerHTML = roomPackages.map(pkg => `
+                            <option value="${pkg.id}">${pkg.name}</option>
+                        `).join('');
+                    }
+                    packageId = roomPackages[0]?.id || 0;
+                } else {
+                    // 方案選擇改變時，直接使用當前選中的方案
+                    packageId = parseInt(packageSelect?.value || roomPackages[0]?.id || 0);
+                }
+                
+                const selectedPackage = mockPackages.find(p => p.id === packageId);
+                
+                const calendarContainer = document.getElementById('calendar-container');
+                if (calendarContainer) {
+                    calendarContainer.innerHTML = renderCalendarView(selectedPackage, selectedRoom);
+                }
+            }
+
+            function attachCalendarManagementListeners() {
+                // 房型選擇
+                document.getElementById('room-type-select')?.addEventListener('change', function() {
+                    currentManagementRoomId = parseInt(this.value);
+                    updateCalendarView(true); // 傳入 true 表示是房型改變
+                });
+
+                // 方案選擇
+                document.getElementById('package-select')?.addEventListener('change', function() {
+                    updateCalendarView(false); // 傳入 false 表示是方案改變
+                });
+
+                // 月曆導航
+                document.getElementById('prev-month-manage')?.addEventListener('click', function() {
+                    managementCalendarDate.setMonth(managementCalendarDate.getMonth() - 1);
+                    updateCalendarView(false); // 導航不改變房型或方案
+                });
+
+                document.getElementById('next-month-manage')?.addEventListener('click', function() {
+                    managementCalendarDate.setMonth(managementCalendarDate.getMonth() + 1);
+                    updateCalendarView(false); // 導航不改變房型或方案
+                });
+
+                // 日期導航 (改為按日切換)
+                document.getElementById('prev-week-manage')?.addEventListener('click', function() {
+                    managementCalendarDate.setDate(managementCalendarDate.getDate() - 1);
+                    updateCalendarView(false); // 導航不改變房型或方案
+                });
+
+                document.getElementById('next-week-manage')?.addEventListener('click', function() {
+                    managementCalendarDate.setDate(managementCalendarDate.getDate() + 1);
+                    updateCalendarView(false); // 導航不改變房型或方案
+                });
+
+                // 日期/時段點擊事件
+                document.addEventListener('click', function(e) {
+                    if (e.target.closest('.calendar-day-cell, td[data-date]')) {
+                        const element = e.target.closest('.calendar-day-cell, td[data-date]');
+                        const date = element.dataset.date;
+                        const roomId = parseInt(element.dataset.roomId);
+                        const packageId = parseInt(element.dataset.packageId);
+                        const timeSlot = element.dataset.timeSlot;
+                        
+                        showAvailabilityModal(date, roomId, packageId, timeSlot);
+                    }
+                });
+            }
+
+            function showAvailabilityModal(date, roomId, packageId, timeSlot) {
+                const room = mockRoomTypes.find(r => r.id === roomId);
+                const package = mockPackages.find(p => p.id === packageId);
+                const stockInfo = timeSlot ? 
+                    calculateHourlyStock(new Date(date), timeSlot, room, package) :
+                    calculateDailyStock(new Date(date), room, package);
+                
+                const modalTitle = timeSlot ? 
+                    `管理 ${formatDate(new Date(date))} ${timeSlot}小時時段可用性` :
+                    `管理 ${formatDate(new Date(date))} 可用性`;
+
+                const modalContent = `
+                    <div class="p-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold text-[#181111]">${modalTitle}</h2>
+                            <button id="close-availability-modal" class="text-2xl">&times;</button>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <p class="text-sm text-gray-600">當前剩餘庫存</p>
+                                <p class="text-lg font-bold text-[#181111]">${stockInfo.available} / ${stockInfo.total}</p>
+                            </div>
+
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">手動調整可用數量</label>
+                                <input type="number" id="manual-stock-input" class="form-input-styled mt-1" 
+                                       value="${stockInfo.available}" min="0" max="${stockInfo.total}">
+                                <p class="text-xs text-gray-500 mt-1">設定為 0 表示完全不可預訂</p>
+                            </div>
+
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm font-medium text-[#886364]">設為不可預訂</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="unavailable-toggle" ${stockInfo.available === 0 ? 'checked' : ''}>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">備註 (選填)</label>
+                                <textarea id="availability-note" class="form-input-styled mt-1 h-20" 
+                                          placeholder="例如：因消毒關閉、員工不足等"></textarea>
+                            </div>
+
+                            <div class="flex gap-2 pt-4">
+                                <button id="clear-manual-settings" class="flex-1 py-2 px-4 bg-gray-200 text-gray-700 rounded-full text-sm">
+                                    清除手動設定
+                                </button>
+                                <button id="save-availability" class="flex-1 py-2 px-4 bg-[#181111] text-white rounded-full text-sm">
+                                    儲存
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // 創建模態框
+                const modal = document.createElement('div');
+                modal.className = 'modal-overlay';
+                modal.innerHTML = `
+                    <div class="modal-content max-w-md w-full">
+                        ${modalContent}
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                // 綁定模態框事件
+                modal.querySelector('#close-availability-modal').addEventListener('click', () => {
+                    document.body.removeChild(modal);
+                });
+
+                modal.querySelector('#unavailable-toggle').addEventListener('change', function() {
+                    const stockInput = modal.querySelector('#manual-stock-input');
+                    stockInput.value = this.checked ? '0' : stockInfo.available;
+                });
+
+                modal.querySelector('#save-availability').addEventListener('click', () => {
+                    alert('可用性設定已儲存 (模擬)');
+                    document.body.removeChild(modal);
+                });
+
+                modal.querySelector('#clear-manual-settings').addEventListener('click', () => {
+                    modal.querySelector('#manual-stock-input').value = stockInfo.available;
+                    modal.querySelector('#unavailable-toggle').checked = false;
+                    modal.querySelector('#availability-note').value = '';
+                });
+            }
+
+            // --- 事件監聽器綁定 ---
+            function attachBookingModuleListeners() {
+                document.getElementById('checkin-date')?.addEventListener('click', openCalendar);
+                document.getElementById('checkout-date')?.addEventListener('click', openCalendar);
+                document.getElementById('decrease-pet-count')?.addEventListener('click', () => {
+                    let input = document.getElementById('pet-count');
+                    let count = parseInt(input.value);
+                    if (count > 1) input.value = count - 1;
+                    updatePrice();
+                });
+                document.getElementById('increase-pet-count')?.addEventListener('click', () => {
+                    let input = document.getElementById('pet-count');
+                    input.value = parseInt(input.value) + 1;
+                    updatePrice();
+                });
+                document.querySelectorAll('.addon-service').forEach(el => el.addEventListener('change', updatePrice));
+                
+                document.querySelectorAll('.service-type-toggle button').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.service-type-toggle button').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        const serviceType = btn.dataset.serviceType;
+                        document.getElementById('overnight-booking-options').classList.toggle('hidden', serviceType !== 'overnight');
+                        document.getElementById('daycare-booking-options').classList.toggle('hidden', serviceType !== 'daycare');
+                        updatePrice();
+                    });
+                });
+
+                document.querySelectorAll('.package-item').forEach(item => {
+                    item.addEventListener('click', function() {
+                        if(this.closest('.unavailable')) return;
+                        const parentContainer = this.closest('#overnight-booking-options, #daycare-booking-options');
+                        parentContainer.querySelectorAll('.package-item.selected').forEach(p => p.classList.remove('selected'));
+                        this.classList.add('selected');
+                        updatePrice();
+                    });
+                });
+
+                document.querySelectorAll('.daycare-time-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        this.classList.toggle('active');
+                        updatePrice();
+                    });
+                });
+            }
+
+            document.body.addEventListener('click', function(e) {
+                // 頁面切換
+                if (e.target.closest('.nav-item')) showPage(e.target.closest('.nav-item').dataset.page);
+                if (e.target.closest('#profile-icon-button')) showPage('account');
+                if (e.target.closest('.listing-card')) showPage('detail');
+                if (e.target.closest('#chat-icon-button')) showPage('chat');
+                // 搜尋框
+                if (e.target.id === 'home-search-input') showPage('searchResult');
+                // 會員中心
+                if (e.target.closest('#become-merchant')) {
+                    alert('感謝您的申請！您現在是商家了。');
+                    isUserMerchant = true;
+                    updateUserCenterOptions();
+                }
+                if (e.target.closest('#merchant-entry')) showPage('merchantDashboard');
+                if (e.target.closest('#back-to-dashboard-btn')) showPage('merchantDashboard');
+                if (e.target.closest('#manage-rooms-link')) showPage('roomManagement');
+                if (e.target.closest('#manage-calendar-btn')) showPage('calendarManagement');
+                if (e.target.closest('#add-new-room-btn')) renderRoomForm();
+                if (e.target.closest('.edit-room-btn')) {
+                    const roomId = parseInt(e.target.closest('.edit-room-btn').dataset.roomId);
+                    renderRoomForm(roomId);
+                }
+                if (e.target.closest('#cancel-form-btn')) {
+                     formModal.classList.add('hidden');
+                     if(document.getElementById('package-name')) { // 判斷是方案表單
+                        const roomId = parseInt(document.getElementById('save-package-btn').dataset.roomId);
+                        showPage('packageManagement', { roomId: roomId });
+                     } else {
+                        showPage('roomManagement');
+                     }
+                }
+                // 訂單篩選
+                if (e.target.closest('.order-filter-btn')) renderOrders(e.target.closest('.order-filter-btn').dataset.filter);
+                // 日曆
+                if (e.target.closest('#prev-month')) { currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1); renderCalendar(); }
+                if (e.target.closest('#next-month')) { currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1); renderCalendar(); }
+                if (e.target.closest('#calendar-cancel')) calendarModal.classList.add('hidden');
+                if (e.target.closest('#calendar-confirm')) {
+                    const checkinInput = document.getElementById('checkin-date');
+                    const checkoutInput = document.getElementById('checkout-date');
+                    if(selectedCheckinDate) checkinInput.value = selectedCheckinDate.toISOString().split('T')[0];
+                    if(selectedCheckoutDate) checkoutInput.value = selectedCheckoutDate.toISOString().split('T')[0];
+                    updatePrice();
+                    calendarModal.classList.add('hidden');
+                }
+                if (e.target.closest('#calendar-days')) handleDateClick(e);
+                // 管理行事曆 - 移除全域事件監聽器，改由 attachCalendarManagementListeners 處理
+                // 房型表單中的寵物類型
+                if (e.target.matches('input[name="pet-type"][value="dog"]')) {
+                    document.getElementById('dog-size-options').classList.toggle('hidden', !e.target.checked);
+                }
+                // 方案管理
+                if (e.target.closest('.manage-packages-btn')) {
+                    const roomId = parseInt(e.target.closest('.manage-packages-btn').dataset.roomId);
+                    showPage('packageManagement', { roomId: roomId });
+                }
+                if (e.target.closest('#add-new-package-btn')) {
+                    const roomId = parseInt(e.target.dataset.roomId);
+                    renderPackageForm(roomId, null);
+                }
+                if (e.target.closest('.edit-package-btn')) {
+                    const packageId = parseInt(e.target.dataset.packageId);
+                    const roomId = parseInt(e.target.dataset.roomId);
+                    renderPackageForm(roomId, packageId);
+                }
+                if (e.target.closest('#back-to-room-list-btn')) showPage('roomManagement');
+                if (e.target.id === 'save-package-btn') {
+                    alert('方案已儲存 (模擬)。');
+                    formModal.classList.add('hidden');
+                    const roomId = parseInt(e.target.dataset.roomId);
+                    showPage('packageManagement', { roomId: roomId });
+                }
+            });
+
+            // --- 初始化 ---
+            showPage('home');
+        });
+    </script>
+</body>
+</html>
