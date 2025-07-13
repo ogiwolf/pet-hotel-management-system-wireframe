@@ -35,4 +35,22 @@ node_modules/
 
 # Temporary files
 *.tmp
-*.temp 
+*.temp
+
+# Project resource files (not needed in repository)
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.xlsx
+*.xls
+*.doc
+*.docx
+*.ppt
+*.pptx
+
+# Keep only core development files:
+# - pawpad_wireframe.html (main app)
+# - README.md (documentation)
+# - .gitignore (this file) 
