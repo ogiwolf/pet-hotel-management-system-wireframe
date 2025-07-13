@@ -1407,61 +1407,97 @@
                 // 獲取該房間的所有預訂
                 const roomBookings = getRoomBookings(dateStr, room.id);
                 
-                let timelineHTML = '';
-                let skipSlots = 0; // 用於跳過已被合併的時段
-                
-                for (let index = 0; index < timeSlots.length; index++) {
-                    const slot = timeSlots[index];
-                    
-                    // 如果這個時段已被前面的預訂合併，跳過
-                    if (skipSlots > 0) {
-                        skipSlots--;
-                        continue;
-                    }
-                    
+                // 創建時段狀態陣列
+                const slotStates = timeSlots.map((slot, index) => {
                     const isCurrentTime = currentDate.toDateString() === today.toDateString() && isCurrentTimeSlot(slot.startTime, slot.endTime);
-                    
-                    // 檢查是否有預訂覆蓋這個時段
                     const booking = roomBookings.find(b => 
                         isTimeSlotOverlap(b.timeSlot, `${slot.startTime}-${slot.endTime}`)
                     );
                     
-                    if (booking) {
-                        // 計算這個預訂跨越多少個時段
-                        const bookingSpan = calculateBookingSpan(booking.timeSlot, timeSlots, index);
-                        skipSlots = bookingSpan - 1; // 跳過後續的時段
+                    return {
+                        slot,
+                        index,
+                        isCurrentTime,
+                        booking,
+                        isBooked: !!booking,
+                        processed: false
+                    };
+                });
+                
+                let timelineHTML = '';
+                
+                for (let i = 0; i < slotStates.length; i++) {
+                    const currentState = slotStates[i];
+                    
+                    if (currentState.processed) {
+                        continue;
+                    }
+                    
+                    if (currentState.isBooked) {
+                        // 處理預訂時段
+                        const bookingSpan = calculateBookingSpan(currentState.booking.timeSlot, timeSlots, i);
                         
-                        // 生成跨越多個時段的預訂格子
+                        // 標記相關時段為已處理
+                        for (let j = i; j < i + bookingSpan && j < slotStates.length; j++) {
+                            slotStates[j].processed = true;
+                        }
+                        
                         timelineHTML += `
                             <td class="border-r border-gray-200 h-10 cursor-pointer relative bg-red-400" 
                                 colspan="${bookingSpan}"
                                 data-date="${dateStr}"
-                                data-time-slot="${booking.timeSlot}"
+                                data-time-slot="${currentState.booking.timeSlot}"
                                 data-room-id="${room.id}"
                                 data-package-id="${selectedPackage.id}">
                                 <div class="text-xs text-white text-center font-medium leading-tight px-1" style="font-size: 10px;">
-                                    ${booking.customer}
+                                    ${currentState.booking.customer}
                                 </div>
                                 <div class="text-xs text-red-100 text-center leading-tight px-1" style="font-size: 9px;">
-                                    ${booking.timeSlot}
+                                    ${currentState.booking.timeSlot}
                                 </div>
                             </td>
                         `;
                     } else {
-                        // 生成空的可預訂格子
+                        // 處理可預訂時段 - 尋找連續的可預訂時段
+                        let availableSpan = 1;
+                        let hasCurrentTime = currentState.isCurrentTime;
+                        
+                        // 計算連續的可預訂時段數量
+                        for (let j = i + 1; j < slotStates.length; j++) {
+                            if (slotStates[j].isBooked || slotStates[j].processed) {
+                                break;
+                            }
+                            availableSpan++;
+                            if (slotStates[j].isCurrentTime) {
+                                hasCurrentTime = true;
+                            }
+                        }
+                        
+                        // 標記相關時段為已處理
+                        for (let j = i; j < i + availableSpan && j < slotStates.length; j++) {
+                            slotStates[j].processed = true;
+                        }
+                        
+                        // 生成連續的可預訂區塊
                         let cellClass = 'border-r border-gray-200 h-10 cursor-pointer relative bg-green-100 hover:bg-green-200';
                         let cellContent = '<div class="text-xs text-green-700 text-center mt-2" style="font-size: 9px;">可預訂</div>';
                         
                         // 添加當前時間線
-                        if (isCurrentTime) {
+                        if (hasCurrentTime) {
                             cellContent += '<div class="absolute inset-0 border-l-4 border-green-500 current-time-line pointer-events-none"></div>';
                             cellContent += '<div class="absolute top-0 left-0 w-1 h-full bg-green-500 current-time-line pointer-events-none"></div>';
                         }
                         
+                        // 計算時間範圍顯示
+                        const startTime = currentState.slot.startTime;
+                        const endTime = timeSlots[i + availableSpan - 1]?.endTime || currentState.slot.endTime;
+                        const timeRange = availableSpan > 1 ? `${startTime}-${endTime}` : `${startTime}-${currentState.slot.endTime}`;
+                        
                         timelineHTML += `
                             <td class="${cellClass}"
+                                colspan="${availableSpan}"
                                 data-date="${dateStr}"
-                                data-time-slot="${slot.startTime}-${slot.endTime}"
+                                data-time-slot="${timeRange}"
                                 data-room-id="${room.id}"
                                 data-package-id="${selectedPackage.id}">
                                 ${cellContent}
