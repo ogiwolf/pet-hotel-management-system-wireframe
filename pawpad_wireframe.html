@@ -1303,8 +1303,8 @@
                             <div class="flex-shrink-0 w-16 bg-gray-50 border-r">
                                 <div class="h-10 border-b bg-white flex items-center justify-center text-xs font-medium">時間</div>
                                 ${timeSlots.map((slot, index) => `
-                                    <div class="h-8 border-b flex items-center justify-center text-xs ${index % 4 === 0 ? 'font-medium text-gray-800' : 'text-gray-500'}" style="min-height: 32px;">
-                                        ${index % 4 === 0 ? slot.startTime : slot.startTime.split(':')[1]}
+                                    <div class="h-8 border-b flex items-center justify-center text-xs font-medium text-gray-800" style="min-height: 32px;">
+                                        ${slot.startTime}
                                     </div>
                                 `).join('')}
                             </div>
@@ -1329,42 +1329,24 @@
 
             function generateTimeSlots(selectedPackage) {
                 const slots = [];
-                const startTime = selectedPackage.startTime || '07:00';
-                const endTime = selectedPackage.endTime || '22:00';
+                const startTime = selectedPackage.startTime || '09:00';
+                const endTime = selectedPackage.endTime || '18:00';
                 
                 // 解析開始和結束時間
                 const [startHour, startMin] = startTime.split(':').map(Number);
                 const [endHour, endMin] = endTime.split(':').map(Number);
                 
-                // 轉換為分鐘總數以便計算
-                let currentMinutes = startHour * 60 + startMin;
-                const endMinutes = endHour * 60 + endMin;
-                const slotDuration = 15; // 改為15分鐘一個時段，提供更高精度
-                
-                while (currentMinutes < endMinutes) {
-                    const nextMinutes = currentMinutes + slotDuration;
-                    
-                    if (nextMinutes > endMinutes) {
-                        break;
-                    }
-                    
-                    // 轉換回小時:分鐘格式
-                    const startH = Math.floor(currentMinutes / 60);
-                    const startM = currentMinutes % 60;
-                    const endH = Math.floor(nextMinutes / 60);
-                    const endM = nextMinutes % 60;
-                    
-                    const startTimeStr = `${startH.toString().padStart(2, '0')}:${startM.toString().padStart(2, '0')}`;
-                    const endTimeStr = `${endH.toString().padStart(2, '0')}:${endM.toString().padStart(2, '0')}`;
+                // 以整點為單位生成時段 (例如 9:00-10:00, 10:00-11:00)
+                for (let hour = startHour; hour < endHour; hour++) {
+                    const startTimeStr = `${hour.toString().padStart(2, '0')}:00`;
+                    const endTimeStr = `${(hour + 1).toString().padStart(2, '0')}:00`;
                     
                     slots.push({
                         startTime: startTimeStr,
                         endTime: endTimeStr,
                         display: `${startTimeStr}`,
-                        minutes: currentMinutes // 添加分鐘數便於計算
+                        minutes: hour * 60 // 添加分鐘數便於計算
                     });
-                    
-                    currentMinutes = nextMinutes;
                 }
                 
                 return slots;
@@ -1380,15 +1362,13 @@
 
             function isCurrentTimeSlot(startTime, endTime) {
                 const now = new Date();
-                const currentMinutes = now.getHours() * 60 + now.getMinutes();
+                const currentHour = now.getHours();
                 
                 const [startHour, startMin] = startTime.split(':').map(Number);
                 const [endHour, endMin] = endTime.split(':').map(Number);
                 
-                const startMinutes = startHour * 60 + startMin;
-                const endMinutes = endHour * 60 + endMin;
-                
-                return currentMinutes >= startMinutes && currentMinutes < endMinutes;
+                // 檢查當前小時是否在這個整點時段內
+                return currentHour >= startHour && currentHour < endHour;
             }
 
             function generateRoomTimeline(currentDate, room, timeSlots, selectedPackage, today) {
@@ -1504,7 +1484,7 @@
                             slotStates[j].processed = true;
                         }
                         
-                        const blockHeight = bookingSpan * 32; // 每個時段32px高度
+                        const blockHeight = bookingSpan * 32; // 每個整點時段32px高度
                         
                         timelineHTML += `
                             <div class="border-b bg-red-400 cursor-pointer relative flex items-center justify-center text-center" 
@@ -1544,7 +1524,7 @@
                             slotStates[j].processed = true;
                         }
                         
-                        const blockHeight = availableSpan * 32; // 每個時段32px高度
+                        const blockHeight = availableSpan * 32; // 每個整點時段32px高度
                         
                         // 計算時間範圍顯示
                         const startTime = currentState.slot.startTime;
@@ -1574,18 +1554,18 @@
             }
 
             function getRoomBookings(dateStr, roomId) {
-                // 模擬預訂資料 (支援分鐘級精度)
+                // 模擬預訂資料 (以整點為單位)
                 const mockBookings = [
-                    { roomId: 1, date: dateStr, timeSlot: '09:07-10:23', customer: '王小明', pet: '黃金獵犬' },
-                    { roomId: 1, date: dateStr, timeSlot: '14:15-15:45', customer: '李小華', pet: '英短貓' },
-                    { roomId: 2, date: dateStr, timeSlot: '10:12-11:58', customer: '陳大同', pet: '柴犬' },
-                    { roomId: 2, date: dateStr, timeSlot: '15:20-17:35', customer: '周雅婷', pet: '貴賓狗' },
-                    { roomId: 3, date: dateStr, timeSlot: '08:05-09:40', customer: '張美玲', pet: '波斯貓' },
-                    { roomId: 3, date: dateStr, timeSlot: '13:25-14:55', customer: '劉志明', pet: '哈士奇' },
-                    { roomId: 4, date: dateStr, timeSlot: '11:18-12:52', customer: '吳佳蓉', pet: '博美犬' },
-                    { roomId: 4, date: dateStr, timeSlot: '16:08-18:33', customer: '蔡明宏', pet: '米克斯' },
-                    { roomId: 5, date: dateStr, timeSlot: '09:42-11:28', customer: '林雅文', pet: '摺耳貓' },
-                    { roomId: 5, date: dateStr, timeSlot: '14:37-15:59', customer: '許志豪', pet: '拉布拉多' },
+                    { roomId: 1, date: dateStr, timeSlot: '09:00-11:00', customer: '王小明', pet: '黃金獵犬' },
+                    { roomId: 1, date: dateStr, timeSlot: '14:00-16:00', customer: '李小華', pet: '英短貓' },
+                    { roomId: 2, date: dateStr, timeSlot: '10:00-12:00', customer: '陳大同', pet: '柴犬' },
+                    { roomId: 2, date: dateStr, timeSlot: '15:00-17:00', customer: '周雅婷', pet: '貴賓狗' },
+                    { roomId: 3, date: dateStr, timeSlot: '09:00-10:00', customer: '張美玲', pet: '波斯貓' },
+                    { roomId: 3, date: dateStr, timeSlot: '13:00-15:00', customer: '劉志明', pet: '哈士奇' },
+                    { roomId: 4, date: dateStr, timeSlot: '11:00-13:00', customer: '吳佳蓉', pet: '博美犬' },
+                    { roomId: 4, date: dateStr, timeSlot: '16:00-18:00', customer: '蔡明宏', pet: '米克斯' },
+                    { roomId: 5, date: dateStr, timeSlot: '10:00-11:00', customer: '林雅文', pet: '摺耳貓' },
+                    { roomId: 5, date: dateStr, timeSlot: '14:00-16:00', customer: '許志豪', pet: '拉布拉多' },
                 ];
                 
                 return mockBookings.filter(b => b.roomId === roomId && b.date === dateStr);
