@@ -258,7 +258,7 @@
             let isSelectingCheckin = true;
             let managementCalendarDate = new Date();
             let currentManagementRoomId = 1;
-            let managementViewMode = 'daily'; // 'daily' or 'hourly'
+            let managementViewMode = 'monthly'; // 'monthly' or 'daily'
 
 
             const mockOrders = [
@@ -1232,7 +1232,7 @@
                     <div class="mb-4">
                         <div class="flex justify-between items-center">
                             <button id="prev-month-manage" class="p-2 rounded-full hover:bg-gray-100">&lt;</button>
-                            <h3 class="font-bold text-lg">${year}年 ${month + 1}月 - 過夜寄宿</h3>
+                            <h3 class="font-bold text-lg">${year}年 ${month + 1}月</h3>
                             <button id="next-month-manage" class="p-2 rounded-full hover:bg-gray-100">&gt;</button>
                         </div>
                     </div>
@@ -1290,7 +1290,7 @@
                     <div class="mb-4">
                         <div class="flex justify-between items-center">
                             <button id="prev-day-manage" class="p-2 rounded-full hover:bg-gray-100">&lt;</button>
-                            <h3 class="font-bold text-lg">${formatDate(currentDate)} - 日間安親</h3>
+                            <h3 class="font-bold text-lg">${formatDate(currentDate)}</h3>
                             <button id="next-day-manage" class="p-2 rounded-full hover:bg-gray-100">&gt;</button>
                         </div>
                         <div class="text-sm text-gray-600 text-center">
