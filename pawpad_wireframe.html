@@ -1143,8 +1143,7 @@
                 const container = pages.calendarManagement;
                 const activeRooms = mockRoomTypes.filter(room => room.status === 'active');
                 const selectedRoom = activeRooms.find(r => r.id === currentManagementRoomId) || activeRooms[0];
-                const roomPackages = mockPackages.filter(p => p.roomId === selectedRoom.id && p.status === 'active');
-                const selectedPackage = roomPackages[0] || null;
+
                 
                 if (!selectedRoom) {
                     container.innerHTML = `
@@ -1184,21 +1183,18 @@
                             </select>
                         </div>
 
-                        <!-- 方案選擇 -->
+                        <!-- 顯示模式選擇 -->
                         <div class="mb-4">
-                            <label class="text-sm font-medium text-[#886364] mb-2 block">選擇方案</label>
-                            <select id="package-select" class="form-input-styled">
-                                ${roomPackages.map(pkg => `
-                                    <option value="${pkg.id}" ${pkg.id === (selectedPackage?.id || 0) ? 'selected' : ''}>
-                                        ${pkg.name}
-                                    </option>
-                                `).join('')}
+                            <label class="text-sm font-medium text-[#886364] mb-2 block">顯示模式</label>
+                            <select id="view-mode-select" class="form-input-styled">
+                                <option value="monthly" ${managementViewMode === 'monthly' ? 'selected' : ''}>月曆模式</option>
+                                <option value="daily" ${managementViewMode === 'daily' ? 'selected' : ''}>時程模式</option>
                             </select>
                         </div>
 
                         <!-- 日曆區域 -->
                         <div id="calendar-container" class="bg-white rounded-xl border border-gray-100 p-4">
-                            ${renderCalendarView(selectedPackage, selectedRoom)}
+                            ${renderCalendarView(null, selectedRoom)}
                         </div>
                     </div>
                 `;
