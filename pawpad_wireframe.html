@@ -1261,7 +1261,7 @@
                              data-view-mode="monthly">
                             <div class="text-xs font-medium">${day}</div>
                             <div class="text-xs ${stockInfo.available === 0 ? 'text-red-600' : 'text-gray-600'}">
-                                ${stockInfo.available > 0 ? `剩 ${stockInfo.available}` : '已滿'}
+                                ${stockInfo.available > 0 ? `空房 ${stockInfo.available}` : '已滿'}
                             </div>
                         </div>
                     `;
@@ -1554,21 +1554,77 @@
             }
 
             function getRoomBookings(dateStr, roomId) {
-                // 模擬預訂資料 (以整點為單位)
-                const mockBookings = [
-                    { roomId: 1, date: dateStr, timeSlot: '09:00-11:00', customer: '王小明', pet: '黃金獵犬' },
-                    { roomId: 1, date: dateStr, timeSlot: '14:00-16:00', customer: '李小華', pet: '英短貓' },
-                    { roomId: 2, date: dateStr, timeSlot: '10:00-12:00', customer: '陳大同', pet: '柴犬' },
-                    { roomId: 2, date: dateStr, timeSlot: '15:00-17:00', customer: '周雅婷', pet: '貴賓狗' },
-                    { roomId: 3, date: dateStr, timeSlot: '09:00-10:00', customer: '張美玲', pet: '波斯貓' },
-                    { roomId: 3, date: dateStr, timeSlot: '13:00-15:00', customer: '劉志明', pet: '哈士奇' },
-                    { roomId: 4, date: dateStr, timeSlot: '11:00-13:00', customer: '吳佳蓉', pet: '博美犬' },
-                    { roomId: 4, date: dateStr, timeSlot: '16:00-18:00', customer: '蔡明宏', pet: '米克斯' },
-                    { roomId: 5, date: dateStr, timeSlot: '10:00-11:00', customer: '林雅文', pet: '摺耳貓' },
-                    { roomId: 5, date: dateStr, timeSlot: '14:00-16:00', customer: '許志豪', pet: '拉布拉多' },
-                ];
+                // 模擬多天的預訂資料 (以整點為單位)
+                const allBookings = {
+                    // 今天 - 比較滿的一天
+                    [getTodayString()]: [
+                        { roomId: 1, timeSlot: '09:00-11:00', customer: '王小明', pet: '黃金獵犬' },
+                        { roomId: 1, timeSlot: '14:00-16:00', customer: '李小華', pet: '英短貓' },
+                        { roomId: 2, timeSlot: '10:00-12:00', customer: '陳大同', pet: '柴犬' },
+                        { roomId: 2, timeSlot: '15:00-17:00', customer: '周雅婷', pet: '貴賓狗' },
+                        { roomId: 3, timeSlot: '09:00-10:00', customer: '張美玲', pet: '波斯貓' },
+                        { roomId: 3, timeSlot: '13:00-15:00', customer: '劉志明', pet: '哈士奇' },
+                        // 4號房和5號房空房
+                    ],
+                    // 明天 - 輕鬆的一天
+                    [getTomorrowString()]: [
+                        { roomId: 1, timeSlot: '10:00-12:00', customer: '林美惠', pet: '摺耳貓' },
+                        { roomId: 3, timeSlot: '14:00-16:00', customer: '張志偉', pet: '柯基犬' },
+                        // 其他房間空房
+                    ],
+                    // 後天 - 忙碌的一天
+                    [getDateString(2)]: [
+                        { roomId: 1, timeSlot: '09:00-12:00', customer: '吳雅玲', pet: '哈士奇' },
+                        { roomId: 1, timeSlot: '15:00-17:00', customer: '黃志明', pet: '貴賓狗' },
+                        { roomId: 2, timeSlot: '09:00-11:00', customer: '陳佳慧', pet: '拉布拉多' },
+                        { roomId: 2, timeSlot: '13:00-16:00', customer: '劉建國', pet: '黃金獵犬' },
+                        { roomId: 3, timeSlot: '10:00-13:00', customer: '許雅婷', pet: '博美犬' },
+                        { roomId: 4, timeSlot: '11:00-14:00', customer: '王大明', pet: '柴犬' },
+                        { roomId: 5, timeSlot: '09:00-11:00', customer: '李小芳', pet: '英短貓' },
+                        { roomId: 5, timeSlot: '16:00-18:00', customer: '蔡志豪', pet: '米克斯' },
+                    ],
+                    // 大後天 - 週末滿房
+                    [getDateString(3)]: [
+                        { roomId: 1, timeSlot: '09:00-13:00', customer: '周美玲', pet: '薩摩耶' },
+                        { roomId: 1, timeSlot: '14:00-18:00', customer: '張家豪', pet: '阿拉斯加' },
+                        { roomId: 2, timeSlot: '09:00-12:00', customer: '林志玲', pet: '吉娃娃' },
+                        { roomId: 2, timeSlot: '13:00-17:00', customer: '王建民', pet: '法鬥' },
+                        { roomId: 3, timeSlot: '09:00-14:00', customer: '陳美華', pet: '瑪爾濟斯' },
+                        { roomId: 3, timeSlot: '15:00-18:00', customer: '劉德華', pet: '約克夏' },
+                        { roomId: 4, timeSlot: '09:00-15:00', customer: '蔡依林', pet: '邊境牧羊犬' },
+                        { roomId: 4, timeSlot: '16:00-18:00', customer: '郭富城', pet: '史賓格' },
+                        { roomId: 5, timeSlot: '09:00-16:00', customer: '周杰倫', pet: '德國牧羊犬' },
+                        { roomId: 5, timeSlot: '17:00-18:00', customer: '林俊傑', pet: '威爾斯柯基' },
+                    ],
+                    // 第五天 - 普通工作日
+                    [getDateString(4)]: [
+                        { roomId: 2, timeSlot: '10:00-13:00', customer: '何佳玲', pet: '雪納瑞' },
+                        { roomId: 4, timeSlot: '14:00-17:00', customer: '呂志偉', pet: '西高地白梗' },
+                    ],
+                };
                 
-                return mockBookings.filter(b => b.roomId === roomId && b.date === dateStr);
+                const dayBookings = allBookings[dateStr] || [];
+                return dayBookings.filter(b => b.roomId === roomId).map(b => ({
+                    ...b,
+                    date: dateStr
+                }));
+            }
+            
+            // 輔助函數：取得日期字串
+            function getTodayString() {
+                return new Date().toISOString().split('T')[0];
+            }
+            
+            function getTomorrowString() {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                return tomorrow.toISOString().split('T')[0];
+            }
+            
+            function getDateString(daysFromNow) {
+                const date = new Date();
+                date.setDate(date.getDate() + daysFromNow);
+                return date.toISOString().split('T')[0];
             }
 
             function calculateBookingSpan(bookingTimeSlot, timeSlots, startIndex) {
@@ -1644,18 +1700,27 @@
             }
 
             function calculateDailyStock(date, room) {
-                // 模擬計算邏輯
                 const totalStock = room.stock;
-                const bookings = mockBookings.filter(b => 
-                    b.roomId === room.id && 
-                    new Date(b.startDate) <= date && 
-                    new Date(b.endDate) >= date
-                );
-                const bookedCount = bookings.length;
+                const dateStr = date.toISOString().split('T')[0];
+                
+                // 計算當天有預訂的房間數量（每個房間只要有任何時段預訂就算佔用一間）
+                const occupiedRooms = new Set(); // 使用 Set 來避免重複計算同一房間
+                
+                // 檢查每個房間是否在當天有任何預訂
+                for (let roomNumber = 1; roomNumber <= totalStock; roomNumber++) {
+                    const roomBookings = getRoomBookings(dateStr, roomNumber);
+                    if (roomBookings.length > 0) {
+                        occupiedRooms.add(roomNumber);
+                    }
+                }
+                
+                const bookedCount = occupiedRooms.size;
+                const available = Math.max(0, totalStock - bookedCount);
+                
                 return {
                     total: totalStock,
                     booked: bookedCount,
-                    available: Math.max(0, totalStock - bookedCount)
+                    available: available
                 };
             }
 
@@ -1797,7 +1862,7 @@
                             <div class="bg-gray-50 p-3 rounded-lg">
                                 <p class="text-sm text-gray-600">服務類型：${serviceTypeText}</p>
                                 <p class="text-sm text-gray-600">房型：${room.name}</p>
-                                <p class="text-sm text-gray-600">當前剩餘庫存</p>
+                                <p class="text-sm text-gray-600">當前剩餘空房</p>
                                 <p class="text-lg font-bold text-[#181111]">${stockInfo.available} / ${stockInfo.total}</p>
                             </div>
 
