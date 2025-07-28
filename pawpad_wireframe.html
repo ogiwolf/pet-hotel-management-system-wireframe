@@ -257,7 +257,7 @@
         /* UI優化：隱藏結束時間滑桿，只保留開始時間選擇 */
         #daycare-date-selection .mb-4:has(#end-time-slider),
         #daycare-date-selection .mb-4:nth-child(4) {
-            display: none;
+            display: block !important;
         }
         
         /* 優化時長顯示區域 */
@@ -288,6 +288,25 @@
             color: white;
             border: none;
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        /* 確保所有時間滑桿都顯示 - 覆蓋之前的隱藏規則 */
+        #daycare-date-selection .mb-4:has(#end-time-slider),
+        #daycare-date-selection .mb-4:nth-child(4) {
+            display: block !important;
+        }
+
+        /* 更強制的顯示規則 */
+        #end-time-slider,
+        #end-time-display {
+            display: block !important;
+            visibility: visible !important;
+        }
+        
+        /* 確保結束時間區域顯示 */
+        #daycare-date-selection div:has(#end-time-slider) {
+            display: block !important;
+            opacity: 1 !important;
         }
 
     </style>
