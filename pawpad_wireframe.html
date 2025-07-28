@@ -952,18 +952,15 @@
                      this.classList.remove('border-gray-200');
                      this.classList.add('border-[#181111]', 'bg-green-50');
                      
-                     // 切換日期選擇界面
+                     // 隱藏過夜寄宿界面，但暫時不顯示時間滑桿
                      overnightDateSection.classList.add('hidden');
-                     daycareDateSection.classList.remove('hidden');
+                     daycareDateSection.classList.add('hidden'); // 先隱藏時間滑桿
                      
                      selectedServiceType = 'daycare';
                      bookingData.serviceType = 'daycare';
                      
-                     // 隱藏房型選項，等待時段選擇完成
-                     const roomServiceList = document.getElementById('room-service-list');
-                     if (roomServiceList) {
-                         roomServiceList.classList.add('hidden');
-                     }
+                     // 顯示日間安親方案選擇
+                     showDaycarePackageSelection();
                      
                      // 重置相關資料
                      bookingData.duration = '';
@@ -1122,6 +1119,12 @@
                  const roomServiceList = document.getElementById('room-service-list');
                  if (!roomServiceList) return;
                  
+                 // 如果是日間安親，顯示方案選擇界面
+                 if (serviceType === 'daycare') {
+                     showDaycarePackageSelection();
+                     return;
+                 }
+                 
                  // 整理房型和對應的服務
                  const roomTypeMap = new Map();
                  
@@ -1183,6 +1186,68 @@
                  
                  // 綁定房型選擇事件
                  attachRoomServiceListeners();
+             }
+             
+             // 顯示日間安親方案選擇
+             function showDaycarePackageSelection() {
+                 const roomServiceList = document.getElementById('room-service-list');
+                 if (!roomServiceList) return;
+                 
+                 // 獲取所有日間安親方案
+                 const daycarePackages = mockPackages.filter(pkg => 
+                     pkg.type === 'daycare' && pkg.status === 'active'
+                 );
+                 
+                 let html = '<h4 class="font-medium text-[#181111] mb-3">選擇日間安親方案</h4>';
+                 
+                 daycarePackages.forEach(pkg => {
+                     const roomData = mockRoomTypes.find(room => room.id === pkg.roomId);
+                     if (!roomData) return;
+                     
+                     html += `
+                         <div class="border border-gray-200 rounded-lg p-4 mb-3">
+                             <div class="flex justify-between items-start mb-2">
+                                 <div>
+                                     <h5 class="font-medium text-[#181111]">${pkg.name}</h5>
+                                     <p class="text-sm text-gray-600">${roomData.name}</p>
+                                     <p class="text-xs text-gray-500 mt-1">${pkg.description}</p>
+                                 </div>
+                                 <div class="text-right">
+                                     <div class="font-bold text-lg">NT$ ${pkg.basePrice}</div>
+                                     <div class="text-xs text-gray-500">/ ${pkg.daycareLengths}小時</div>
+                                 </div>
+                             </div>
+                             <button class="daycare-package-btn w-full p-3 border-2 border-gray-200 rounded-lg hover:border-blue-300 transition-all" 
+                                     data-package-id="${pkg.id}">
+                                 選擇此方案
+                             </button>
+                         </div>
+                     `;
+                 });
+                 
+                 roomServiceList.innerHTML = html;
+                 roomServiceList.classList.remove('hidden');
+                 
+                 // 綁定方案選擇事件
+                 document.querySelectorAll('.daycare-package-btn').forEach(btn => {
+                     btn.addEventListener('click', function() {
+                         // 選中當前方案
+                         document.querySelectorAll('.daycare-package-btn').forEach(b => {
+                             b.classList.remove('border-blue-300', 'bg-blue-50');
+                             b.classList.add('border-gray-200');
+                         });
+                         this.classList.remove('border-gray-200');
+                         this.classList.add('border-blue-300', 'bg-blue-50');
+                         
+                         // 選擇方案後顯示時間滑桿
+                         const daycareDateSection = document.getElementById('daycare-date-selection');
+                         if (daycareDateSection) {
+                             daycareDateSection.classList.remove('hidden');
+                         }
+                         
+                         checkCanContinueBooking();
+                     });
+                 });
              }
              
              // 綁定房型服務選擇事件
