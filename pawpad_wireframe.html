@@ -512,7 +512,9 @@
                         <!-- 日期選擇 -->
                         <div class="mb-4">
                             <h3 class="font-medium text-[#181111] mb-3">選擇日期</h3>
-                            <div class="grid grid-cols-2 gap-3">
+                            
+                            <!-- 過夜寄宿的日期選擇 -->
+                            <div id="overnight-date-selection" class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label class="text-sm text-gray-600 block mb-1">入住日期</label>
                                     <input type="date" id="detail-checkin-date" class="form-input-styled text-center">
@@ -522,12 +524,55 @@
                                     <input type="date" id="detail-checkout-date" class="form-input-styled text-center">
                                 </div>
                             </div>
+                            
+                            <!-- 日間安親的日期+時段選擇 -->
+                            <div id="daycare-date-selection" class="hidden space-y-3">
+                                <div>
+                                    <label class="text-sm text-gray-600 block mb-1">服務日期</label>
+                                    <input type="date" id="detail-service-date" class="form-input-styled text-center w-full">
+                                </div>
+                                <div>
+                                    <label class="text-sm text-gray-600 block mb-2">選擇時段</label>
+                                    <div class="grid grid-cols-1 gap-2">
+                                        <button class="daycare-time-slot p-3 border-2 border-gray-200 rounded-lg text-left hover:border-[#181111] transition-all" data-slot="09:00-13:00" data-duration="4" data-name="上午時段">
+                                            <div class="flex justify-between items-center">
+                                                <span class="font-medium">上午時段</span>
+                                                <span class="text-sm text-gray-500">09:00-13:00 (4小時)</span>
+                                            </div>
+                                        </button>
+                                        <button class="daycare-time-slot p-3 border-2 border-gray-200 rounded-lg text-left hover:border-[#181111] transition-all" data-slot="14:00-18:00" data-duration="4" data-name="下午時段">
+                                            <div class="flex justify-between items-center">
+                                                <span class="font-medium">下午時段</span>
+                                                <span class="text-sm text-gray-500">14:00-18:00 (4小時)</span>
+                                            </div>
+                                        </button>
+                                        <button class="daycare-time-slot p-3 border-2 border-gray-200 rounded-lg text-left hover:border-[#181111] transition-all" data-slot="09:00-17:00" data-duration="8" data-name="全日時段">
+                                            <div class="flex justify-between items-center">
+                                                <span class="font-medium">全日時段</span>
+                                                <span class="text-sm text-gray-500">09:00-17:00 (8小時)</span>
+                                            </div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- 服務類型選擇 -->
                         <div class="mb-4">
                             <h3 class="font-medium text-[#181111] mb-3">選擇服務類型</h3>
-                            <div id="room-service-list" class="space-y-3">
+                            <div class="grid grid-cols-2 gap-3 mb-4">
+                                <button id="select-overnight" class="service-type-btn p-4 border-2 border-gray-200 rounded-lg text-center hover:border-[#181111] transition-all" data-service="overnight">
+                                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2 text-sm">🏠</div>
+                                    <div class="font-medium text-[#181111]">寄宿過夜</div>
+                                    <div class="text-xs text-gray-500 mt-1">適合出差旅行</div>
+                                </button>
+                                <button id="select-daycare" class="service-type-btn p-4 border-2 border-gray-200 rounded-lg text-center hover:border-[#181111] transition-all" data-service="daycare">
+                                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2 text-sm">⏰</div>
+                                    <div class="font-medium text-[#181111]">日間安親</div>
+                                    <div class="text-xs text-gray-500 mt-1">專業照護陪伴</div>
+                                </button>
+                            </div>
+                            <div id="room-service-list" class="space-y-3 hidden">
                                 <!-- 房型與服務選項由 JavaScript 動態生成 -->
                             </div>
                         </div>
@@ -684,7 +729,6 @@
 
             // 詳情頁面事件監聽器
             function attachDetailPageListeners() {
-                renderRoomServiceList();
                 initHotelMap();
                 attachMapListeners();
                 attachDetailDateListeners();
@@ -692,82 +736,187 @@
 
             // 綁定詳情頁日期選擇事件
             function attachDetailDateListeners() {
-                const checkinInput = document.getElementById('detail-checkin-date');
-                const checkoutInput = document.getElementById('detail-checkout-date');
-                
                 // 設定預設日期
                 const today = new Date();
                 const tomorrow = new Date(today.getTime() + (24 * 60 * 60 * 1000));
-                checkinInput.value = today.toISOString().split('T')[0];
-                checkoutInput.value = tomorrow.toISOString().split('T')[0];
                 
                 // 更新全域變數
                 selectedCheckinDate = today;
                 selectedCheckoutDate = tomorrow;
                 
-                // 綁定日期變化事件
-                checkinInput.addEventListener('change', function() {
-                    selectedCheckinDate = new Date(this.value);
-                    // 確保退房日期不早於入住日期
-                    if (this.value >= checkoutInput.value) {
-                        const nextDay = new Date(this.value);
-                        nextDay.setDate(nextDay.getDate() + 1);
-                        checkoutInput.value = nextDay.toISOString().split('T')[0];
-                        selectedCheckoutDate = nextDay;
-                    }
-                    updateDetailPricePreview();
-                });
+                // 綁定服務類型選擇
+                attachServiceTypeListeners();
                 
-                checkoutInput.addEventListener('change', function() {
-                    selectedCheckoutDate = new Date(this.value);
-                    updateDetailPricePreview();
-                });
+                // 設定過夜寄宿的預設日期
+                const checkinInput = document.getElementById('detail-checkin-date');
+                const checkoutInput = document.getElementById('detail-checkout-date');
+                const serviceDateInput = document.getElementById('detail-service-date');
                 
-                // 初始更新價格預覽
-                updateDetailPricePreview();
+                if (checkinInput && checkoutInput) {
+                    checkinInput.value = today.toISOString().split('T')[0];
+                    checkoutInput.value = tomorrow.toISOString().split('T')[0];
+                    
+                    checkinInput.addEventListener('change', function() {
+                        selectedCheckinDate = new Date(this.value);
+                        if (this.value >= checkoutInput.value) {
+                            const nextDay = new Date(this.value);
+                            nextDay.setDate(nextDay.getDate() + 1);
+                            checkoutInput.value = nextDay.toISOString().split('T')[0];
+                            selectedCheckoutDate = nextDay;
+                        }
+                        checkCanContinueBooking();
+                    });
+                    
+                    checkoutInput.addEventListener('change', function() {
+                        selectedCheckoutDate = new Date(this.value);
+                        checkCanContinueBooking();
+                    });
+                }
+                
+                // 設定日間安親的預設日期
+                if (serviceDateInput) {
+                    serviceDateInput.value = today.toISOString().split('T')[0];
+                    serviceDateInput.addEventListener('change', function() {
+                        selectedCheckinDate = new Date(this.value);
+                        checkCanContinueBooking();
+                    });
+                }
+                
+                // 綁定時段選擇
+                attachTimeSlotListeners();
             }
 
-            // 更新詳情頁的價格預覽
-            function updateDetailPricePreview() {
-                const selectedServiceBtn = document.querySelector('.service-option-btn.selected');
+            // 綁定服務類型選擇事件
+            function attachServiceTypeListeners() {
+                const overnightBtn = document.getElementById('select-overnight');
+                const daycareBtn = document.getElementById('select-daycare');
+                const overnightDateSection = document.getElementById('overnight-date-selection');
+                const daycareDateSection = document.getElementById('daycare-date-selection');
+                
+                let selectedServiceType = null;
+                
+                overnightBtn?.addEventListener('click', function() {
+                    // 重置按鈕狀態
+                    document.querySelectorAll('.service-type-btn').forEach(btn => {
+                        btn.classList.remove('border-[#181111]', 'bg-blue-50');
+                        btn.classList.add('border-gray-200');
+                    });
+                    
+                    // 選中當前按鈕
+                    this.classList.remove('border-gray-200');
+                    this.classList.add('border-[#181111]', 'bg-blue-50');
+                    
+                    // 切換日期選擇界面
+                    overnightDateSection.classList.remove('hidden');
+                    daycareDateSection.classList.add('hidden');
+                    
+                    selectedServiceType = 'overnight';
+                    bookingData.serviceType = 'overnight';
+                    
+                    // 重置時段選擇
+                    bookingData.timeSlot = '';
+                    
+                    checkCanContinueBooking();
+                });
+                
+                daycareBtn?.addEventListener('click', function() {
+                    // 重置按鈕狀態
+                    document.querySelectorAll('.service-type-btn').forEach(btn => {
+                        btn.classList.remove('border-[#181111]', 'bg-blue-50');
+                        btn.classList.add('border-gray-200');
+                    });
+                    
+                    // 選中當前按鈕
+                    this.classList.remove('border-gray-200');
+                    this.classList.add('border-[#181111]', 'bg-green-50');
+                    
+                    // 切換日期選擇界面
+                    overnightDateSection.classList.add('hidden');
+                    daycareDateSection.classList.remove('hidden');
+                    
+                    selectedServiceType = 'daycare';
+                    bookingData.serviceType = 'daycare';
+                    
+                    checkCanContinueBooking();
+                });
+            }
+
+            // 綁定時段選擇事件
+            function attachTimeSlotListeners() {
+                document.querySelectorAll('.daycare-time-slot').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        // 重置所有時段按鈕
+                        document.querySelectorAll('.daycare-time-slot').forEach(b => {
+                            b.classList.remove('border-[#181111]', 'bg-green-50');
+                            b.classList.add('border-gray-200');
+                        });
+                        
+                        // 選中當前時段
+                        this.classList.remove('border-gray-200');
+                        this.classList.add('border-[#181111]', 'bg-green-50');
+                        
+                        // 保存時段信息
+                        bookingData.timeSlot = this.dataset.slot;
+                        bookingData.timeSlotName = this.dataset.name;
+                        bookingData.duration = this.dataset.duration;
+                        
+                        checkCanContinueBooking();
+                    });
+                });
+            }
+
+            // 檢查是否可以繼續預訂
+            function checkCanContinueBooking() {
+                const continueBtn = document.getElementById('continue-booking-btn');
                 const pricePreview = document.getElementById('price-preview');
                 const estimatedPrice = document.getElementById('estimated-price');
                 
-                if (!selectedServiceBtn || !selectedCheckinDate || !selectedCheckoutDate) {
-                    pricePreview.classList.add('hidden');
-                    return;
+                let canContinue = false;
+                let priceText = '請完成選擇';
+                
+                if (bookingData.serviceType === 'overnight') {
+                    if (selectedCheckinDate && selectedCheckoutDate && selectedCheckoutDate > selectedCheckinDate) {
+                        const nights = Math.ceil((selectedCheckoutDate - selectedCheckinDate) / (1000 * 60 * 60 * 24));
+                        const basePrice = 800; // 基礎價格，可以根據實際房型調整
+                        const totalPrice = basePrice * nights;
+                        priceText = `NT$ ${totalPrice.toLocaleString()}起`;
+                        canContinue = true;
+                        
+                        // 更新日期資料
+                        bookingData.dates.checkin = selectedCheckinDate.toISOString().split('T')[0];
+                        bookingData.dates.checkout = selectedCheckoutDate.toISOString().split('T')[0];
+                    }
+                } else if (bookingData.serviceType === 'daycare') {
+                    if (selectedCheckinDate && bookingData.timeSlot) {
+                        const basePrice = 150; // 基礎價格，可以根據時段調整
+                        priceText = `NT$ ${basePrice.toLocaleString()}起`;
+                        canContinue = true;
+                        
+                        // 更新日期資料
+                        bookingData.dates.checkin = selectedCheckinDate.toISOString().split('T')[0];
+                        bookingData.dates.checkout = ''; // 日間安親不需要退房日期
+                    }
                 }
                 
-                const serviceType = selectedServiceBtn.dataset.serviceType;
-                // 從按鈕中提取價格
-                const priceText = selectedServiceBtn.querySelector('.font-bold').textContent;
-                const basePrice = parseInt(priceText.replace(/[^\d]/g, ''));
-                
-                let totalPrice = basePrice;
-                if (serviceType === 'overnight' && selectedCheckoutDate > selectedCheckinDate) {
-                    const nights = Math.ceil((selectedCheckoutDate - selectedCheckinDate) / (1000 * 60 * 60 * 24));
-                    totalPrice = basePrice * nights;
-                }
-                
-                estimatedPrice.textContent = `NT$ ${totalPrice.toLocaleString()}起`;
+                // 更新價格顯示
+                estimatedPrice.textContent = priceText;
                 pricePreview.classList.remove('hidden');
-            }
-
-            // 顯示繼續預訂按鈕
-            function showContinueBookingButton() {
-                const continueBtn = document.getElementById('continue-booking-btn');
-                if (continueBtn) {
+                
+                // 更新繼續按鈕狀態
+                if (canContinue) {
                     continueBtn.classList.remove('hidden');
-                    
-                    // 移除舊的事件監聽器並添加新的
                     continueBtn.replaceWith(continueBtn.cloneNode(true));
-                    const newContinueBtn = document.getElementById('continue-booking-btn');
-                    
-                    newContinueBtn.addEventListener('click', function() {
+                    const newBtn = document.getElementById('continue-booking-btn');
+                    newBtn.addEventListener('click', function() {
+                        bookingStep = 3;
                         showPage('bookingFlow');
                     });
+                } else {
+                    continueBtn.classList.add('hidden');
                 }
             }
+
+
 
             // 渲染房型與服務列表
             function renderRoomServiceList() {
@@ -1991,7 +2140,7 @@
                                 <span class="font-medium">${isOvernight ? '寄宿過夜' : '日間安親'}</span>
                                 ${isOvernight ? 
                                     ` • ${bookingData.dates.checkin} 至 ${bookingData.dates.checkout}` :
-                                    ` • ${bookingData.dates.checkin} ${bookingData.timeSlot}`
+                                    ` • ${bookingData.dates.checkin} ${bookingData.timeSlotName || bookingData.timeSlot}`
                                 }
                             </p>
                         </div>
@@ -2164,7 +2313,7 @@
                                         <span class="font-medium">
                                             ${isOvernight ? 
                                                 `${bookingData.dates.checkin} 至 ${bookingData.dates.checkout}` :
-                                                `${bookingData.dates.checkin} ${bookingData.timeSlot}`
+                                                `${bookingData.dates.checkin} ${bookingData.timeSlotName || bookingData.timeSlot}`
                                             }
                                         </span>
                                     </div>
