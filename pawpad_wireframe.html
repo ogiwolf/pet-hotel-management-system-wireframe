@@ -253,6 +253,18 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
         }
+        
+        /* UI優化：隱藏結束時間滑桿，只保留開始時間選擇 */
+        #daycare-date-selection .mb-4:has(#end-time-slider),
+        #daycare-date-selection .mb-4:nth-child(4) {
+            display: none;
+        }
+        
+        /* 優化時長顯示區域 */
+        #daycare-date-selection .bg-gray-50 {
+            background-color: #eff6ff;
+            border: 1px solid #dbeafe;
+        }
 
     </style>
 </head>
@@ -595,7 +607,9 @@
                                     
                                     <!-- 開始時間選擇 -->
                                     <div class="mb-4">
-                                        <label class="text-sm text-gray-600 block mb-2">開始時間</label>
+                                        <label class="text-sm text-gray-600 block mb-2">選擇開始時間</label>
+                                        <p class="text-xs text-gray-500 mb-3">💡 結束時間會根據您選擇的方案自動計算</p>
+                                        
                                         <div class="px-2">
                                             <input type="range" id="start-time-slider" min="9" max="17" value="9" step="1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
                                             <div class="flex justify-between text-xs text-gray-500 mt-1">
