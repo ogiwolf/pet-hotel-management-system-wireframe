@@ -266,6 +266,30 @@
             border: 1px solid #dbeafe;
         }
 
+        /* 美化時間選擇區域 */
+        #daycare-date-selection {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 16px 0;
+        }
+        
+        #daycare-date-selection .mb-4 {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        #daycare-date-selection .bg-gray-50 {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
     </style>
 </head>
 <body>
@@ -603,12 +627,12 @@
                                     <input type="date" id="detail-service-date" class="form-input-styled text-center w-full">
                                 </div>
                                 <div>
-                                    <label class="text-sm text-gray-600 block mb-3">選擇服務時間</label>
+                                    <label class="text-sm text-gray-600 block mb-3">設定服務時間範圍</label>
+                                    <p class="text-xs text-gray-500 mb-4">🕐 請選擇服務的開始和結束時間（營業時間：9:00-18:00）</p>
                                     
                                     <!-- 開始時間選擇 -->
                                     <div class="mb-4">
-                                        <label class="text-sm text-gray-600 block mb-2">選擇開始時間</label>
-                                        <p class="text-xs text-gray-500 mb-3">💡 結束時間會根據您選擇的方案自動計算</p>
+                                        <label class="text-sm text-gray-600 block mb-2">開始時間</label>
                                         
                                         <div class="px-2">
                                             <input type="range" id="start-time-slider" min="9" max="17" value="9" step="1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
