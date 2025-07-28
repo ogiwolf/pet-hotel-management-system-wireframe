@@ -505,13 +505,45 @@
                          <p class="text-[#886364] text-sm mt-2">提供最溫馨舒適的環境，讓您的寵物如同在家一般自在。我們有專業的照護人員與寬敞的活動空間。</p>
                     </div>
 
-                    <!-- 房型與服務 -->
+                    <!-- 預訂區塊 -->
                     <div class="p-4 rounded-xl border border-gray-100 bg-white">
-                        <h2 class="text-lg font-bold text-[#181111] mb-4">房型與服務</h2>
-                        <div id="room-service-list" class="space-y-4">
-                            <!-- 房型資訊由 JavaScript 動態生成 -->
+                        <h2 class="text-lg font-bold text-[#181111] mb-4">預訂服務</h2>
+                        
+                        <!-- 日期選擇 -->
+                        <div class="mb-4">
+                            <h3 class="font-medium text-[#181111] mb-3">選擇日期</h3>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-sm text-gray-600 block mb-1">入住日期</label>
+                                    <input type="date" id="detail-checkin-date" class="form-input-styled text-center">
+                                </div>
+                                <div>
+                                    <label class="text-sm text-gray-600 block mb-1">退房日期</label>
+                                    <input type="date" id="detail-checkout-date" class="form-input-styled text-center">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 服務類型選擇 -->
+                        <div class="mb-4">
+                            <h3 class="font-medium text-[#181111] mb-3">選擇服務類型</h3>
+                            <div id="room-service-list" class="space-y-3">
+                                <!-- 房型與服務選項由 JavaScript 動態生成 -->
+                            </div>
+                        </div>
+
+                        <!-- 價格預覽與預訂按鈕 -->
+                        <div id="price-preview" class="bg-blue-50 rounded-lg p-3 mt-4 hidden">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-sm text-blue-800">預估價格</span>
+                                <span id="estimated-price" class="font-bold text-blue-900">請選擇服務</span>
+                            </div>
+                            <button id="continue-booking-btn" class="btn-main w-full h-10 text-sm hidden">
+                                繼續預訂
+                            </button>
                         </div>
                     </div>
+
                      <div class="p-4 rounded-xl border border-gray-100 bg-white">
                          <p class="text-[#181111] text-lg font-bold">用戶評價</p>
                          <div class="mt-2 space-y-3">
@@ -655,6 +687,86 @@
                 renderRoomServiceList();
                 initHotelMap();
                 attachMapListeners();
+                attachDetailDateListeners();
+            }
+
+            // 綁定詳情頁日期選擇事件
+            function attachDetailDateListeners() {
+                const checkinInput = document.getElementById('detail-checkin-date');
+                const checkoutInput = document.getElementById('detail-checkout-date');
+                
+                // 設定預設日期
+                const today = new Date();
+                const tomorrow = new Date(today.getTime() + (24 * 60 * 60 * 1000));
+                checkinInput.value = today.toISOString().split('T')[0];
+                checkoutInput.value = tomorrow.toISOString().split('T')[0];
+                
+                // 更新全域變數
+                selectedCheckinDate = today;
+                selectedCheckoutDate = tomorrow;
+                
+                // 綁定日期變化事件
+                checkinInput.addEventListener('change', function() {
+                    selectedCheckinDate = new Date(this.value);
+                    // 確保退房日期不早於入住日期
+                    if (this.value >= checkoutInput.value) {
+                        const nextDay = new Date(this.value);
+                        nextDay.setDate(nextDay.getDate() + 1);
+                        checkoutInput.value = nextDay.toISOString().split('T')[0];
+                        selectedCheckoutDate = nextDay;
+                    }
+                    updateDetailPricePreview();
+                });
+                
+                checkoutInput.addEventListener('change', function() {
+                    selectedCheckoutDate = new Date(this.value);
+                    updateDetailPricePreview();
+                });
+                
+                // 初始更新價格預覽
+                updateDetailPricePreview();
+            }
+
+            // 更新詳情頁的價格預覽
+            function updateDetailPricePreview() {
+                const selectedServiceBtn = document.querySelector('.service-option-btn.selected');
+                const pricePreview = document.getElementById('price-preview');
+                const estimatedPrice = document.getElementById('estimated-price');
+                
+                if (!selectedServiceBtn || !selectedCheckinDate || !selectedCheckoutDate) {
+                    pricePreview.classList.add('hidden');
+                    return;
+                }
+                
+                const serviceType = selectedServiceBtn.dataset.serviceType;
+                // 從按鈕中提取價格
+                const priceText = selectedServiceBtn.querySelector('.font-bold').textContent;
+                const basePrice = parseInt(priceText.replace(/[^\d]/g, ''));
+                
+                let totalPrice = basePrice;
+                if (serviceType === 'overnight' && selectedCheckoutDate > selectedCheckinDate) {
+                    const nights = Math.ceil((selectedCheckoutDate - selectedCheckinDate) / (1000 * 60 * 60 * 24));
+                    totalPrice = basePrice * nights;
+                }
+                
+                estimatedPrice.textContent = `NT$ ${totalPrice.toLocaleString()}起`;
+                pricePreview.classList.remove('hidden');
+            }
+
+            // 顯示繼續預訂按鈕
+            function showContinueBookingButton() {
+                const continueBtn = document.getElementById('continue-booking-btn');
+                if (continueBtn) {
+                    continueBtn.classList.remove('hidden');
+                    
+                    // 移除舊的事件監聽器並添加新的
+                    continueBtn.replaceWith(continueBtn.cloneNode(true));
+                    const newContinueBtn = document.getElementById('continue-booking-btn');
+                    
+                    newContinueBtn.addEventListener('click', function() {
+                        showPage('bookingFlow');
+                    });
+                }
             }
 
             // 渲染房型與服務列表
@@ -710,7 +822,7 @@
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <span class="font-bold text-sm">NT$ ${minPrice.toLocaleString()}起</span>
+                                        <span class="font-bold text-sm price-display">NT$ ${minPrice.toLocaleString()}起</span>
                                         <p class="text-xs text-gray-500">每晚</p>
                                     </div>
                                 </div>
@@ -753,15 +865,35 @@
                 // 綁定點擊事件
                 document.querySelectorAll('.service-option-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
+                        // 移除其他按鈕的選中狀態
+                        document.querySelectorAll('.service-option-btn').forEach(b => {
+                            b.classList.remove('selected');
+                            b.style.borderColor = '#e5e7eb';
+                            b.style.backgroundColor = '';
+                        });
+                        
+                        // 選中當前按鈕
+                        this.classList.add('selected');
+                        this.style.borderColor = '#181111';
+                        this.style.backgroundColor = '#f9fafb';
+                        
                         const serviceType = this.dataset.serviceType;
                         const roomId = parseInt(this.dataset.roomId);
                         
-                        // 設定預訂資料
+                        // 設定預訂資料，使用詳情頁已選擇的日期
                         bookingData.serviceType = serviceType;
-                        bookingData.preferredRoomId = roomId; // 用戶偏好的房型
-                        bookingStep = 2; // 跳到日期時間選擇
+                        bookingData.preferredRoomId = roomId;
+                        bookingData.dates.checkin = selectedCheckinDate.toISOString().split('T')[0];
+                        bookingData.dates.checkout = selectedCheckoutDate.toISOString().split('T')[0];
                         
-                        showPage('bookingFlow');
+                        // 直接跳到房型選擇步驟，跳過日期選擇
+                        bookingStep = 3;
+                        
+                        // 更新價格預覽
+                        updateDetailPricePreview();
+                        
+                        // 顯示繼續預訂按鈕
+                        showContinueBookingButton();
                     });
                 });
             }
@@ -1632,12 +1764,13 @@
             function renderBookingFlowPage() {
                 const container = pages.bookingFlow;
                 
-                if (bookingStep === 2) {
-                    renderDateTimeStep();
-                } else if (bookingStep === 3) {
+                if (bookingStep === 3) {
                     renderRoomSelectionStep();
                 } else if (bookingStep === 4) {
                     renderConfirmationStep();
+                } else {
+                    // 如果出現其他步驟，回到詳情頁
+                    showPage('detail');
                 }
             }
             
@@ -1846,10 +1979,9 @@
                                 <h1 class="text-xl font-bold text-[#181111]">選擇房型</h1>
                                 <div class="flex mt-2">
                                     <div class="flex-1 h-1 bg-[#181111] rounded-full"></div>
-                                    <div class="flex-1 h-1 bg-[#181111] rounded-full ml-1"></div>
                                     <div class="flex-1 h-1 bg-gray-200 rounded-full ml-1"></div>
                                 </div>
-                                <p class="text-sm text-gray-500 mt-1">步驟 2/3</p>
+                                <p class="text-sm text-gray-500 mt-1">步驟 1/2</p>
                             </div>
                         </div>
                         
@@ -1978,8 +2110,8 @@
                 
                 // 返回按鈕事件
                 document.getElementById('booking-back-btn')?.addEventListener('click', function() {
-                    bookingStep = 2;
-                    renderBookingFlowPage();
+                    // 從房型選擇返回詳情頁
+                    showPage('detail');
                 });
                         }
             
@@ -2014,9 +2146,8 @@
                                 <div class="flex mt-2">
                                     <div class="flex-1 h-1 bg-[#181111] rounded-full"></div>
                                     <div class="flex-1 h-1 bg-[#181111] rounded-full ml-1"></div>
-                                    <div class="flex-1 h-1 bg-[#181111] rounded-full ml-1"></div>
                                 </div>
-                                <p class="text-sm text-gray-500 mt-1">步驟 3/3</p>
+                                <p class="text-sm text-gray-500 mt-1">步驟 2/2</p>
                             </div>
                         </div>
                         
@@ -2166,7 +2297,7 @@
                     }, 1500);
                 });
                 
-                // 返回按鈕事件
+                // 返回按鈕事件  
                 document.getElementById('booking-back-btn')?.addEventListener('click', function() {
                     bookingStep = 3;
                     renderBookingFlowPage();
