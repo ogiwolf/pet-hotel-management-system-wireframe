@@ -309,6 +309,247 @@
             opacity: 1 !important;
         }
 
+        /* 日間安親時間選擇優化 */
+        .daycare-time-selection {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 16px 0;
+        }
+        
+        .preset-time-slots {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .preset-time-slot {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .preset-time-slot:hover {
+            border-color: #181111;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .preset-time-slot.selected {
+            border-color: #181111;
+            background-color: #f9fafb;
+            box-shadow: 0 2px 8px rgba(24, 17, 17, 0.15);
+        }
+        
+        .preset-time-slot .time-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .preset-time-slot .time-label {
+            font-weight: 600;
+            color: #181111;
+            font-size: 16px;
+        }
+        
+        .preset-time-slot .price {
+            font-weight: 700;
+            color: #059669;
+            font-size: 18px;
+        }
+        
+        .preset-time-slot .time-detail {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .preset-time-slot .features {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .preset-time-slot .feature-tag {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+        
+        /* 價格透明度改進 */
+        .price-transparency {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        
+        .price-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .price-item:last-child {
+            border-bottom: none;
+        }
+        
+        .price-item.addon {
+            background: #f9fafb;
+            margin: 8px -12px;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+        
+        .price-item .item-label {
+            color: #374151;
+            font-size: 14px;
+        }
+        
+        .price-item .item-detail {
+            color: #6b7280;
+            font-size: 13px;
+        }
+        
+        .price-item .item-price {
+            font-weight: 600;
+            color: #181111;
+        }
+        
+        .price-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-top: 2px solid #e5e7eb;
+            margin-top: 8px;
+        }
+        
+        .price-total .total-label {
+            font-weight: 700;
+            color: #181111;
+            font-size: 16px;
+        }
+        
+        .price-total .total-price {
+            font-weight: 700;
+            color: #059669;
+            font-size: 20px;
+        }
+        
+        /* 錯誤處理機制優化 */
+        .error-handling {
+            margin: 16px 0;
+        }
+        
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+        }
+        
+        .error-message .error-title {
+            color: #dc2626;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .error-message .error-list {
+            color: #7f1d1d;
+            font-size: 13px;
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .error-message .error-list li {
+            margin-bottom: 4px;
+        }
+        
+        .validation-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+        
+        .validation-indicator.valid {
+            color: #059669;
+        }
+        
+        .validation-indicator.invalid {
+            color: #dc2626;
+        }
+        
+        .validation-indicator .icon {
+            width: 16px;
+            height: 16px;
+        }
+        
+        /* 自訂時段選擇優化 */
+        .custom-time-section {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 16px;
+            margin-top: 16px;
+        }
+        
+        .custom-time-toggle {
+            background: none;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 8px 16px;
+            color: #6b7280;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .custom-time-toggle:hover {
+            border-color: #181111;
+            color: #181111;
+        }
+        
+        .custom-time-toggle.active {
+            background: #181111;
+            color: white;
+            border-color: #181111;
+        }
+        
+        .time-sliders {
+            margin-top: 16px;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+        
+        .time-sliders.hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -392,7 +633,7 @@
                 { id: 1, name: '標準犬房', description: '舒適的標準房，適合中小型犬。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 5, status: 'active' },
                 { id: 2, name: '豪華貓別墅', description: '寬敞的豪華別墅，附有貓跳台與獨立通風。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 3, status: 'active' },
                 { id: 3, name: '小型寵物寄宿籠', description: '安全舒適的寄宿籠，適合兔子、倉鼠等。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 10, status: 'disabled' },
-                { id: 4, name: '陽光豪華雙人房', description: '附有陽台的雙寵物豪華房。', imageUrl: 'https://images.unsplash.com/photo-1574158622682-e40e69841006?q=80&w=600', stock: 2, status: 'active' }
+                { id: 4, name: '陽光豪華雙人房', description: '附有陽台的雙寵物豪華房。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 2, status: 'active' }
             ];
             
             let mockPackages = [
@@ -640,69 +881,97 @@
                             </div>
                             
                             <!-- 日間安親的日期+時段選擇 -->
-                            <div id="daycare-date-selection" class="hidden space-y-3">
-                                <div>
+                            <div id="daycare-date-selection" class="hidden">
+                                <div class="mb-4">
                                     <label class="text-sm text-gray-600 block mb-1">服務日期</label>
                                     <input type="date" id="detail-service-date" class="form-input-styled text-center w-full">
                                 </div>
-                                <div>
-                                    <label class="text-sm text-gray-600 block mb-3">設定服務時間範圍</label>
-                                    <p class="text-xs text-gray-500 mb-4">🕐 請選擇服務的開始和結束時間（營業時間：9:00-18:00）</p>
+                                
+                                <!-- 簡化的時段選擇 -->
+                                <div class="daycare-time-selection">
+                                    <h4 class="font-medium text-[#181111] mb-3">選擇服務時段</h4>
                                     
-                                    <!-- 開始時間選擇 -->
-                                    <div class="mb-4">
-                                        <label class="text-sm text-gray-600 block mb-2">開始時間</label>
+                                    <!-- 預設時段選項 -->
+                                    <div class="preset-time-slots">
+                                        <div class="preset-time-slot" data-hours="4" data-time="09:00-13:00" data-price="600">
+                                            <div class="time-header">
+                                                <span class="time-label">上午時段</span>
+                                                <span class="price">NT$ 600</span>
+                                            </div>
+                                            <div class="time-detail">09:00-13:00 (4小時)</div>
+                                            <div class="features">
+                                                <span class="feature-tag">專業照護</span>
+                                                <span class="feature-tag">戶外活動</span>
+                                                <span class="feature-tag">營養餐點</span>
+                                            </div>
+                                        </div>
                                         
-                                        <div class="px-2">
-                                            <input type="range" id="start-time-slider" min="9" max="17" value="9" step="1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
-                                            <div class="flex justify-between text-xs text-gray-500 mt-1">
-                                                <span>9:00</span>
-                                                <span>10:00</span>
-                                                <span>11:00</span>
-                                                <span>12:00</span>
-                                                <span>13:00</span>
-                                                <span>14:00</span>
-                                                <span>15:00</span>
-                                                <span>16:00</span>
-                                                <span>17:00</span>
+                                        <div class="preset-time-slot" data-hours="8" data-time="09:00-17:00" data-price="960">
+                                            <div class="time-header">
+                                                <span class="time-label">全日時段</span>
+                                                <span class="price">NT$ 960</span>
+                                            </div>
+                                            <div class="time-detail">09:00-17:00 (8小時)</div>
+                                            <div class="features">
+                                                <span class="feature-tag">專業照護</span>
+                                                <span class="feature-tag">戶外活動</span>
+                                                <span class="feature-tag">營養餐點</span>
+                                                <span class="feature-tag">洗澡服務</span>
                                             </div>
                                         </div>
-                                        <div class="text-center mt-2">
-                                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium" id="start-time-display">9:00</span>
+                                        
+                                        <div class="preset-time-slot" data-hours="6" data-time="10:00-16:00" data-price="720">
+                                            <div class="time-header">
+                                                <span class="time-label">下午時段</span>
+                                                <span class="price">NT$ 720</span>
+                                            </div>
+                                            <div class="time-detail">10:00-16:00 (6小時)</div>
+                                            <div class="features">
+                                                <span class="feature-tag">專業照護</span>
+                                                <span class="feature-tag">戶外活動</span>
+                                                <span class="feature-tag">營養餐點</span>
+                                            </div>
                                         </div>
                                     </div>
                                     
-                                    <!-- 結束時間選擇 -->
-                                    <div class="mb-4">
-                                        <label class="text-sm text-gray-600 block mb-2">結束時間</label>
-                                        <div class="px-2">
-                                            <input type="range" id="end-time-slider" min="10" max="18" value="13" step="1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
-                                            <div class="flex justify-between text-xs text-gray-500 mt-1">
-                                                <span>10:00</span>
-                                                <span>11:00</span>
-                                                <span>12:00</span>
-                                                <span>13:00</span>
-                                                <span>14:00</span>
-                                                <span>15:00</span>
-                                                <span>16:00</span>
-                                                <span>17:00</span>
-                                                <span>18:00</span>
+                                    <!-- 自訂時段選項 -->
+                                    <div class="custom-time-section">
+                                        <button class="custom-time-toggle" type="button">
+                                            <span>自訂時段</span>
+                                        </button>
+                                        <div class="time-sliders hidden">
+                                            <div class="mb-4">
+                                                <label class="text-sm text-gray-600 block mb-2">開始時間</label>
+                                                <input type="range" id="start-time-slider" min="9" max="17" value="9" step="1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
+                                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                                    <span>9:00</span><span>10:00</span><span>11:00</span><span>12:00</span><span>13:00</span><span>14:00</span><span>15:00</span><span>16:00</span><span>17:00</span>
+                                                </div>
+                                                <div class="text-center mt-2">
+                                                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium" id="start-time-display">9:00</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="text-center mt-2">
-                                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-medium" id="end-time-display">13:00</span>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- 時長和價格顯示 -->
-                                    <div class="bg-gray-50 rounded-lg p-3">
-                                        <div class="flex justify-between items-center">
-                                            <span class="text-sm text-gray-600">服務時長</span>
-                                            <span class="font-medium" id="duration-display">4 小時</span>
-                                        </div>
-                                        <div class="flex justify-between items-center mt-1">
-                                            <span class="text-sm text-gray-600">預估費用</span>
-                                            <span class="font-bold text-green-600" id="time-price-display">NT$ 600</span>
+                                            
+                                            <div class="mb-4">
+                                                <label class="text-sm text-gray-600 block mb-2">結束時間</label>
+                                                <input type="range" id="end-time-slider" min="10" max="18" value="13" step="1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
+                                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                                    <span>10:00</span><span>11:00</span><span>12:00</span><span>13:00</span><span>14:00</span><span>15:00</span><span>16:00</span><span>17:00</span><span>18:00</span>
+                                                </div>
+                                                <div class="text-center mt-2">
+                                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-medium" id="end-time-display">13:00</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="bg-gray-50 rounded-lg p-3">
+                                                <div class="flex justify-between items-center">
+                                                    <span class="text-sm text-gray-600">服務時長</span>
+                                                    <span class="font-medium" id="duration-display">4 小時</span>
+                                                </div>
+                                                <div class="flex justify-between items-center mt-1">
+                                                    <span class="text-sm text-gray-600">預估費用</span>
+                                                    <span class="font-bold text-green-600" id="time-price-display">NT$ 600</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -729,13 +998,43 @@
                             </div>
                         </div>
 
-                        <!-- 價格預覽與預訂按鈕 -->
-                        <div id="price-preview" class="bg-blue-50 rounded-lg p-3 mt-4 hidden">
-                            <div class="flex justify-between items-center mb-3">
-                                <span class="text-sm text-blue-800">預估價格</span>
-                                <span id="estimated-price" class="font-bold text-blue-900">請選擇服務</span>
+                        <!-- 錯誤處理區域 -->
+                        <div id="booking-errors" class="error-handling hidden">
+                            <!-- 錯誤訊息將在這裡動態生成 -->
+                        </div>
+                        
+                        <!-- 價格透明度改進 -->
+                        <div id="price-transparency" class="price-transparency hidden">
+                            <h3 class="font-bold text-[#181111] mb-3">價格明細</h3>
+                            <div class="price-breakdown">
+                                <div class="price-item">
+                                    <span class="item-label">房型費用</span>
+                                    <span class="item-detail" id="room-price-detail">請選擇房型</span>
+                                    <span class="item-price" id="room-price">NT$ 0</span>
+                                </div>
+                                <div class="price-item" id="duration-item" style="display: none;">
+                                    <span class="item-label">服務時長</span>
+                                    <span class="item-detail" id="duration-detail">請選擇時段</span>
+                                    <span class="item-price" id="duration-price">NT$ 0</span>
+                                </div>
+                                <div class="price-item" id="pet-count-item" style="display: none;">
+                                    <span class="item-label">寵物數量</span>
+                                    <span class="item-detail" id="pet-count-detail">1 隻</span>
+                                    <span class="item-price" id="pet-count-price">× 1</span>
+                                </div>
+                                <div id="addon-items">
+                                    <!-- 加購服務項目將在這裡動態生成 -->
+                                </div>
+                                <div class="price-total">
+                                    <span class="total-label">總計</span>
+                                    <span class="total-price" id="total-price">NT$ 0</span>
+                                </div>
                             </div>
-                            <button id="continue-booking-btn" class="btn-main w-full h-10 text-sm hidden">
+                        </div>
+                        
+                        <!-- 繼續預訂按鈕 -->
+                        <div id="continue-booking-section" class="mt-4 hidden">
+                            <button id="continue-booking-btn" class="btn-main w-full h-12 text-base">
                                 繼續預訂
                             </button>
                         </div>
@@ -936,17 +1235,33 @@
                         bookingData.timeSlot = '';
                         bookingData.preferredRoomId = null;
                         
-                        // 隱藏時段選擇和房型選項
-                        const timeSlotSelection = document.getElementById('time-slot-selection');
+                        // 隱藏房型選項
                         const roomServiceList = document.getElementById('room-service-list');
-                        if (timeSlotSelection) timeSlotSelection.classList.add('hidden');
                         if (roomServiceList) roomServiceList.classList.add('hidden');
+                        
+                        // 清除時段選擇
+                        document.querySelectorAll('.preset-time-slot').forEach(s => {
+                            s.classList.remove('selected');
+                        });
                         
                         // 重置滑桿到預設值
                         const startTimeSlider = document.getElementById('start-time-slider');
                         const endTimeSlider = document.getElementById('end-time-slider');
                         if (startTimeSlider) startTimeSlider.value = 9;
                         if (endTimeSlider) endTimeSlider.value = 13;
+                        
+                        // 隱藏自訂時段選擇
+                        const timeSliders = document.querySelector('.time-sliders');
+                        if (timeSliders) {
+                            timeSliders.classList.add('hidden');
+                        }
+                        
+                        // 重置自訂時段按鈕
+                        const customToggle = document.querySelector('.custom-time-toggle');
+                        if (customToggle) {
+                            customToggle.classList.remove('active');
+                            customToggle.innerHTML = '<span>自訂時段</span>';
+                        }
                         
                         checkCanContinueBooking();
                     });
@@ -1009,20 +1324,28 @@
                      this.classList.remove('border-gray-200');
                      this.classList.add('border-[#181111]', 'bg-green-50');
                      
-                     // 隱藏過夜寄宿界面，但暫時不顯示時間滑桿
+                     // 顯示日間安親的日期選擇
                      overnightDateSection.classList.add('hidden');
-                     daycareDateSection.classList.add('hidden'); // 先隱藏時間滑桿
+                     daycareDateSection.classList.remove('hidden');
                      
                      selectedServiceType = 'daycare';
                      bookingData.serviceType = 'daycare';
-                     
-                     // 顯示日間安親方案選擇
-                     showDaycarePackageSelection();
                      
                      // 重置相關資料
                      bookingData.duration = '';
                      bookingData.timeSlot = '';
                      bookingData.preferredRoomId = null;
+                     
+                     // 隱藏房型選項，等待時段選擇完成
+                     const roomServiceList = document.getElementById('room-service-list');
+                     if (roomServiceList) {
+                         roomServiceList.classList.add('hidden');
+                     }
+                     
+                     // 重新綁定時段選擇事件
+                     setTimeout(() => {
+                         attachTimeSlotListeners();
+                     }, 100);
                      
                      checkCanContinueBooking();
                  });
@@ -1030,6 +1353,72 @@
 
             // 綁定時段選擇事件
             function attachTimeSlotListeners() {
+                // 預設時段選擇
+                document.querySelectorAll('.preset-time-slot').forEach(slot => {
+                    slot.addEventListener('click', function() {
+                        // 移除其他時段的選中狀態
+                        document.querySelectorAll('.preset-time-slot').forEach(s => {
+                            s.classList.remove('selected');
+                        });
+                        
+                        // 選中當前時段
+                        this.classList.add('selected');
+                        
+                        // 更新預訂資料
+                        const hours = parseInt(this.dataset.hours);
+                        const time = this.dataset.time;
+                        const price = parseInt(this.dataset.price);
+                        
+                        bookingData.duration = hours;
+                        bookingData.timeSlot = time;
+                        bookingData.timeSlotName = `${hours}小時 (${time})`;
+                        bookingData.customPrice = price;
+                        
+                        // 隱藏自訂時段選擇
+                        const timeSliders = document.querySelector('.time-sliders');
+                        if (timeSliders) {
+                            timeSliders.classList.add('hidden');
+                        }
+                        
+                        // 顯示房型選項
+                        showRoomServiceOptions('daycare');
+                        
+                        // 更新價格顯示
+                        updatePriceTransparency();
+                        checkCanContinueBooking();
+                    });
+                });
+                
+                // 自訂時段切換
+                document.querySelector('.custom-time-toggle')?.addEventListener('click', function() {
+                    const timeSliders = document.querySelector('.time-sliders');
+                    const isHidden = timeSliders.classList.contains('hidden');
+                    
+                    if (isHidden) {
+                        // 顯示自訂時段選擇
+                        timeSliders.classList.remove('hidden');
+                        this.classList.add('active');
+                        this.innerHTML = '<span>收起自訂時段</span>';
+                        
+                        // 清除預設時段選擇
+                        document.querySelectorAll('.preset-time-slot').forEach(s => {
+                            s.classList.remove('selected');
+                        });
+                        
+                        // 隱藏房型選項，等待自訂時段選擇完成
+                        const roomServiceList = document.getElementById('room-service-list');
+                        if (roomServiceList) {
+                            roomServiceList.classList.add('hidden');
+                        }
+                    } else {
+                        // 隱藏自訂時段選擇
+                        timeSliders.classList.add('hidden');
+                        this.classList.remove('active');
+                        this.innerHTML = '<span>自訂時段</span>';
+                    }
+                });
+                
+                // 滑桿時間選擇 (保留原有功能)
                 const startTimeSlider = document.getElementById('start-time-slider');
                 const endTimeSlider = document.getElementById('end-time-slider');
                 const startTimeDisplay = document.getElementById('start-time-display');
@@ -1053,7 +1442,7 @@
                     }
                     
                     updateTimeDisplays();
-                    updateBookingData();
+                    updateCustomBookingData();
                 });
                 
                 // 結束時間滑桿事件
@@ -1067,7 +1456,7 @@
                     }
                     
                     updateTimeDisplays();
-                    updateBookingData();
+                    updateCustomBookingData();
                 });
                 
                 // 更新時間顯示
@@ -1090,8 +1479,8 @@
                     if (timePriceDisplay) timePriceDisplay.textContent = `NT$ ${price.toLocaleString()}`;
                 }
                 
-                // 更新預訂資料
-                function updateBookingData() {
+                // 更新自訂預訂資料
+                function updateCustomBookingData() {
                     const startHour = parseInt(startTimeSlider.value);
                     const endHour = parseInt(endTimeSlider.value);
                     const duration = endHour - startHour;
@@ -1103,12 +1492,20 @@
                     bookingData.duration = duration;
                     bookingData.timeSlot = `${startTime}-${endTime}`;
                     bookingData.timeSlotName = `${duration}小時 (${startTime}-${endTime})`;
+                    bookingData.customPrice = duration * 150;
                     
                     // 顯示房型選項（如果時間已選擇）
                     if (duration > 0) {
                         showRoomServiceOptions('daycare');
                     }
                     
+                    // 隱藏自訂時段選擇
+                    const timeSliders = document.querySelector('.time-sliders');
+                    if (timeSliders) {
+                        timeSliders.classList.add('hidden');
+                    }
+                    
+                    updatePriceTransparency();
                     checkCanContinueBooking();
                 }
             }
@@ -1334,56 +1731,162 @@
                  });
              }
 
-            // 檢查是否可以繼續預訂
-            function checkCanContinueBooking() {
-                const continueBtn = document.getElementById('continue-booking-btn');
-                const pricePreview = document.getElementById('price-preview');
-                const estimatedPrice = document.getElementById('estimated-price');
+            // 更新價格透明度顯示
+            function updatePriceTransparency() {
+                const priceTransparency = document.getElementById('price-transparency');
+                const roomPriceDetail = document.getElementById('room-price-detail');
+                const roomPrice = document.getElementById('room-price');
+                const durationItem = document.getElementById('duration-item');
+                const durationDetail = document.getElementById('duration-detail');
+                const durationPrice = document.getElementById('duration-price');
+                const petCountItem = document.getElementById('pet-count-item');
+                const petCountDetail = document.getElementById('pet-count-detail');
+                const petCountPrice = document.getElementById('pet-count-price');
+                const totalPrice = document.getElementById('total-price');
                 
-                let canContinue = false;
-                let priceText = '請完成選擇';
+                let total = 0;
+                let hasValidData = false;
+                
+                // 房型費用
+                if (bookingData.preferredRoomId) {
+                    const selectedRoom = mockRoomTypes.find(room => room.id === bookingData.preferredRoomId);
+                    if (selectedRoom) {
+                        const basePrice = bookingData.serviceType === 'overnight' ? 800 : 600;
+                        roomPriceDetail.textContent = selectedRoom.name;
+                        roomPrice.textContent = `NT$ ${basePrice.toLocaleString()}`;
+                        total += basePrice;
+                        hasValidData = true;
+                    }
+                } else {
+                    roomPriceDetail.textContent = '請選擇房型';
+                    roomPrice.textContent = 'NT$ 0';
+                }
+                
+                // 服務時長 (僅日間安親)
+                if (bookingData.serviceType === 'daycare' && bookingData.duration) {
+                    durationItem.style.display = 'flex';
+                    durationDetail.textContent = `${bookingData.duration}小時`;
+                    
+                    const durationCost = bookingData.customPrice || (bookingData.duration * 150);
+                    durationPrice.textContent = `NT$ ${durationCost.toLocaleString()}`;
+                    total += durationCost;
+                    hasValidData = true;
+                } else {
+                    durationItem.style.display = 'none';
+                }
+                
+                // 寵物數量
+                if (bookingData.petCount > 1) {
+                    petCountItem.style.display = 'flex';
+                    petCountDetail.textContent = `${bookingData.petCount} 隻`;
+                    petCountPrice.textContent = `× ${bookingData.petCount}`;
+                    total *= bookingData.petCount;
+                } else {
+                    petCountItem.style.display = 'none';
+                }
+                
+                // 加購服務
+                const addonItems = document.getElementById('addon-items');
+                addonItems.innerHTML = '';
+                bookingData.addons.forEach(addon => {
+                    const addonItem = document.createElement('div');
+                    addonItem.className = 'price-item addon';
+                    addonItem.innerHTML = `
+                        <span class="item-label">加購服務</span>
+                        <span class="item-detail">${addon.name}</span>
+                        <span class="item-price">NT$ ${addon.price.toLocaleString()}</span>
+                    `;
+                    addonItems.appendChild(addonItem);
+                    total += addon.price;
+                });
+                
+                // 更新總價
+                totalPrice.textContent = `NT$ ${total.toLocaleString()}`;
+                
+                // 顯示/隱藏價格透明度區域
+                if (hasValidData) {
+                    priceTransparency.classList.remove('hidden');
+                } else {
+                    priceTransparency.classList.add('hidden');
+                }
+            }
+            
+            // 驗證預訂資料
+            function validateBookingData() {
+                const errors = [];
+                
+                if (!bookingData.serviceType) {
+                    errors.push('請選擇服務類型');
+                }
+                
+                if (!selectedCheckinDate) {
+                    errors.push('請選擇服務日期');
+                }
                 
                 if (bookingData.serviceType === 'overnight') {
-                    if (selectedCheckinDate && selectedCheckoutDate && selectedCheckoutDate > selectedCheckinDate) {
-                        const nights = Math.ceil((selectedCheckoutDate - selectedCheckinDate) / (1000 * 60 * 60 * 24));
-                        const basePrice = 800; // 基礎價格，可以根據實際房型調整
-                        const totalPrice = basePrice * nights;
-                        priceText = `NT$ ${totalPrice.toLocaleString()}起`;
-                        canContinue = true;
-                        
-                        // 更新日期資料
-                        bookingData.dates.checkin = selectedCheckinDate.toISOString().split('T')[0];
-                        bookingData.dates.checkout = selectedCheckoutDate.toISOString().split('T')[0];
-                    }
-                } else if (bookingData.serviceType === 'daycare') {
-                    // 檢查日間安親的完成步驟
-                    if (!selectedCheckinDate) {
-                        priceText = '請選擇服務日期';
-                    } else if (!bookingData.duration) {
-                        priceText = '請選擇服務時長';
-                    } else if (!bookingData.timeSlot) {
-                        priceText = '請選擇服務時段';
-                    } else if (!bookingData.preferredRoomId) {
-                        priceText = '請選擇房型';
-                    } else {
-                        // 所有步驟完成，計算價格
-                        let basePrice = bookingData.duration === 4 ? 150 : 120 * bookingData.duration;
-                        priceText = `NT$ ${basePrice.toLocaleString()}起`;
-                        canContinue = true;
-                        
-                        // 更新日期資料
-                        bookingData.dates.checkin = selectedCheckinDate.toISOString().split('T')[0];
-                        bookingData.dates.checkout = ''; // 日間安親不需要退房日期
+                    if (!selectedCheckoutDate) {
+                        errors.push('請選擇退房日期');
+                    } else if (selectedCheckoutDate <= selectedCheckinDate) {
+                        errors.push('退房日期必須晚於入住日期');
                     }
                 }
                 
-                // 更新價格顯示
-                estimatedPrice.textContent = priceText;
-                pricePreview.classList.remove('hidden');
+                if (bookingData.serviceType === 'daycare') {
+                    if (!bookingData.duration) {
+                        errors.push('請選擇服務時長');
+                    }
+                    if (!bookingData.timeSlot) {
+                        errors.push('請選擇服務時段');
+                    }
+                }
                 
-                // 更新繼續按鈕狀態
-                if (canContinue) {
-                    continueBtn.classList.remove('hidden');
+                if (!bookingData.preferredRoomId) {
+                    errors.push('請選擇房型');
+                }
+                
+                return errors;
+            }
+            
+            // 顯示錯誤訊息
+            function showBookingErrors(errors) {
+                const errorContainer = document.getElementById('booking-errors');
+                if (errors.length > 0) {
+                    errorContainer.innerHTML = `
+                        <div class="error-message">
+                            <div class="error-title">
+                                <svg class="icon" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                </svg>
+                                請修正以下問題：
+                            </div>
+                            <ul class="error-list">
+                                ${errors.map(error => `<li>${error}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                    errorContainer.classList.remove('hidden');
+                } else {
+                    errorContainer.classList.add('hidden');
+                }
+            }
+            
+            // 檢查是否可以繼續預訂
+            function checkCanContinueBooking() {
+                const continueSection = document.getElementById('continue-booking-section');
+                const errors = validateBookingData();
+                
+                // 顯示錯誤訊息
+                showBookingErrors(errors);
+                
+                // 更新價格透明度
+                updatePriceTransparency();
+                
+                // 檢查是否可以繼續
+                if (errors.length === 0) {
+                    continueSection.classList.remove('hidden');
+                    
+                    // 重新綁定繼續按鈕事件
+                    const continueBtn = document.getElementById('continue-booking-btn');
                     continueBtn.replaceWith(continueBtn.cloneNode(true));
                     const newBtn = document.getElementById('continue-booking-btn');
                     newBtn.addEventListener('click', function() {
@@ -1411,7 +1914,7 @@
                         showPage('bookingFlow');
                     });
                 } else {
-                    continueBtn.classList.add('hidden');
+                    continueSection.classList.add('hidden');
                 }
             }
 
@@ -1673,17 +2176,70 @@
             function renderUserCenterPage() {
                 const container = pages.account;
                 container.innerHTML = `
-                <h1 class="text-2xl font-bold mb-6 text-center text-[#181111]">我的帳戶</h1>
-                <div class="flex flex-col items-center mb-6">
-                    <img src="https://images.unsplash.com/photo-1548142813-c348350df52b?q=80&w=400" alt="使用者頭像" class="w-24 h-24 rounded-full object-cover mb-4 border-4 border-white shadow-lg">
-                    <h2 class="text-xl font-bold text-[#181111]">James</h2>
-                    <p class="text-sm text-[#886364]">user@email.com</p>
+                <div class="sticky top-0 z-10 bg-white border-b border-gray-100">
+                    <div class="px-4 py-3 flex items-center justify-center">
+                        <h2 class="text-[#181111] text-base font-bold">帳戶</h2>
+                    </div>
                 </div>
-                <div class="space-y-2" id="user-options-list">
-                     <!-- 選項由JS生成 -->
+
+                <div class="px-4 py-3 bg-white">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="https://images.unsplash.com/photo-1548142813-c348350df52b?q=80&w=200" class="w-12 h-12 rounded-full object-cover" alt="avatar">
+                            <div>
+                                <p class="font-bold text-[#181111]">James</p>
+                                <p class="text-xs text-[#886364]">台北市, 台灣</p>
+                            </div>
+                        </div>
+                        <button id="account-edit-icon" class="p-2 text-[#181111]" aria-label="edit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" fill="currentColor"><path d="M227.31,73.37,182.63,28.69a16,16,0,0,0-22.63,0L41.37,147.31A15.86,15.86,0,0,0,36.69,158L24.29,207.14a8,8,0,0,0,9.85,9.85l49.1-12.4a15.86,15.86,0,0,0,10.68-4.68L227.31,96A16,16,0,0,0,227.31,73.37ZM78.4,192.62l-28.2,7.12,7.12-28.2L152,76.86l21.09,21.09ZM197.66,73.37,184,87l-21.09-21.1,13.66-13.66a0,0,0,0,1,0,0L197.66,59.71A0,0,0,0,1,197.66,73.37Z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="h-2 bg-gray-100"></div>
+
+                ${!isUserMerchant ? `
+                <div id="become-merchant-card" class="px-4 py-3 cursor-pointer">
+                    <div class="bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-amber-100 flex items_center justify-center">🏪</div>
+                        <div class="flex-1">
+                            <p class="font-bold text-[#181111]">成為商家</p>
+                            <p class="text-xs text-[#886364]">馬上申請成為 Paw Pad 的合作夥伴！</p>
+                        </div>
+                        <div class="text-[#886364]">›</div>
+                    </div>
+                </div>` : `
+                <div class="px-4 py-3">
+                    <div id="merchant-entry" class="bg-white border border-gray-100 rounded-xl p-4 flex items-center justify-between cursor-pointer">
+                        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">📊</div><div><p class="font-bold text-[#181111]">商家專區</p><p class="text-xs text-[#886364]">管理訂單、行事曆與方案</p></div></div>
+                        <div class="text-[#886364]">›</div>
+                    </div>
+                    <div class="mt-3">
+                        <button id="merchant-backend-btn" class="btn-main h-11">進入商家後台</button>
+                    </div>
+                </div>`}
+
+                <div class="h-2 bg-gray-100"></div>
+
+                <div class="px-4 py-2 space-y-2">
+                    <div id="account-profile" class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center cursor-pointer"><span>個人資料</span><span class="text-[#886364]">›</span></div>
+                    <div id="account-support" class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center cursor-pointer"><span>聯繫客服</span><span class="text-[#886364]">›</span></div>
+                    <div id="account-privacy" class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center cursor-pointer"><span>隱私</span><span class="text-[#886364]">›</span></div>
+                    <div id="account-referral" class="bg-white p-4 rounded-xl border border-gray-100 flex justify_between items-center cursor-pointer"><span>我的推薦代碼</span><span class="text-[#886364]">›</span></div>
+                    <div id="account-coupons" class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center cursor-pointer"><span>優惠券列表</span><span class="text-[#886364]">›</span></div>
+                    <div id="account-notifications" class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center cursor-pointer"><span>通知設定</span><span class="text-[#886364]">›</span></div>
+                    <div id="account-settings" class="bg-white p-4 rounded-xl border border-gray-100 flex justify_between items-center cursor-pointer"><span>設定</span><span class="text-[#886364]">›</span></div>
+                </div>
+
+                <div class="h-2 bg-gray-100"></div>
+
+                <div class="px-4 py-2">
+                    <div id="account-logout" class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center cursor-pointer"><span>登出</span><span class="text-[#886364]">›</span></div>
                 </div>
                 `;
-                updateUserCenterOptions();
+
+                attachAccountListeners();
             }
 
             function updateUserCenterOptions() {
@@ -1699,6 +2255,396 @@
                     optionsHTML += `<div id="become-merchant" class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center cursor-pointer"><span>成為商家</span><span class="text-blue-600 font-bold">立即申請</span></div>`;
                 }
                 container.innerHTML = optionsHTML + `<div class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center cursor-pointer text-red-600"><span>登出</span></div>`;
+            }
+
+            // 帳戶頁：事件與模態
+            function attachAccountListeners() {
+                document.getElementById('account-edit-icon')?.addEventListener('click', openProfileEditModal);
+                document.getElementById('account-profile')?.addEventListener('click', openProfileEditModal);
+                document.getElementById('become-merchant-card')?.addEventListener('click', () => { renderMerchantApplicationFlow(); });
+                document.getElementById('merchant-entry')?.addEventListener('click', () => showPage('merchantDashboard'));
+                document.getElementById('merchant-backend-btn')?.addEventListener('click', () => showPage('merchantDashboard'));
+                document.getElementById('account-support')?.addEventListener('click', () => showPage('chat'));
+                document.getElementById('account-privacy')?.addEventListener('click', openPrivacyModal);
+                document.getElementById('account-referral')?.addEventListener('click', openReferralModal);
+                document.getElementById('account-coupons')?.addEventListener('click', openCouponsModal);
+                document.getElementById('account-notifications')?.addEventListener('click', () => openSettingsModal('notifications'));
+                document.getElementById('account-settings')?.addEventListener('click', () => openSettingsModal());
+                document.getElementById('account-logout')?.addEventListener('click', () => { alert('已登出 (模擬)'); showPage('home'); });
+            }
+
+            function openOverlayWithContent(innerHtml) {
+                const modal = document.createElement('div');
+                modal.className = 'modal-overlay';
+                modal.innerHTML = `<div class="modal-content">${innerHtml}</div>`;
+                document.body.appendChild(modal);
+                modal.addEventListener('click', function(e){ if (e.target === modal || e.target.id === 'modal-close-btn') document.body.removeChild(modal); });
+                return modal;
+            }
+
+            function openReferralModal() {
+                const code = 'PP-JAMES-1234';
+                const html = `
+                    <div class="flex justify-between items-center mb-2"><h2 class="text-lg font-bold text-[#181111]">我的推薦代碼</h2><button id="modal-close-btn" class="text-2xl">&times;</button></div>
+                    <p class="text-sm text-[#886364] mb-3">分享給朋友，雙方皆可獲得優惠。</p>
+                    <div class="bg-gray-50 border rounded-xl p-4 text-center mb-3">
+                        <p class="text-2xl font-black tracking-widest text-[#181111]">${code}</p>
+                    </div>
+                    <button id="copy-referral" class="btn-main h-11">複製代碼</button>
+                `;
+                const modal = openOverlayWithContent(html);
+                modal.querySelector('#copy-referral')?.addEventListener('click', async () => {
+                    try { await navigator.clipboard.writeText(code); alert('已複製'); } catch(_) { alert('複製失敗'); }
+                });
+            }
+
+            function openCouponsModal() {
+                const html = `
+                    <div class="flex justify-between items-center mb-2"><h2 class="text-lg font-bold text-[#181111]">優惠券列表</h2><button id="modal-close-btn" class="text-2xl">&times;</button></div>
+                    <div class="space-y-2">
+                        <div class="bg-white border rounded-xl p-3 flex justify-between items-center">
+                            <div><p class="font-bold text-[#181111]">新用戶 85 折</p><p class="text-xs text-[#886364]">到期日：2025/12/31</p></div>
+                            <span class="text-emerald-600 font-bold">可用</span>
+                        </div>
+                        <div class="bg-white border rounded-xl p-3 flex justify-between items-center">
+                            <div><p class="font-bold text-[#181111]">滿 2000 折 200</p><p class="text-xs text-[#886364]">到期日：2025/09/30</p></div>
+                            <span class="text-emerald-600 font-bold">可用</span>
+                        </div>
+                    </div>
+                `;
+                openOverlayWithContent(html);
+            }
+
+            // 商家中心：目前房況（圖表示意）
+            function openOccupancyModal() {
+                const html = `
+                    <div class="flex justify-between items-center mb-2"><h2 class="text-lg font-bold text-[#181111]">目前房況</h2><button id="modal-close-btn" class="text-2xl">&times;</button></div>
+                    <div class="space-y-3 text-sm">
+                        <div class="bg-white border rounded-xl p-3">
+                            <p class="mb-2 text-[#886364]">今日整體入住率</p>
+                            <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                                <div class="bg-emerald-500 h-3" style="width: 68%"></div>
+                            </div>
+                            <div class="mt-1 text-xs text-gray-600">68%</div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            ${mockRoomTypes.filter(r=>r.status==='active').map(r=>`
+                                <div class="bg-white border rounded-xl p-3">
+                                    <p class="font-medium text-[#181111] mb-1">${r.name}</p>
+                                    <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                                        <div class="bg-blue-500 h-2" style="width: ${Math.min(100, Math.round((r.stock-1)/r.stock*100))}%"></div>
+                                    </div>
+                                    <div class="mt-1 text-xs text-gray-600">可用 ${Math.max(0, r.stock-1)} / ${r.stock}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                openOverlayWithContent(html);
+            }
+
+            // 商家中心：金流（請款 / 退款申請審核）
+            function openFinanceModal() {
+                const html = `
+                    <div class="flex justify-between items-center mb-2"><h2 class="text-lg font-bold text-[#181111]">金流</h2><button id="modal-close-btn" class="text-2xl">&times;</button></div>
+                    <div class="flex gap-2 mb-3 text-sm">
+                        <button data-fin-tab="payouts" class="px-3 py-1 rounded-full bg-[#181111] text-white">請款</button>
+                        <button data-fin-tab="refunds" class="px-3 py-1 rounded-full bg-gray-100">退款申請審核</button>
+                    </div>
+                    <div id="finance-content" class="space-y-2 text-sm"></div>
+                `;
+                const modal = openOverlayWithContent(html);
+                const content = modal.querySelector('#finance-content');
+                function render(tab){
+                    modal.querySelectorAll('[data-fin-tab]')?.forEach(b=>{
+                        const active = b.dataset.finTab===tab;
+                        b.classList.toggle('bg-[#181111]', active);
+                        b.classList.toggle('text-white', active);
+                        b.classList.toggle('bg-gray-100', !active);
+                    });
+                    if(tab==='refunds'){
+                        content.innerHTML = `
+                            <div class="bg-white border rounded-xl p-3 flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium text-[#181111]">訂單 #A1029</p>
+                                    <p class="text-xs text-[#886364]">原因：臨時取消</p>
+                                </div>
+                                <div class="flex gap-2 text-xs">
+                                    <button class="px-3 py-1 bg-gray-200 rounded-full">駁回</button>
+                                    <button class="px-3 py-1 bg-emerald-600 text-white rounded-full">同意退款</button>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        content.innerHTML = `
+                            <div class="bg-white border rounded-xl p-3 flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium text-[#181111]">可請款金額</p>
+                                    <p class="text-xs text-[#886364]">本期：NT$ 42,000</p>
+                                </div>
+                                <button class="px-3 py-1 bg-[#181111] text-white rounded-full text-xs">申請請款</button>
+                            </div>
+                            <div class="bg-white border rounded-xl p-3">
+                                <p class="font-medium text-[#181111] mb-1">歷史請款紀錄</p>
+                                <p class="text-xs text-[#886364]">2025/06/01 NT$ 30,000 - 已匯款</p>
+                            </div>
+                        `;
+                    }
+                }
+                modal.querySelectorAll('[data-fin-tab]')?.forEach(btn=>btn.addEventListener('click',()=>render(btn.dataset.finTab)));
+                render('payouts');
+            }
+
+            // 商家中心：報表（下載）
+            function openReportsModal() {
+                const html = `
+                    <div class="flex justify-between items-center mb-2"><h2 class="text-lg font-bold text-[#181111]">報表</h2><button id="modal-close-btn" class="text-2xl">&times;</button></div>
+                    <div class="space-y-3 text-sm">
+                        <div class="bg-white border rounded-xl p-3">
+                            <label class="block mb-1">範圍</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="date" class="form-input-styled">
+                                <input type="date" class="form-input-styled">
+                            </div>
+                        </div>
+                        <div class="bg-white border rounded-xl p-3 flex items-center justify-between">
+                            <span>每日收入報表 (CSV)</span>
+                            <button class="px-3 py-1 bg-[#181111] text-white rounded-full text-xs">下載</button>
+                        </div>
+                        <div class="bg-white border rounded-xl p-3 flex items-center justify-between">
+                            <span>月收入與預約統計 (PDF)</span>
+                            <button class="px-3 py-1 bg-[#181111] text-white rounded-full text-xs">下載</button>
+                        </div>
+                    </div>
+                `;
+                openOverlayWithContent(html);
+            }
+
+            // 商家中心：優惠券發送與管理
+            function openCouponManageModal() {
+                const html = `
+                    <div class="flex justify-between items-center mb-2"><h2 class="text-lg font-bold text-[#181111]">優惠券管理</h2><button id="modal-close-btn" class="text-2xl">&times;</button></div>
+                    <div class="space-y-3 text-sm">
+                        <div class="bg-white border rounded-xl p-3">
+                            <label class="block mb-1">新增優惠券</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input id="new-coupon-name" class="form-input-styled" placeholder="名稱，例如 首購85折">
+                                <input id="new-coupon-exp" type="date" class="form-input-styled">
+                            </div>
+                            <div class="mt-2 flex gap-2">
+                                <input id="new-coupon-scope" class="form-input-styled flex-1" placeholder="可用範圍，例如 全館 / 指定房型">
+                                <button id="add-coupon-btn" class="px-3 py-1 bg-[#181111] text-white rounded-full text-xs">新增</button>
+                            </div>
+                        </div>
+                        <div id="coupon-list" class="space-y-2">
+                            <div class="bg-white border rounded-xl p-3 flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium text-[#181111]">新用戶 85 折</p>
+                                    <p class="text-xs text-[#886364]">到期：2025/12/31 • 範圍：全館</p>
+                                </div>
+                                <button class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-xs">停用</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                const modal = openOverlayWithContent(html);
+                modal.querySelector('#add-coupon-btn')?.addEventListener('click', ()=>{
+                    const name = modal.querySelector('#new-coupon-name')?.value || '未命名優惠券';
+                    const exp = modal.querySelector('#new-coupon-exp')?.value || '—';
+                    const scope = modal.querySelector('#new-coupon-scope')?.value || '—';
+                    const list = modal.querySelector('#coupon-list');
+                    const node = document.createElement('div');
+                    node.className = 'bg-white border rounded-xl p-3 flex items-center justify-between';
+                    node.innerHTML = `<div><p class="font-medium text-[#181111]">${name}</p><p class="text-xs text-[#886364]">到期：${exp} • 範圍：${scope}</p></div><button class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-xs">停用</button>`;
+                    list?.prepend(node);
+                });
+            }
+
+            function openSettingsModal(activeTab = 'general') {
+                const html = `
+                    <div class="flex justify-between items-center mb-2"><h2 class="text-lg font-bold text-[#181111]">設定</h2><button id="modal-close-btn" class="text-2xl">&times;</button></div>
+                    <div class="flex gap-2 mb-3 text-sm">
+                        <button data-tab="general" class="px-3 py-1 rounded-full ${activeTab==='general'?'bg-[#181111] text-white':'bg-gray-100'}">一般</button>
+                        <button data-tab="notifications" class="px-3 py-1 rounded-full ${activeTab==='notifications'?'bg-[#181111] text-white':'bg-gray-100'}">通知</button>
+                        <button data-tab="account" class="px-3 py-1 rounded-full ${activeTab==='account'?'bg-[#181111] text-white':'bg-gray-100'}">帳號</button>
+                    </div>
+                    <div id="settings-content" class="space-y-3"></div>
+                `;
+                const modal = openOverlayWithContent(html);
+                const content = modal.querySelector('#settings-content');
+
+                function renderTab(tab){
+                    modal.querySelectorAll('[data-tab]')?.forEach(btn=>{
+                        btn.classList.toggle('bg-[#181111]', btn.dataset.tab===tab);
+                        btn.classList.toggle('text-white', btn.dataset.tab===tab);
+                        btn.classList.toggle('bg-gray-100', btn.dataset.tab!==tab);
+                    });
+                    if(tab==='notifications'){
+                        content.innerHTML = `
+                            <label class="flex items-center justify-between bg-white border rounded-xl p-3 text-sm"><span>推播通知</span><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></label>
+                            <label class="flex items-center justify-between bg-white border rounded-xl p-3 text-sm"><span>訂單更新</span><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></label>
+                        `;
+                    } else if(tab==='account'){
+                        content.innerHTML = `
+                            <div class="bg-white border rounded-xl p-3 text-sm">
+                                <p class="mb-2 font-medium">帳號管理</p>
+                                <div class="flex gap-2 flex-wrap">
+                                    <button id="settings-change-password" class="py-2 px-3 bg-gray-200 rounded-full text-xs">變更密碼</button>
+                                    <button id="settings-referral-btn" class="py-2 px-3 bg-gray-200 rounded-full text-xs">查看推薦碼</button>
+                                </div>
+                            </div>
+                        `;
+                        content.querySelector('#settings-referral-btn')?.addEventListener('click', () => openReferralModal());
+                    } else {
+                        content.innerHTML = `
+                            <div class="bg-white border rounded-xl p-3 text-sm">
+                                <label class="block mb-1">語言</label>
+                                <select class="form-input-styled"><option>繁體中文</option><option>English</option></select>
+                            </div>
+                        `;
+                    }
+                }
+
+                modal.querySelectorAll('[data-tab]')?.forEach(btn=>btn.addEventListener('click', ()=>renderTab(btn.dataset.tab)));
+                renderTab(activeTab);
+            }
+
+            function openPrivacyModal() {
+                const html = `
+                    <div class="flex justify-between items-center mb-2"><h2 class="text-lg font-bold text-[#181111]">隱私</h2><button id="modal-close-btn" class="text-2xl">&times;</button></div>
+                    <div class="text-sm text-[#886364] space-y-2">
+                        <p>我們重視您的隱私，僅於提供服務所需範圍內使用資料。</p>
+                        <p>可於「設定 > 帳號」申請資料下載或刪除。</p>
+                    </div>
+                `;
+                openOverlayWithContent(html);
+            }
+
+            function openProfileEditModal() {
+                const html = `
+                    <div class="flex justify-between items-center mb-2"><h2 class="text-lg font-bold text-[#181111]">編輯個人資料</h2><button id="modal-close-btn" class="text-2xl">&times;</button></div>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-sm text-gray-600">名稱</label>
+                            <input class="form-input-styled mt-1" value="James">
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-600">城市</label>
+                            <input class="form-input-styled mt-1" value="台北市">
+                        </div>
+                        <button class="btn-main h-11">儲存</button>
+                    </div>
+                `;
+                openOverlayWithContent(html);
+            }
+
+            function renderMerchantApplicationFlow() {
+                let step = 1;
+
+                function render() {
+                    formModal.innerHTML = `
+                        <div class="p-4 overflow-y-auto max-h-full">
+                            <div class="flex justify-between items-center mb-4 sticky top-0 bg-gray-50 py-2 z-10">
+                                <button id="merchant-back-btn" class="text-lg font-bold p-2">${step===1?'&lt; 返回':'&lt; 上一步'}</button>
+                                <h1 class="text-xl font-bold text-[#181111] flex-1 text-center">成為商家</h1>
+                                <div class="w-20 text-sm text-[#886364]">${step}/4</div>
+                            </div>
+                            ${step===1 ? renderMerchantStep1() : ''}
+                            ${step===2 ? renderMerchantStep2() : ''}
+                            ${step===3 ? renderMerchantStep3() : ''}
+                            ${step===4 ? renderMerchantStep4() : ''}
+                        </div>
+                    `;
+                    formModal.classList.remove('hidden');
+
+                    document.getElementById('merchant-back-btn')?.addEventListener('click', () => {
+                        if (step === 1) { formModal.classList.add('hidden'); return; }
+                        step = Math.max(1, step - 1); render();
+                    });
+
+                    document.getElementById('merchant-next-btn')?.addEventListener('click', () => { step = Math.min(4, step + 1); render(); });
+                    document.getElementById('merchant-submit-btn')?.addEventListener('click', () => {
+                        alert('申請已提交 (模擬)。');
+                        isUserMerchant = true;
+                        formModal.classList.add('hidden');
+                        renderUserCenterPage();
+                        showPage('merchantDashboard');
+                    });
+                }
+
+                function renderMerchantStep1() {
+                    return `
+                        <div class="space-y-4 px-2">
+                            <div class="bg-blue-50 p-3 rounded-lg text-sm text-blue-800">填寫基本資料以開始申請</div>
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">店家名稱</label>
+                                <input type="text" class="form-input-styled mt-1" placeholder="例如：快樂爪子旅館">
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">聯絡電話</label>
+                                <input type="tel" class="form-input-styled mt-1" placeholder="09xx-xxx-xxx">
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">地址</label>
+                                <input type="text" class="form-input-styled mt-1" placeholder="城市、街道、門牌">
+                            </div>
+                            <div class="mt-6"><button id="merchant-next-btn" class="btn-main">下一步</button></div>
+                        </div>`;
+                }
+
+                function renderMerchantStep2() {
+                    return `
+                        <div class="space-y-4 px-2">
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">環境照片</label>
+                                <div class="mt-1 flex justify-center rounded-lg border border-dashed border-gray-300 px-6 py-10 text-sm text-gray-600">拖曳或點擊上傳</div>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">位置標示</label>
+                                <div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center text-[#886364] text-sm">地圖預覽 (示意)</div>
+                            </div>
+                            <div class="mt-6"><button id="merchant-next-btn" class="btn-main">下一步</button></div>
+                        </div>`;
+                }
+
+                function renderMerchantStep3() {
+                    return `
+                        <div class="space-y-4 px-2">
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">主要服務與價格</label>
+                                <div class="grid grid-cols-2 gap-3 mt-2">
+                                    <label class="text-sm bg-white border rounded-xl p-3 flex items-center justify-between">過夜寄宿<input type="number" class="form-input-styled w-24 ml-2" placeholder="NT$"></label>
+                                    <label class="text-sm bg-white border rounded-xl p-3 flex items-center justify-between">日間安親<input type="number" class="form-input-styled w-24 ml-2" placeholder="每小時"></label>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">提供項目</label>
+                                <div class="grid grid-cols-2 gap-2 mt-2 text-sm">
+                                    <label class="flex items-center"><input type="checkbox" class="mr-2">室內活動區</label>
+                                    <label class="flex items-center"><input type="checkbox" class="mr-2">戶外草地</label>
+                                    <label class="flex items-center"><input type="checkbox" class="mr-2">美容服務</label>
+                                    <label class="flex items-center"><input type="checkbox" class="mr-2">接送服務</label>
+                                </div>
+                            </div>
+                            <div class="mt-6"><button id="merchant-next-btn" class="btn-main">下一步</button></div>
+                        </div>`;
+                }
+
+                function renderMerchantStep4() {
+                    return `
+                        <div class="space-y-4 px-2">
+                            <div class="bg-white border rounded-xl p-3">
+                                <p class="text-sm text-[#886364] mb-2">商家身份驗證（選填）</p>
+                                <div class="grid gap-2 text-sm">
+                                    <label class="flex items-center justify-between">身分證/公司登記影本<input type="file" class="text-sm"></label>
+                                    <label class="flex items-center justify-between">營業相關文件<input type="file" class="text-sm"></label>
+                                </div>
+                            </div>
+                            <div class="mt-6"><button id="merchant-submit-btn" class="btn-main">提交申請</button></div>
+                        </div>`;
+                }
+
+                render();
             }
 
             function renderOrdersPage() {
@@ -2847,13 +3793,17 @@
                                     <div>
                                         <label class="text-sm font-medium text-[#886364] block mb-2">加購服務</label>
                                         <div class="space-y-2">
-                                            <label class="flex items-center justify-between">
+                                            <label class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
                                                 <span class="text-gray-700 text-sm">寵物洗澡 (NT$ 300)</span>
                                                 <input type="checkbox" data-price="300" data-name="寵物洗澡" class="addon-service rounded text-black focus:ring-black">
                                             </label>
-                                            <label class="flex items-center justify-between">
+                                            <label class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
                                                 <span class="text-gray-700 text-sm">專人陪玩 (NT$ 200)</span>
                                                 <input type="checkbox" data-price="200" data-name="專人陪玩" class="addon-service rounded text-black focus:ring-black">
+                                            </label>
+                                            <label class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                                                <span class="text-gray-700 text-sm">美容修剪 (NT$ 400)</span>
+                                                <input type="checkbox" data-price="400" data-name="美容修剪" class="addon-service rounded text-black focus:ring-black">
                                             </label>
                                         </div>
                                     </div>
@@ -2904,13 +3854,15 @@
                 document.getElementById('decrease-pet-count')?.addEventListener('click', function() {
                     if (bookingData.petCount > 1) {
                         bookingData.petCount--;
-                        updateConfirmationDisplay();
+                        updatePriceTransparency();
+                        checkCanContinueBooking();
                     }
                 });
                 
                 document.getElementById('increase-pet-count')?.addEventListener('click', function() {
                     bookingData.petCount++;
-                    updateConfirmationDisplay();
+                    updatePriceTransparency();
+                    checkCanContinueBooking();
                 });
                 
                 // 加購服務
@@ -2924,7 +3876,8 @@
                         } else {
                             bookingData.addons = bookingData.addons.filter(addon => addon.name !== name);
                         }
-                        updateConfirmationDisplay();
+                        updatePriceTransparency();
+                        checkCanContinueBooking();
                     });
                 });
                 
@@ -3876,6 +4829,25 @@
                 if (e.target.closest('#back-to-dashboard-btn')) showPage('merchantDashboard');
                 if (e.target.closest('#manage-rooms-link')) showPage('roomManagement');
                 if (e.target.closest('#manage-calendar-btn')) showPage('calendarManagement');
+                // 新增：商家中心各入口
+                if (e.target.closest('#md-orders')) {
+                    alert('訂單管理（示意）：顯示顧客資訊與寵物需求');
+                }
+                if (e.target.closest('#md-occupancy')) {
+                    openOccupancyModal();
+                }
+                if (e.target.closest('#md-finance')) {
+                    openFinanceModal();
+                }
+                if (e.target.closest('#md-reports')) {
+                    openReportsModal();
+                }
+                if (e.target.closest('#md-chat')) {
+                    showPage('chat');
+                }
+                if (e.target.closest('#md-coupons')) {
+                    openCouponManageModal();
+                }
                 if (e.target.closest('#add-new-room-btn')) renderRoomForm();
                 if (e.target.closest('.edit-room-btn')) {
                     const roomId = parseInt(e.target.closest('.edit-room-btn').dataset.roomId);
