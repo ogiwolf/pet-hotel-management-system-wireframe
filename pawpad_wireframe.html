@@ -2540,6 +2540,13 @@
 
             function renderMerchantApplicationFlow() {
                 let step = 1;
+                const appState = {
+                    codeSent: false,
+                    smsVerified: false,
+                    outcome: 'pending'
+                };
+                if (!window.merchantApplicationStatus) window.merchantApplicationStatus = 'not_applied';
+                if (!window.merchantLastRejectReason) window.merchantLastRejectReason = '';
 
                 function render() {
                     formModal.innerHTML = `
@@ -2547,12 +2554,17 @@
                             <div class="flex justify-between items-center mb-4 sticky top-0 bg-gray-50 py-2 z-10">
                                 <button id="merchant-back-btn" class="text-lg font-bold p-2">${step===1?'&lt; 返回':'&lt; 上一步'}</button>
                                 <h1 class="text-xl font-bold text-[#181111] flex-1 text-center">成為商家</h1>
-                                <div class="w-20 text-sm text-[#886364]">${step}/4</div>
+                                <div class="w-28 text-right text-xs text-[#886364]">${
+                                    window.merchantApplicationStatus==='under_review' ? '狀態：審核中' :
+                                    window.merchantApplicationStatus==='rejected' ? '狀態：不通過' :
+                                    window.merchantApplicationStatus==='re_review' ? '狀態：再次審核中' :
+                                    window.merchantApplicationStatus==='approved' ? '狀態：已通過' : ' '}
+                                </div>
                             </div>
-                            ${step===1 ? renderMerchantStep1() : ''}
-                            ${step===2 ? renderMerchantStep2() : ''}
-                            ${step===3 ? renderMerchantStep3() : ''}
-                            ${step===4 ? renderMerchantStep4() : ''}
+                            ${step===1 ? renderStep1Info() : ''}
+                            ${step===2 ? renderStep2SMS() : ''}
+                            ${step===3 ? renderStep3SubmitAndReview() : ''}
+                            ${step===4 ? renderStep4Outcome() : ''}
                         </div>
                     `;
                     formModal.classList.remove('hidden');
@@ -2563,84 +2575,141 @@
                     });
 
                     document.getElementById('merchant-next-btn')?.addEventListener('click', () => { step = Math.min(4, step + 1); render(); });
-                    document.getElementById('merchant-submit-btn')?.addEventListener('click', () => {
-                        alert('申請已提交 (模擬)。');
+                    document.getElementById('merchant-send-code-btn')?.addEventListener('click', () => {
+                        appState.codeSent = true; render();
+                    });
+                    document.getElementById('merchant-verify-code-btn')?.addEventListener('click', () => {
+                        appState.smsVerified = true; render();
+                    });
+                    document.getElementById('merchant-submit-review-btn')?.addEventListener('click', () => {
+                        window.merchantApplicationStatus = 'under_review';
+                        step = 3; render();
+                    });
+                    document.getElementById('simulate-approve-btn')?.addEventListener('click', () => {
+                        appState.outcome = 'approved';
+                        window.merchantApplicationStatus = 'approved';
+                        step = 4; render();
+                    });
+                    document.getElementById('simulate-reject-btn')?.addEventListener('click', () => {
+                        appState.outcome = 'rejected';
+                        window.merchantApplicationStatus = 'rejected';
+                        step = 4; render();
+                    });
+                    document.getElementById('resubmit-btn')?.addEventListener('click', () => {
+                        window.merchantApplicationStatus = 're_review';
+                        step = 1; render();
+                    });
+                    document.getElementById('go-dashboard-btn')?.addEventListener('click', () => {
                         isUserMerchant = true;
                         formModal.classList.add('hidden');
                         renderUserCenterPage();
                         showPage('merchantDashboard');
                     });
+                    document.getElementById('reject-reason-input')?.addEventListener('input', (e) => {
+                        window.merchantLastRejectReason = e.target.value || '';
+                    });
                 }
 
-                function renderMerchantStep1() {
+                function renderStep1Info() {
                     return `
                         <div class="space-y-4 px-2">
-                            <div class="bg-blue-50 p-3 rounded-lg text-sm text-blue-800">填寫基本資料以開始申請</div>
+                            <div class="bg-blue-50 p-3 rounded-lg text-sm text-blue-800">商家填寫資料（名稱、國家、地區、地址、證件…）</div>
                             <div>
                                 <label class="text-sm font-medium text-[#886364]">店家名稱</label>
                                 <input type="text" class="form-input-styled mt-1" placeholder="例如：快樂爪子旅館">
                             </div>
-                            <div>
-                                <label class="text-sm font-medium text-[#886364]">聯絡電話</label>
-                                <input type="tel" class="form-input-styled mt-1" placeholder="09xx-xxx-xxx">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-sm font-medium text-[#886364]">國家</label>
+                                    <input type="text" class="form-input-styled mt-1" placeholder="台灣">
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-[#886364]">地區</label>
+                                    <input type="text" class="form-input-styled mt-1" placeholder="台北市/信義區">
+                                </div>
                             </div>
                             <div>
                                 <label class="text-sm font-medium text-[#886364]">地址</label>
                                 <input type="text" class="form-input-styled mt-1" placeholder="城市、街道、門牌">
                             </div>
-                            <div class="mt-6"><button id="merchant-next-btn" class="btn-main">下一步</button></div>
-                        </div>`;
-                }
-
-                function renderMerchantStep2() {
-                    return `
-                        <div class="space-y-4 px-2">
-                            <div>
-                                <label class="text-sm font-medium text-[#886364]">環境照片</label>
-                                <div class="mt-1 flex justify-center rounded-lg border border-dashed border-gray-300 px-6 py-10 text-sm text-gray-600">拖曳或點擊上傳</div>
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium text-[#886364]">位置標示</label>
-                                <div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center text-[#886364] text-sm">地圖預覽 (示意)</div>
-                            </div>
-                            <div class="mt-6"><button id="merchant-next-btn" class="btn-main">下一步</button></div>
-                        </div>`;
-                }
-
-                function renderMerchantStep3() {
-                    return `
-                        <div class="space-y-4 px-2">
-                            <div>
-                                <label class="text-sm font-medium text-[#886364]">主要服務與價格</label>
-                                <div class="grid grid-cols-2 gap-3 mt-2">
-                                    <label class="text-sm bg-white border rounded-xl p-3 flex items-center justify-between">過夜寄宿<input type="number" class="form-input-styled w-24 ml-2" placeholder="NT$"></label>
-                                    <label class="text-sm bg-white border rounded-xl p-3 flex items-center justify-between">日間安親<input type="number" class="form-input-styled w-24 ml-2" placeholder="每小時"></label>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="text-sm font-medium text-[#886364]">提供項目</label>
-                                <div class="grid grid-cols-2 gap-2 mt-2 text-sm">
-                                    <label class="flex items-center"><input type="checkbox" class="mr-2">室內活動區</label>
-                                    <label class="flex items-center"><input type="checkbox" class="mr-2">戶外草地</label>
-                                    <label class="flex items-center"><input type="checkbox" class="mr-2">美容服務</label>
-                                    <label class="flex items-center"><input type="checkbox" class="mr-2">接送服務</label>
-                                </div>
-                            </div>
-                            <div class="mt-6"><button id="merchant-next-btn" class="btn-main">下一步</button></div>
-                        </div>`;
-                }
-
-                function renderMerchantStep4() {
-                    return `
-                        <div class="space-y-4 px-2">
                             <div class="bg-white border rounded-xl p-3">
-                                <p class="text-sm text-[#886364] mb-2">商家身份驗證（選填）</p>
+                                <p class="text-sm text-[#886364] mb-2">身分/營業文件（示意）</p>
                                 <div class="grid gap-2 text-sm">
-                                    <label class="flex items-center justify-between">身分證/公司登記影本<input type="file" class="text-sm"></label>
+                                    <label class="flex items-center justify-between">身分證或公司登記<input type="file" class="text-sm"></label>
                                     <label class="flex items-center justify-between">營業相關文件<input type="file" class="text-sm"></label>
                                 </div>
                             </div>
-                            <div class="mt-6"><button id="merchant-submit-btn" class="btn-main">提交申請</button></div>
+                            <div class="mt-6"><button id="merchant-next-btn" class="btn-main">下一步：簡訊驗證</button></div>
+                        </div>`;
+                }
+
+                function renderStep2SMS() {
+                    return `
+                        <div class="space-y-4 px-2">
+                            <div class="bg-blue-50 p-3 rounded-lg text-sm text-blue-800">簡訊驗證手機</div>
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">手機號碼</label>
+                                <div class="flex gap-2 mt-1">
+                                    <input type="tel" class="form-input-styled flex-1" placeholder="09xx-xxx-xxx">
+                                    <button id="merchant-send-code-btn" class="px-3 h-11 rounded-full bg-gray-100 text-sm">${appState.codeSent?'重新發送':'發送驗證碼'}</button>
+                                </div>
+                            </div>
+                            ${appState.codeSent ? `
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">輸入驗證碼</label>
+                                <div class="flex gap-2 mt-1">
+                                    <input type="text" class="form-input-styled flex-1" placeholder="6 位數碼">
+                                    <button id="merchant-verify-code-btn" class="btn-main h-11 px-4">驗證</button>
+                                </div>
+                                ${appState.smsVerified?'<p class="text-xs text-emerald-600 mt-1">驗證成功</p>':''}
+                            </div>` : ''}
+                            <div class="mt-6">
+                                <button id="merchant-next-btn" class="btn-main" ${appState.smsVerified?'' : 'disabled'}>下一步：送出審核</button>
+                            </div>
+                        </div>`;
+                }
+
+                function renderStep3SubmitAndReview() {
+                    const isUnderReview = window.merchantApplicationStatus === 'under_review' || window.merchantApplicationStatus === 're_review';
+                    return `
+                        <div class="space-y-4 px-2">
+                            <div class="bg-blue-50 p-3 rounded-lg text-sm text-blue-800">送出審核（狀態：${isUnderReview?'審核中':'尚未送出'}）</div>
+                            ${!isUnderReview ? `<button id="merchant-submit-review-btn" class="btn-main w-full">送出審核</button>` : ''}
+                            ${isUnderReview ? `
+                            <div class="bg-white border rounded-xl p-4 text-sm">
+                                <p class="text-[#181111] font-bold mb-1">審核中</p>
+                                <p class="text-[#886364]">我們會於 1-3 個工作天完成審核，並以信件通知結果。</p>
+                            </div>
+                            <div class="text-xs text-[#886364]">（示意）管理者操作：
+                                <div class="flex gap-2 mt-2">
+                                    <button id="simulate-approve-btn" class="px-3 py-2 rounded-full bg-emerald-100 text-emerald-700">模擬審核通過</button>
+                                    <button id="simulate-reject-btn" class="px-3 py-2 rounded-full bg-red-100 text-red-700">模擬退審</button>
+                                </div>
+                            </div>` : ''}
+                        </div>`;
+                }
+
+                function renderStep4Outcome() {
+                    if (appState.outcome === 'approved') {
+                        return `
+                            <div class="space-y-4 px-2">
+                                <div class="bg-white border rounded-xl p-4">
+                                    <p class="text-base font-bold text-[#181111] mb-1">審核通過</p>
+                                    <p class="text-sm text-[#886364]">已寄出入駐成功信件，歡迎成為合作商家！</p>
+                                </div>
+                                <button id="go-dashboard-btn" class="btn-main w-full">進入商家後台</button>
+                            </div>`;
+                    }
+                    return `
+                        <div class="space-y-4 px-2">
+                            <div class="bg-white border rounded-xl p-4">
+                                <p class="text-base font-bold text-[#181111] mb-1">退審</p>
+                                <p class="text-sm text-[#886364] mb-3">以下為不通過原因，請更新資料後再次送出。</p>
+                                <textarea id="reject-reason-input" class="form-input-styled w-full" rows="3" placeholder="範例：資料不完整、地址無法驗證等">${window.merchantLastRejectReason}</textarea>
+                            </div>
+                            <div class="flex gap-2">
+                                <button id="resubmit-btn" class="btn-main flex-1">更新資料並再次送出</button>
+                            </div>
                         </div>`;
                 }
 
