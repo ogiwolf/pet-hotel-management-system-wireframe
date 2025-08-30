@@ -1586,6 +1586,9 @@
                         // 更新預訂資料
                         bookingData.serviceType = 'overnight';
                         console.log('預訂資料已更新:', bookingData);
+                        
+                        // 更新步驟指示器到步驟2
+                        updateStepIndicator(2);
                     } else {
                         console.error('找不到步驟元素');
                     }
@@ -1622,6 +1625,9 @@
                         // 更新預訂資料
                         bookingData.serviceType = 'daycare';
                         console.log('預訂資料已更新:', bookingData);
+                        
+                        // 更新步驟指示器到步驟2
+                        updateStepIndicator(2);
                     } else {
                         console.error('找不到步驟元素');
                     }
@@ -1699,6 +1705,9 @@
                         step1.style.display = 'block';
                         console.log('步驟1已顯示');
                         
+                        // 更新步驟指示器回到步驟1
+                        updateStepIndicator(1);
+                        
                         // 重置方案選擇狀態
                         document.querySelectorAll('.plan-option').forEach(option => {
                             option.classList.remove('border-[#181111]', 'bg-blue-50');
@@ -1768,6 +1777,9 @@
                                 step3.style.display = 'block';
                                 console.log('步驟3已顯示');
                                 
+                                // 更新步驟指示器到步驟3
+                                updateStepIndicator(3);
+                                
                                 // 根據服務類型顯示對應的時段選擇
                                 if (bookingData.serviceType === 'overnight') {
                                     const overnightDateSelection = document.getElementById('overnight-date-selection');
@@ -1814,6 +1826,9 @@
                         // 顯示步驟2
                         step2.style.display = 'block';
                         console.log('步驟2已顯示');
+                        
+                        // 更新步驟指示器回到步驟2
+                        updateStepIndicator(2);
                         
                         // 重置時段選擇狀態
                         if (bookingData.serviceType === 'overnight') {
@@ -2185,6 +2200,9 @@
             function initializeBookingFunctions() {
                 attachPlanSelectionListeners();
                 attachTimeSelectionListeners();
+                
+                // 初始化步驟指示器為步驟1
+                updateStepIndicator(1);
             }
 
             // 綁定時段選擇事件
