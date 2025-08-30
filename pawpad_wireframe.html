@@ -309,6 +309,27 @@
             opacity: 1 !important;
         }
 
+        /* 設定頁面標籤樣式 */
+        .settings-tab-btn {
+            background-color: #f3f4f6;
+            color: #6b7280;
+            transition: all 0.2s ease;
+        }
+        
+        .settings-tab-btn.active {
+            background-color: #181111;
+            color: white;
+        }
+        
+        .settings-tab-btn:hover:not(.active) {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+        
+        .settings-tab-content {
+            transition: opacity 0.3s ease;
+        }
+
         /* 日間安親時間選擇優化 */
         .daycare-time-selection {
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
@@ -570,6 +591,7 @@
             <div id="chat-page" class="page-content hidden"></div>
             <div id="calendar-management-page" class="page-content hidden"></div>
             <div id="booking-flow-page" class="page-content hidden"></div>
+            <div id="settings-page" class="page-content hidden"></div>
         </div>
 
         <!-- 全螢幕模態框 (用於新增/編輯) -->
@@ -688,6 +710,7 @@
                 packageManagement: document.getElementById('package-management-page'),
                 calendarManagement: document.getElementById('calendar-management-page'),
                 bookingFlow: document.getElementById('booking-flow-page'),
+                settings: document.getElementById('settings-page'),
             };
             const calendarModal = document.getElementById('calendar-modal');
             const formModal = document.getElementById('form-modal');
@@ -710,6 +733,7 @@
                     if (pageKey === 'favorites') renderFavoritesPage();
                     if (pageKey === 'calendarManagement') renderCalendarManagementPage();
                     if (pageKey === 'bookingFlow') renderBookingFlowPage();
+                    if (pageKey === 'settings') renderSettingsPage();
                 }
                 updateNavActiveState(pageKey);
             }
@@ -2228,8 +2252,10 @@
                     <div id="account-privacy" class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center cursor-pointer"><span>隱私</span><span class="text-[#886364]">›</span></div>
                     <div id="account-referral" class="bg-white p-4 rounded-xl border border-gray-100 flex justify_between items-center cursor-pointer"><span>我的推薦代碼</span><span class="text-[#886364]">›</span></div>
                     <div id="account-coupons" class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center cursor-pointer"><span>優惠券列表</span><span class="text-[#886364]">›</span></div>
-                    <div id="account-notifications" class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center cursor-pointer"><span>通知設定</span><span class="text-[#886364]">›</span></div>
-                    <div id="account-settings" class="bg-white p-4 rounded-xl border border-gray-100 flex justify_between items-center cursor-pointer"><span>設定</span><span class="text-[#886364]">›</span></div>
+                    <div id="account-settings" class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center cursor-pointer">
+                        <span>設定</span>
+                        <span class="text-[#886364]">›</span>
+                    </div>
                 </div>
 
                 <div class="h-2 bg-gray-100"></div>
@@ -2268,8 +2294,7 @@
                 document.getElementById('account-privacy')?.addEventListener('click', openPrivacyModal);
                 document.getElementById('account-referral')?.addEventListener('click', openReferralModal);
                 document.getElementById('account-coupons')?.addEventListener('click', openCouponsModal);
-                document.getElementById('account-notifications')?.addEventListener('click', () => openSettingsModal('notifications'));
-                document.getElementById('account-settings')?.addEventListener('click', () => openSettingsModal());
+                document.getElementById('account-settings')?.addEventListener('click', () => showPage('settings'));
                 document.getElementById('account-logout')?.addEventListener('click', () => { alert('已登出 (模擬)'); showPage('home'); });
             }
 
@@ -2462,50 +2487,375 @@
 
             function openSettingsModal(activeTab = 'general') {
                 const html = `
-                    <div class="flex justify-between items-center mb-2"><h2 class="text-lg font-bold text-[#181111]">設定</h2><button id="modal-close-btn" class="text-2xl">&times;</button></div>
-                    <div class="flex gap-2 mb-3 text-sm">
-                        <button data-tab="general" class="px-3 py-1 rounded-full ${activeTab==='general'?'bg-[#181111] text-white':'bg-gray-100'}">一般</button>
-                        <button data-tab="notifications" class="px-3 py-1 rounded-full ${activeTab==='notifications'?'bg-[#181111] text-white':'bg-gray-100'}">通知</button>
-                        <button data-tab="account" class="px-3 py-1 rounded-full ${activeTab==='account'?'bg-[#181111] text-white':'bg-gray-100'}">帳號</button>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold text-[#181111]">設定</h2>
+                        <button id="modal-close-btn" class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
                     </div>
-                    <div id="settings-content" class="space-y-3"></div>
+                    
+                    <!-- 設定分類標籤 -->
+                    <div class="flex gap-2 mb-6 text-sm overflow-x-auto pb-2">
+                        <button data-tab="general" class="px-4 py-2 rounded-full whitespace-nowrap ${activeTab==='general'?'bg-[#181111] text-white':'bg-gray-100 text-gray-600 hover:bg-gray-200'}">一般設定</button>
+                        <button data-tab="notifications" class="px-4 py-2 rounded-full whitespace-nowrap ${activeTab==='notifications'?'bg-[#181111] text-white':'bg-gray-100 text-gray-600 hover:bg-gray-200'}">通知設定</button>
+                        <button data-tab="account" class="px-4 py-2 rounded-full whitespace-nowrap ${activeTab==='account'?'bg-[#181111] text-white':'bg-gray-100 text-gray-600 hover:bg-gray-200'}">帳號設定</button>
+                        <button data-tab="app" class="px-4 py-2 rounded-full whitespace-nowrap ${activeTab==='app'?'bg-[#181111] text-white':'bg-gray-100 text-gray-600 hover:bg-gray-200'}">應用程式</button>
+                        <button data-tab="payment" class="px-4 py-2 rounded-full whitespace-nowrap ${activeTab==='payment'?'bg-[#181111] text-white':'bg-gray-100 text-gray-600 hover:bg-gray-200'}">付款設定</button>
+                        <button data-tab="pets" class="px-4 py-2 rounded-full whitespace-nowrap ${activeTab==='pets'?'bg-[#181111] text-white':'bg-gray-100 text-gray-600 hover:bg-gray-200'}">寵物設定</button>
+                        ${isUserMerchant ? `<button data-tab="merchant" class="px-4 py-2 rounded-full whitespace-nowrap ${activeTab==='merchant'?'bg-[#181111] text-white':'bg-gray-100 text-gray-600 hover:bg-gray-200'}">商家設定</button>` : ''}
+                    </div>
+                    
+                    <!-- 設定內容區域 -->
+                    <div id="settings-content" class="space-y-4 max-h-96 overflow-y-auto"></div>
                 `;
+                
                 const modal = openOverlayWithContent(html);
                 const content = modal.querySelector('#settings-content');
 
                 function renderTab(tab){
+                    // 更新標籤狀態
                     modal.querySelectorAll('[data-tab]')?.forEach(btn=>{
                         btn.classList.toggle('bg-[#181111]', btn.dataset.tab===tab);
                         btn.classList.toggle('text-white', btn.dataset.tab===tab);
                         btn.classList.toggle('bg-gray-100', btn.dataset.tab!==tab);
+                        btn.classList.toggle('text-gray-600', btn.dataset.tab!==tab);
+                        btn.classList.toggle('hover:bg-gray-200', btn.dataset.tab!==tab);
                     });
+                    
+                    // 渲染對應內容
                     if(tab==='notifications'){
                         content.innerHTML = `
-                            <label class="flex items-center justify-between bg-white border rounded-xl p-3 text-sm"><span>推播通知</span><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></label>
-                            <label class="flex items-center justify-between bg-white border rounded-xl p-3 text-sm"><span>訂單更新</span><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></label>
+                            <div class="bg-white border border-gray-200 rounded-xl p-4">
+                                <h3 class="font-semibold text-[#181111] mb-3">通知偏好設定</h3>
+                                <div class="space-y-3">
+                                    <label class="flex items-center justify-between">
+                                        <div>
+                                            <span class="text-sm font-medium">推播通知</span>
+                                            <p class="text-xs text-gray-500">接收應用程式推播通知</p>
+                                        </div>
+                                        <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                    </label>
+                                    <label class="flex items-center justify-between">
+                                        <div>
+                                            <span class="text-sm font-medium">訂單更新</span>
+                                            <p class="text-xs text-gray-500">訂單狀態變更通知</p>
+                                        </div>
+                                        <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                    </label>
+                                    <label class="flex items-center justify-between">
+                                        <div>
+                                            <span class="text-sm font-medium">優惠活動</span>
+                                            <p class="text-xs text-gray-500">限時優惠與活動通知</p>
+                                        </div>
+                                        <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                    </label>
+                                    <label class="flex items-center justify-between">
+                                        <div>
+                                            <span class="text-sm font-medium">系統公告</span>
+                                            <p class="text-xs text-gray-500">重要系統更新通知</p>
+                                        </div>
+                                        <label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white border border-gray-200 rounded-xl p-4">
+                                <h3 class="font-semibold text-[#181111] mb-3">通知時間設定</h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="text-sm font-medium">安靜時間</label>
+                                        <div class="flex gap-2 mt-2">
+                                            <select class="form-input-styled text-sm">
+                                                <option>22:00</option><option>23:00</option><option>00:00</option>
+                                            </select>
+                                            <span class="text-sm text-gray-500 self-center">至</span>
+                                            <select class="form-input-styled text-sm">
+                                                <option>07:00</option><option>08:00</option><option>09:00</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         `;
                     } else if(tab==='account'){
                         content.innerHTML = `
-                            <div class="bg-white border rounded-xl p-3 text-sm">
-                                <p class="mb-2 font-medium">帳號管理</p>
-                                <div class="flex gap-2 flex-wrap">
-                                    <button id="settings-change-password" class="py-2 px-3 bg-gray-200 rounded-full text-xs">變更密碼</button>
-                                    <button id="settings-referral-btn" class="py-2 px-3 bg-gray-200 rounded-full text-xs">查看推薦碼</button>
+                            <div class="bg-white border border-gray-200 rounded-xl p-4">
+                                <h3 class="font-semibold text-[#181111] mb-3">帳號管理</h3>
+                                <div class="space-y-3">
+                                    <button id="settings-change-password" class="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <span class="text-sm font-medium">變更密碼</span>
+                                                <p class="text-xs text-gray-500">更新您的登入密碼</p>
+                                            </div>
+                                            <span class="text-gray-400">›</span>
+                                        </div>
+                                    </button>
+                                    <button id="settings-referral-btn" class="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <span class="text-sm font-medium">查看推薦碼</span>
+                                                <p class="text-xs text-gray-500">分享給朋友獲得優惠</p>
+                                            </div>
+                                            <span class="text-gray-400">›</span>
+                                        </div>
+                                    </button>
+                                    <button class="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <span class="text-sm font-medium">資料下載</span>
+                                                <p class="text-xs text-gray-500">下載您的個人資料</p>
+                                            </div>
+                                            <span class="text-gray-400">›</span>
+                                        </div>
+                                    </button>
+                                    <button class="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-red-600">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <span class="text-sm font-medium">刪除帳號</span>
+                                                <p class="text-xs text-gray-500">永久刪除您的帳號</p>
+                                            </div>
+                                            <span class="text-gray-400">›</span>
+                                        </div>
+                                    </button>
                                 </div>
                             </div>
                         `;
                         content.querySelector('#settings-referral-btn')?.addEventListener('click', () => openReferralModal());
-                    } else {
+                    } else if(tab==='app'){
                         content.innerHTML = `
-                            <div class="bg-white border rounded-xl p-3 text-sm">
-                                <label class="block mb-1">語言</label>
-                                <select class="form-input-styled"><option>繁體中文</option><option>English</option></select>
+                            <div class="bg-white border border-gray-200 rounded-xl p-4">
+                                <h3 class="font-semibold text-[#181111] mb-3">應用程式設定</h3>
+                                <div class="space-y-3">
+                                    <label class="flex items-center justify-between">
+                                        <div>
+                                            <span class="text-sm font-medium">自動登入</span>
+                                            <p class="text-xs text-gray-500">保持登入狀態</p>
+                                        </div>
+                                        <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                    </label>
+                                    <label class="flex items-center justify-between">
+                                        <div>
+                                            <span class="text-sm font-medium">生物辨識登入</span>
+                                            <p class="text-xs text-gray-500">使用指紋或臉部辨識</p>
+                                        </div>
+                                        <label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label>
+                                    </label>
+                                    <label class="flex items-center justify-between">
+                                        <div>
+                                            <span class="text-sm font-medium">資料同步</span>
+                                            <p class="text-xs text-gray-500">跨裝置同步資料</p>
+                                        </div>
+                                        <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white border border-gray-200 rounded-xl p-4">
+                                <h3 class="font-semibold text-[#181111] mb-3">快取管理</h3>
+                                <div class="space-y-3">
+                                    <button class="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <span class="text-sm font-medium">清除快取</span>
+                                                <p class="text-xs text-gray-500">釋放儲存空間</p>
+                                            </div>
+                                            <span class="text-gray-400">›</span>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    } else if(tab==='payment'){
+                        content.innerHTML = `
+                            <div class="bg-white border border-gray-200 rounded-xl p-4">
+                                <h3 class="font-semibold text-[#181111] mb-3">付款設定</h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="text-sm font-medium">預設付款方式</label>
+                                        <select class="form-input-styled mt-2">
+                                            <option>信用卡 (****1234)</option>
+                                            <option>Apple Pay</option>
+                                            <option>Google Pay</option>
+                                        </select>
+                                    </div>
+                                    <label class="flex items-center justify-between">
+                                        <div>
+                                            <span class="text-sm font-medium">自動儲存付款方式</span>
+                                            <p class="text-xs text-gray-500">方便下次使用</p>
+                                        </div>
+                                        <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white border border-gray-200 rounded-xl p-4">
+                                <h3 class="font-semibold text-[#181111] mb-3">發票設定</h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="text-sm font-medium">發票類型</label>
+                                        <select class="form-input-styled mt-2">
+                                            <option>電子發票</option>
+                                            <option>紙本發票</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium">統一編號</label>
+                                        <input type="text" class="form-input-styled mt-2" placeholder="選填">
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    } else if(tab==='pets'){
+                        content.innerHTML = `
+                            <div class="bg-white border border-gray-200 rounded-xl p-4">
+                                <h3 class="font-semibold text-[#181111] mb-3">寵物設定</h3>
+                                <div class="space-y-3">
+                                    <label class="flex items-center justify-between">
+                                        <div>
+                                            <span class="text-sm font-medium">預設寵物資訊</span>
+                                            <p class="text-xs text-gray-500">自動填入寵物資料</p>
+                                        </div>
+                                        <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                    </label>
+                                    <label class="flex items-center justify-between">
+                                        <div>
+                                            <span class="text-sm font-medium">特殊需求記錄</span>
+                                            <p class="text-xs text-gray-500">記住寵物特殊需求</p>
+                                        </div>
+                                        <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                    </label>
+                                    <label class="flex items-center justify-between">
+                                        <div>
+                                            <span class="text-sm font-medium">過敏資訊提醒</span>
+                                            <p class="text-xs text-gray-500">提醒商家注意過敏</p>
+                                        </div>
+                                        <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white border border-gray-200 rounded-xl p-4">
+                                <h3 class="font-semibold text-[#181111] mb-3">寵物檔案</h3>
+                                <div class="space-y-3">
+                                    <button class="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <span class="text-sm font-medium">管理寵物檔案</span>
+                                                <p class="text-xs text-gray-500">編輯寵物詳細資訊</p>
+                                            </div>
+                                            <span class="text-gray-400">›</span>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    } else if(tab==='merchant' && isUserMerchant){
+                        content.innerHTML = `
+                            <div class="bg-white border border-gray-200 rounded-xl p-4">
+                                <h3 class="font-semibold text-[#181111] mb-3">商家設定</h3>
+                                <div class="space-y-3">
+                                    <label class="flex items-center justify-between">
+                                        <div>
+                                            <span class="text-sm font-medium">自動回覆</span>
+                                            <p class="text-xs text-gray-500">啟用自動回覆功能</p>
+                                        </div>
+                                        <label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label>
+                                    </label>
+                                    <label class="flex items-center justify-between">
+                                        <div>
+                                            <span class="text-sm font-medium">營業時間提醒</span>
+                                            <p class="text-xs text-gray-500">營業時間變更通知</p>
+                                        </div>
+                                        <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white border border-gray-200 rounded-xl p-4">
+                                <h3 class="font-semibold text-[#181111] mb-3">商家管理</h3>
+                                <div class="space-y-3">
+                                    <button class="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <span class="text-sm font-medium">營業時間設定</span>
+                                                <p class="text-xs text-gray-500">設定每週營業時間</p>
+                                            </div>
+                                            <span class="text-gray-400">›</span>
+                                        </div>
+                                    </button>
+                                    <button class="w-full text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <span class="text-sm font-medium">價格設定</span>
+                                                <p class="text-xs text-gray-500">管理服務價格</p>
+                                            </div>
+                                            <span class="text-gray-400">›</span>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        // 一般設定
+                        content.innerHTML = `
+                            <div class="bg-white border border-gray-200 rounded-xl p-4">
+                                <h3 class="font-semibold text-[#181111] mb-3">基本設定</h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="text-sm font-medium">語言</label>
+                                        <select class="form-input-styled mt-2">
+                                            <option>繁體中文</option>
+                                            <option>English</option>
+                                            <option>日本語</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium">地區</label>
+                                        <select class="form-input-styled mt-2">
+                                            <option>台灣</option>
+                                            <option>香港</option>
+                                            <option>澳門</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium">貨幣</label>
+                                        <select class="form-input-styled mt-2">
+                                            <option>新台幣 (NT$)</option>
+                                            <option>港幣 (HK$)</option>
+                                            <option>人民幣 (¥)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white border border-gray-200 rounded-xl p-4">
+                                <h3 class="font-semibold text-[#181111] mb-3">外觀設定</h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="text-sm font-medium">主題</label>
+                                        <div class="flex gap-2 mt-2">
+                                            <button class="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white text-gray-700">淺色</button>
+                                            <button class="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-800 text-white">深色</button>
+                                            <button class="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-100 text-gray-700">自動</button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium">字體大小</label>
+                                        <select class="form-input-styled mt-2">
+                                            <option>小</option>
+                                            <option selected>中</option>
+                                            <option>大</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         `;
                     }
                 }
 
+                // 綁定標籤點擊事件
                 modal.querySelectorAll('[data-tab]')?.forEach(btn=>btn.addEventListener('click', ()=>renderTab(btn.dataset.tab)));
+                
+                // 初始渲染
                 renderTab(activeTab);
             }
 
@@ -2818,6 +3168,354 @@
                     </div>
                 </div>
                 `;
+            }
+
+            function renderSettingsPage() {
+                const container = pages.settings;
+                container.innerHTML = `
+                <div class="sticky top-0 z-10 bg-white border-b border-gray-100">
+                    <div class="px-4 py-3 flex items-center justify-between">
+                        <button id="settings-back-btn" class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256">
+                                <path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"></path>
+                            </svg>
+                        </button>
+                        <h2 class="text-[#181111] text-base font-bold">設定</h2>
+                        <div class="w-8"></div>
+                    </div>
+                </div>
+
+                <div class="p-4">
+                    <!-- 標籤導航 -->
+                    <div class="flex gap-2 overflow-x-auto pb-2 mb-4">
+                        <button class="settings-tab-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap active" data-tab="general">一般設定</button>
+                        <button class="settings-tab-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-tab="notifications">通知設定</button>
+                        <button class="settings-tab-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-tab="account">帳號設定</button>
+                        <button class="settings-tab-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-tab="app">應用程式</button>
+                        <button class="settings-tab-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-tab="payment">付款設定</button>
+                        <button class="settings-tab-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-tab="pets">寵物設定</button>
+                        ${isUserMerchant ? '<button class="settings-tab-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-tab="merchant">商家設定</button>' : ''}
+                    </div>
+
+                    <!-- 設定內容區域 -->
+                    <div id="settings-content" class="space-y-6">
+                        <!-- 一般設定 -->
+                        <div id="general-settings" class="settings-tab-content active">
+                            <h3 class="text-lg font-bold text-[#181111] mb-4">一般設定</h3>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <label class="block text-sm font-medium text-[#181111] mb-2">語言</label>
+                                    <select class="form-input-styled">
+                                        <option value="zh-TW">繁體中文</option>
+                                        <option value="en">English</option>
+                                        <option value="ja">日本語</option>
+                                    </select>
+                                </div>
+
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <label class="block text-sm font-medium text-[#181111] mb-2">主題</label>
+                                    <div class="flex gap-2">
+                                        <button class="px-4 py-2 rounded-lg bg-[#181111] text-white text-sm font-medium">淺色</button>
+                                        <button class="px-4 py-2 rounded-lg bg-gray-200 text-[#181111] text-sm font-medium border border-gray-200">深色</button>
+                                        <button class="px-4 py-2 rounded-lg bg-gray-200 text-[#181111] text-sm font-medium border border-gray-200">自動</button>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <label class="block text-sm font-medium text-[#181111] mb-2">時區</label>
+                                    <select class="form-input-styled">
+                                        <option value="Asia/Taipei">台北 (GMT+8)</option>
+                                        <option value="Asia/Tokyo">東京 (GMT+9)</option>
+                                        <option value="America/New_York">紐約 (GMT-5)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 通知設定 -->
+                        <div id="notifications-settings" class="settings-tab-content hidden">
+                            <h3 class="text-lg font-bold text-[#181111] mb-4">通知設定</h3>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <label class="block text-sm font-medium text-[#181111]">推播通知</label>
+                                            <p class="text-xs text-[#886364] mt-1">接收重要訊息與更新</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <label class="block text-sm font-medium text-[#181111]">電子郵件通知</label>
+                                            <p class="text-xs text-[#886364] mt-1">接收訂單確認與優惠資訊</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                        <!-- 帳號設定 -->
+                        <div id="account-settings" class="settings-tab-content hidden">
+                            <h3 class="text-lg font-bold text-[#181111] mb-4">帳號設定</h3>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <label class="block text-sm font-medium text-[#181111] mb-2">電子郵件</label>
+                                    <input type="email" value="james@example.com" class="form-input-styled">
+                                </div>
+
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <label class="block text-sm font-medium text-[#181111] mb-2">手機號碼</label>
+                                    <input type="tel" value="+886 912-345-678" class="form-input-styled">
+                                </div>
+
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <button class="btn-main h-11">變更密碼</button>
+                                </div>
+
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <button class="btn-main h-11 bg-red-600 hover:bg-red-700">刪除帳號</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 應用程式設定 -->
+                        <div id="app-settings" class="settings-tab-content hidden">
+                            <h3 class="text-lg font-bold text-[#181111] mb-4">應用程式</h3>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <label class="block text-sm font-medium text-[#181111]">自動更新</label>
+                                            <p class="text-xs text-[#886364] mt-1">自動下載並安裝更新</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <label class="block text-sm font-medium text-[#181111]">位置服務</label>
+                                            <p class="text-xs text-[#886364] mt-1">允許應用程式存取位置</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <label class="block text-sm font-medium text-[#181111]">相機存取</label>
+                                            <p class="text-xs text-[#886364] mt-1">允許應用程式存取相機</p>
+                                        </div>
+                                        <label class="text-sm text-[#886364]">已允許</label>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <button class="btn-main h-11">清除快取</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 付款設定 -->
+                        <div id="payment-settings" class="settings-tab-content hidden">
+                            <h3 class="text-lg font-bold text-[#181111] mb-4">付款設定</h3>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <h4 class="font-medium text-[#181111] mb-3">預設付款方式</h4>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                            <input type="radio" name="default-payment" id="card-1" checked>
+                                            <label for="card-1" class="flex-1">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-sm font-medium">💳 Visa ****1234</span>
+                                                    <span class="text-xs text-[#886364]">到期日: 12/25</span>
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                                            <input type="radio" name="default-payment" id="card-2">
+                                            <label for="card-2" class="flex-1">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-sm font-medium">💳 Mastercard ****5678</span>
+                                                    <span class="text-xs text-[#886364]">到期日: 08/26</span>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <button class="btn-main h-11">新增付款方式</button>
+                                </div>
+
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <h4 class="font-medium text-[#181111] mb-3">發票設定</h4>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center gap-3">
+                                            <input type="radio" name="invoice" id="invoice-1" checked>
+                                            <label for="invoice" class="text-sm">電子發票</label>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <input type="radio" name="invoice" id="invoice-2">
+                                            <label for="invoice" class="text-sm">紙本發票</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 寵物設定 -->
+                        <div id="pets-settings" class="settings-tab-content hidden">
+                            <h3 class="text-lg font-bold text-[#181111] mb-4">寵物設定</h3>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <label class="block text-sm font-medium text-[#181111]">寵物檔案同步</label>
+                                            <p class="text-xs text-[#886364] mt-1">自動同步寵物資訊到雲端</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <label class="block text-sm font-medium text-[#181111]">健康記錄提醒</label>
+                                            <p class="text-xs text-[#886364] mt-1">定期提醒寵物健康檢查</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <label class="block text-sm font-medium text-[#181111] mb-2">特殊需求記錄</label>
+                                    <textarea class="form-input-styled" rows="3" placeholder="記錄寵物的特殊需求、過敏原等資訊..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 商家設定 -->
+                        ${isUserMerchant ? `
+                        <div id="merchant-settings" class="settings-tab-content hidden">
+                            <h3 class="text-lg font-bold text-[#181111] mb-4">商家設定</h3>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <label class="block text-sm font-medium text-[#181111]">自動確認訂單</label>
+                                            <p class="text-xs text-[#886364] mt-1">自動確認符合條件的訂單</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox">
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <label class="block text-sm font-medium text-[#181111]">庫存警告</label>
+                                            <p class="text-xs text-[#886364] mt-1">庫存不足時發送通知</p>
+                                        </div>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <label class="block text-sm font-medium text-[#181111] mb-2">營業時間</label>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label class="block text-xs text-[#886364] mb-1">開始時間</label>
+                                            <input type="time" value="09:00" class="form-input-styled text-sm">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs text-[#886364] mb-1">結束時間</label>
+                                            <input type="time" value="18:00" class="form-input-styled text-sm">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <label class="block text-sm font-medium text-[#181111] mb-2">自動回覆訊息</label>
+                                    <textarea class="form-input-styled" rows="3" placeholder="設定自動回覆客戶的訊息..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+                `;
+
+                attachSettingsListeners();
+            }
+
+            function attachSettingsListeners() {
+                // 返回按鈕
+                document.getElementById('settings-back-btn')?.addEventListener('click', () => showPage('account'));
+                
+                // 標籤切換
+                document.querySelectorAll('.settings-tab-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const tabName = btn.dataset.tab;
+                        switchSettingsTab(tabName);
+                    });
+                });
+            }
+
+            function switchSettingsTab(activeTab) {
+                // 更新標籤按鈕狀態
+                document.querySelectorAll('.settings-tab-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.tab === activeTab);
+                });
+                
+                // 隱藏所有內容
+                document.querySelectorAll('.settings-tab-content').forEach(content => {
+                    content.classList.add('hidden');
+                });
+                
+                // 顯示選中的內容
+                const targetContent = document.getElementById(`${activeTab}-settings`);
+                if (targetContent) {
+                    targetContent.classList.remove('hidden');
+                }
             }
 
             function renderMerchantDashboard() {
