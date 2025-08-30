@@ -3190,10 +3190,12 @@
                     <div class="flex gap-2 overflow-x-auto pb-2 mb-4">
                         <button class="settings-tab-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap active" data-tab="general">一般設定</button>
                         <button class="settings-tab-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-tab="notifications">通知設定</button>
-                        <button class="settings-tab-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-tab="account">帳號設定</button>
-                        <button class="settings-tab-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-tab="app">應用程式</button>
+                        <button class="settings-tab-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-tab="profile">個人資料</button>
+                        <button class="settings-tab-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-tab="system">系統設定</button>
                         <button class="settings-tab-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-tab="payment">付款設定</button>
                         <button class="settings-tab-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-tab="pets">寵物設定</button>
+
+                        <button class="settings-tab-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-tab="support">支援</button>
                         ${isUserMerchant ? '<button class="settings-tab-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-tab="merchant">商家設定</button>' : ''}
                     </div>
 
@@ -3235,7 +3237,6 @@
                                     <div class="flex justify-between items-center">
                                         <div>
                                             <label class="block text-sm font-medium text-[#181111]">推播通知</label>
-                                            <p class="text-xs text-[#886364] mt-1">接收重要訊息與更新</p>
                                         </div>
                                         <label class="toggle-switch">
                                             <input type="checkbox" checked>
@@ -3248,7 +3249,6 @@
                                     <div class="flex justify-between items-center">
                                         <div>
                                             <label class="block text-sm font-medium text-[#181111]">電子郵件通知</label>
-                                            <p class="text-xs text-[#886364] mt-1">接收訂單確認與優惠資訊</p>
                                         </div>
                                         <label class="toggle-switch">
                                             <input type="checkbox" checked>
@@ -3261,11 +3261,16 @@
                             </div>
                         </div>
 
-                        <!-- 帳號設定 -->
-                        <div id="account-settings" class="settings-tab-content hidden">
-                            <h3 class="text-lg font-bold text-[#181111] mb-4">帳號設定</h3>
+                        <!-- 個人資料 -->
+                        <div id="profile-settings" class="settings-tab-content hidden">
+                            <h3 class="text-lg font-bold text-[#181111] mb-4">個人資料</h3>
                             
                             <div class="space-y-4">
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <label class="block text-sm font-medium text-[#181111] mb-2">姓名</label>
+                                    <input type="text" value="James Chen" class="form-input-styled">
+                                </div>
+
                                 <div class="bg-white p-4 rounded-xl border border-gray-100">
                                     <label class="block text-sm font-medium text-[#181111] mb-2">電子郵件</label>
                                     <input type="email" value="james@example.com" class="form-input-styled">
@@ -3281,34 +3286,23 @@
                                 </div>
 
                                 <div class="bg-white p-4 rounded-xl border border-gray-100">
-                                    <button class="btn-main h-11 bg-red-600 hover:bg-red-700">刪除帳號</button>
+                                    <div class="flex gap-3">
+                                        <button class="btn-main h-11 flex-1">儲存變更</button>
+                                        <button class="btn-secondary h-11 flex-1">取消</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- 應用程式設定 -->
-                        <div id="app-settings" class="settings-tab-content hidden">
-                            <h3 class="text-lg font-bold text-[#181111] mb-4">應用程式</h3>
+                        <!-- 系統設定 -->
+                        <div id="system-settings" class="settings-tab-content hidden">
+                            <h3 class="text-lg font-bold text-[#181111] mb-4">系統設定</h3>
                             
                             <div class="space-y-4">
                                 <div class="bg-white p-4 rounded-xl border border-gray-100">
                                     <div class="flex justify-between items-center">
                                         <div>
-                                            <label class="block text-sm font-medium text-[#181111]">自動更新</label>
-                                            <p class="text-xs text-[#886364] mt-1">自動下載並安裝更新</p>
-                                        </div>
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" checked>
-                                            <span class="toggle-slider"></span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div class="bg-white p-4 rounded-xl border border-gray-100">
-                                    <div class="flex justify-between items-center">
-                                        <div>
                                             <label class="block text-sm font-medium text-[#181111]">位置服務</label>
-                                            <p class="text-xs text-[#886364] mt-1">允許應用程式存取位置</p>
                                         </div>
                                         <label class="toggle-switch">
                                             <input type="checkbox" checked>
@@ -3321,7 +3315,6 @@
                                     <div class="flex justify-between items-center">
                                         <div>
                                             <label class="block text-sm font-medium text-[#181111]">相機存取</label>
-                                            <p class="text-xs text-[#886364] mt-1">允許應用程式存取相機</p>
                                         </div>
                                         <label class="text-sm text-[#886364]">已允許</label>
                                     </div>
@@ -3391,7 +3384,6 @@
                                     <div class="flex justify-between items-center">
                                         <div>
                                             <label class="block text-sm font-medium text-[#181111]">寵物檔案同步</label>
-                                            <p class="text-xs text-[#886364] mt-1">自動同步寵物資訊到雲端</p>
                                         </div>
                                         <label class="toggle-switch">
                                             <input type="checkbox" checked>
@@ -3404,7 +3396,6 @@
                                     <div class="flex justify-between items-center">
                                         <div>
                                             <label class="block text-sm font-medium text-[#181111]">健康記錄提醒</label>
-                                            <p class="text-xs text-[#886364] mt-1">定期提醒寵物健康檢查</p>
                                         </div>
                                         <label class="toggle-switch">
                                             <input type="checkbox" checked>
@@ -3416,6 +3407,23 @@
                                 <div class="bg-white p-4 rounded-xl border border-gray-100">
                                     <label class="block text-sm font-medium text-[#181111] mb-2">特殊需求記錄</label>
                                     <textarea class="form-input-styled" rows="3" placeholder="記錄寵物的特殊需求、過敏原等資訊..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!-- 支援 -->
+                        <div id="support-settings" class="settings-tab-content hidden">
+                            <h3 class="text-lg font-bold text-[#181111] mb-4">支援</h3>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <button class="btn-main h-11 w-full">幫助中心</button>
+                                </div>
+
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <button class="btn-main h-11 w-full">意見回饋</button>
                                 </div>
                             </div>
                         </div>
