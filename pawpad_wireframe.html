@@ -366,6 +366,73 @@
             color: #181111 !important;
         }
         
+        /* 時段可用性概覽樣式 */
+        .time-availability-overview {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px solid #e2e8f0;
+        }
+        
+        /* 時間軸樣式 */
+        .timeline-container {
+            position: relative;
+            padding: 30px 0;
+        }
+        
+        .timeline-line {
+            position: relative;
+            display: flex;
+            align-items: center;
+            height: 50px;
+            background: #f3f4f6;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .timeline-segment {
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            font-weight: 600;
+            font-size: 11px;
+            text-align: center;
+            border-right: 2px solid white;
+        }
+        
+        .timeline-segment:last-child {
+            border-right: none;
+        }
+        
+        .timeline-segment.available {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        .timeline-segment.unavailable {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        
+        .timeline-segment:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+        
+        .timeline-segment.selected {
+            box-shadow: 0 0 0 3px #3b82f6, 0 4px 12px rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .segment-time {
+            font-size: 10px;
+            line-height: 1.2;
+            padding: 0 4px;
+        }
+        
 
         
         .preset-time-slots {
@@ -1092,6 +1159,35 @@
                                     
                                     <!-- 自由時段選擇 -->
                                     <div class="flexible-time-selection space-y-4">
+                                        <!-- 時段可用性概覽 -->
+                                        <div class="time-availability-overview mb-4 p-4 bg-white rounded-lg border border-gray-200">
+                                            <h5 class="text-sm font-medium text-gray-700 mb-3">今日時段可用性概覽</h5>
+                                            
+                                            <!-- 時間軸容器 -->
+                                            <div class="timeline-container mb-4">
+                                                <!-- 時間軸主線 -->
+                                                <div class="timeline-line">
+                                                    <!-- 可用時段：8:00-11:00 -->
+                                                    <div class="timeline-segment available" data-start="8" data-end="11" style="width: 25%;">
+                                                        <div class="segment-time">08:00-11:00</div>
+                                                    </div>
+                                                    <!-- 不可用時段：11:00-12:00 -->
+                                                    <div class="timeline-segment unavailable" data-start="11" data-end="12" style="width: 8.33%;">
+                                                        <div class="segment-time">11:00-12:00</div>
+                                                    </div>
+                                                    <!-- 可用時段：12:00-19:00 -->
+                                                    <div class="timeline-segment available" data-start="12" data-end="19" style="width: 58.33%;">
+                                                        <div class="segment-time">12:00-19:00</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="text-xs text-gray-500 text-center">
+                                                <span class="inline-block w-4 h-4 bg-green-500 rounded mr-2"></span>可訂購時段
+                                                <span class="inline-block w-4 h-4 bg-red-500 rounded ml-4 mr-2"></span>額滿時段
+                                            </div>
+                                        </div>
+                                        
                                         <!-- 時段選擇器 -->
                                         <div class="time-range-selector p-4 bg-gray-50 rounded-lg">
                                             <div class="grid grid-cols-2 gap-4">
@@ -1150,12 +1246,9 @@
                                         
 
                                         
-                                        <!-- 時段可用性檢查 -->
-                                        <div class="availability-check mt-4">
-                                            <button id="check-availability-btn" class="w-full p-3 bg-[#181111] text-white rounded-lg hover:bg-gray-800 transition-colors">
-                                                檢查時段可用性
-                                            </button>
-                                            <div id="availability-result" class="mt-3 p-3 rounded-lg hidden">
+                                        <!-- 時段可用性顯示 -->
+                                        <div class="availability-display mt-4">
+                                            <div id="availability-result" class="mt-3 p-3 rounded-lg">
                                                 <!-- 可用性結果將在這裡顯示 -->
                                             </div>
                                         </div>
@@ -1764,8 +1857,7 @@
                 // 綁定日間安親的時段選擇
                 bindFlexibleTimeSelection();
                 
-                // 綁定可用性檢查
-                bindAvailabilityCheck();
+
             }
             
             // 綁定靈活時段選擇
@@ -1806,6 +1898,11 @@
                     
                     updateFlexibleTimeInfo();
                     
+                    // 初始化時檢查可用性
+                    setTimeout(() => {
+                        checkTimeSlotAvailability();
+                    }, 100);
+                    
                     // 綁定開始時間變更
                     startTimeSelect.addEventListener('change', function() {
                         updateEndTimeOptions();
@@ -1816,6 +1913,9 @@
                     endTimeSelect.addEventListener('change', function() {
                         updateFlexibleTimeInfo();
                     });
+                    
+                    // 綁定時段概覽點擊事件
+                    bindTimeSlotOverviewClick();
                     
                     // 綁定服務日期變更
                     if (serviceDateInput) {
@@ -1911,41 +2011,65 @@
                         
                         // 檢查當前步驟是否可以繼續
                         checkCurrentStepCanContinue();
+                        
+                        // 自動檢查時段可用性
+                        checkTimeSlotAvailability();
+                        
+                        // 更新時段概覽的高亮顯示
+                        updateTimeSlotHighlight();
                     }
                 }
                 
                 // 公開更新方案時長提示的方法
                 window.updateDaycarePlanDuration = updatePlanDurationHint;
-            }
-            
-
-            
-            // 綁定可用性檢查
-            function bindAvailabilityCheck() {
-                const checkBtn = document.getElementById('check-availability-btn');
-                const resultDiv = document.getElementById('availability-result');
                 
-                if (checkBtn && resultDiv) {
-                    checkBtn.addEventListener('click', function() {
-                        const startHour = document.getElementById('start-time-select').value;
-                        const endHour = document.getElementById('end-time-select').value;
-                        const serviceDate = document.getElementById('detail-service-date').value;
-                        
-                        if (!serviceDate) {
-                            alert('請先選擇服務日期');
-                            return;
-                        }
-                        
-                        // 模擬檢查可用性（實際應用中會調用API）
-                        checkTimeSlotAvailability(serviceDate, startHour, endHour, resultDiv);
+                // 綁定時段概覽點擊事件
+                function bindTimeSlotOverviewClick() {
+                    // 綁定時段片段點擊
+                    document.querySelectorAll('.timeline-segment').forEach(segment => {
+                        segment.addEventListener('click', function() {
+                            const startHour = parseInt(this.dataset.start);
+                            const status = this.classList.contains('available');
+                            
+                            // 只有可用的時段才能點擊
+                            if (status) {
+                                // 設定開始時間
+                                startTimeSelect.value = startHour;
+                                
+                                // 根據方案小時數設定結束時間
+                                const planHours = getPlanHours(bookingData.selectedPlan || '1小時方案');
+                                const endHour = startHour + planHours;
+                                
+                                if (endHour <= 19) {
+                                    endTimeSelect.value = endHour;
+                                    
+                                    // 觸發更新
+                                    startTimeSelect.dispatchEvent(new Event('change'));
+                                }
+                            }
+                        });
                     });
                 }
             }
             
+
+            
+
+            
             // 檢查時段可用性
-            function checkTimeSlotAvailability(date, startHour, endHour, resultDiv) {
+            function checkTimeSlotAvailability() {
+                const startHour = document.getElementById('start-time-select').value;
+                const endHour = document.getElementById('end-time-select').value;
+                const serviceDate = document.getElementById('detail-service-date').value;
+                const resultDiv = document.getElementById('availability-result');
+                
+                if (!startHour || !endHour || !serviceDate || !resultDiv) {
+                    return;
+                }
+                
                 // 模擬可用性資料（實際應用中會從後端獲取）
                 const mockAvailability = {
+                    '08:00-09:00': { available: true, capacity: 5, booked: 1 },
                     '09:00-10:00': { available: true, capacity: 5, booked: 2 },
                     '10:00-11:00': { available: true, capacity: 5, booked: 3 },
                     '11:00-12:00': { available: false, capacity: 5, booked: 5 },
@@ -1954,8 +2078,12 @@
                     '14:00-15:00': { available: true, capacity: 5, booked: 2 },
                     '15:00-16:00': { available: true, capacity: 5, booked: 1 },
                     '16:00-17:00': { available: true, capacity: 5, booked: 0 },
-                    '17:00-18:00': { available: true, capacity: 5, booked: 1 }
+                    '17:00-18:00': { available: true, capacity: 5, booked: 1 },
+                    '18:00-19:00': { available: true, capacity: 5, booked: 1 }
                 };
+                
+                // 更新時段概覽的可用性狀態
+                updateTimeSlotOverview(mockAvailability);
                 
                 let allAvailable = true;
                 let unavailableSlots = [];
@@ -1996,6 +2124,33 @@
                 }
                 
                 resultDiv.classList.remove('hidden');
+            }
+            
+            // 更新時段概覽的可用性狀態
+            function updateTimeSlotOverview(availability) {
+                // 目前只需要更新時段片段，時間刻度已移除
+                // 可以根據需要添加其他邏輯
+            }
+            
+            // 更新時段概覽的高亮顯示
+            function updateTimeSlotHighlight() {
+                const startHour = parseInt(document.getElementById('start-time-select').value);
+                const endHour = parseInt(document.getElementById('end-time-select').value);
+                
+                // 移除所有高亮
+                document.querySelectorAll('.timeline-segment').forEach(segment => {
+                    segment.classList.remove('selected');
+                });
+                
+                // 高亮選擇的時段範圍
+                document.querySelectorAll('.timeline-segment').forEach(segment => {
+                    const segmentStart = parseInt(segment.dataset.start);
+                    const segmentEnd = parseInt(segment.dataset.end);
+                    
+                    if (startHour >= segmentStart && endHour <= segmentEnd) {
+                        segment.classList.add('selected');
+                    }
+                });
             }
             
             // 更新入住天數顯示
