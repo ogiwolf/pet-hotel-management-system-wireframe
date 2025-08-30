@@ -3379,34 +3379,167 @@
                         <div id="pets-settings" class="settings-tab-content hidden">
                             <h3 class="text-lg font-bold text-[#181111] mb-4">寵物設定</h3>
                             
+                            <!-- 寵物選擇器 -->
+                            <div class="bg-white p-4 rounded-xl border border-gray-100 mb-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <label class="block text-sm font-medium text-[#181111]">選擇寵物</label>
+                                    <button class="add-pet-btn p-2 rounded-full bg-[#181111] text-white hover:bg-gray-800">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="flex gap-2 overflow-x-auto pb-2">
+                                    <button class="pet-selector-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap active bg-[#181111] text-white" data-pet="pet1">🐕 小黃</button>
+                                    <button class="pet-selector-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-200 text-[#181111]" data-pet="pet2">🐱 咪咪</button>
+                                    <button class="pet-selector-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-200 text-[#181111]" data-pet="pet3">🐰 小白</button>
+                                </div>
+                            </div>
+
+                            <!-- 寵物詳細設定 -->
                             <div class="space-y-4">
+                                <!-- 寵物基本資訊 -->
                                 <div class="bg-white p-4 rounded-xl border border-gray-100">
-                                    <div class="flex justify-between items-center">
+                                    <h4 class="font-medium text-[#181111] mb-3">基本資訊</h4>
+                                    <div class="space-y-3">
                                         <div>
-                                            <label class="block text-sm font-medium text-[#181111]">寵物檔案同步</label>
+                                            <label class="block text-xs text-[#886364] mb-1">暱稱</label>
+                                            <input type="text" value="小黃" class="form-input-styled text-sm">
                                         </div>
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" checked>
-                                            <span class="toggle-slider"></span>
-                                        </label>
+                                        <div>
+                                            <label class="block text-xs text-[#886364] mb-1">品種</label>
+                                            <input type="text" value="黃金獵犬" class="form-input-styled text-sm">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs text-[#886364] mb-1">年齡</label>
+                                            <input type="number" value="3" class="form-input-styled text-sm" min="0" max="30">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs text-[#886364] mb-1">體重 (kg)</label>
+                                            <input type="number" value="25" class="form-input-styled text-sm" min="0" step="0.1">
+                                        </div>
                                     </div>
                                 </div>
 
+                                <!-- 寵物偏好設定 -->
                                 <div class="bg-white p-4 rounded-xl border border-gray-100">
-                                    <div class="flex justify-between items-center">
+                                    <h4 class="font-medium text-[#181111] mb-3">偏好設定</h4>
+                                    <div class="space-y-3">
                                         <div>
-                                            <label class="block text-sm font-medium text-[#181111]">健康記錄提醒</label>
+                                            <label class="block text-xs text-[#886364] mb-1">喜歡的玩具</label>
+                                            <input type="text" value="網球、飛盤" class="form-input-styled text-sm" placeholder="輸入寵物喜歡的玩具...">
                                         </div>
-                                        <label class="toggle-switch">
-                                            <input type="checkbox" checked>
-                                            <span class="toggle-slider"></span>
-                                        </label>
+                                        <div>
+                                            <label class="block text-xs text-[#886364] mb-1">喜歡的活動</label>
+                                            <input type="text" value="散步、游泳" class="form-input-styled text-sm" placeholder="輸入寵物喜歡的活動...">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs text-[#886364] mb-1">飲食偏好</label>
+                                            <input type="text" value="乾糧、雞肉" class="form-input-styled text-sm" placeholder="輸入寵物的飲食偏好...">
+                                        </div>
                                     </div>
                                 </div>
 
+                                <!-- 健康與特殊需求 -->
                                 <div class="bg-white p-4 rounded-xl border border-gray-100">
-                                    <label class="block text-sm font-medium text-[#181111] mb-2">特殊需求記錄</label>
-                                    <textarea class="form-input-styled" rows="3" placeholder="記錄寵物的特殊需求、過敏原等資訊..."></textarea>
+                                    <h4 class="font-medium text-[#181111] mb-3">健康與特殊需求</h4>
+                                    <div class="space-y-3">
+                                        <div class="space-y-3">
+                                            <div class="flex justify-between items-center">
+                                                <div>
+                                                    <label class="block text-sm font-medium text-[#181111]">健康記錄提醒</label>
+                                                    <p class="text-xs text-[#886364]">定期提醒寵物健康檢查</p>
+                                                </div>
+                                                <label class="toggle-switch">
+                                                    <input type="checkbox" checked>
+                                                    <span class="toggle-slider"></span>
+                                                </label>
+                                            </div>
+                                            
+                                            <!-- 健康提醒詳細設定 -->
+                                            <div class="pl-4 space-y-2 border-l-2 border-gray-200">
+                                                <div class="grid grid-cols-2 gap-2">
+                                                    <div>
+                                                        <label class="block text-xs text-[#886364] mb-1">疫苗提醒</label>
+                                                        <select class="form-input-styled text-xs">
+                                                            <option value="3">每3個月</option>
+                                                            <option value="6" selected>每6個月</option>
+                                                            <option value="12">每年</option>
+                                                            <option value="custom">自訂</option>
+                                                        </select>
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-xs text-[#886364] mb-1">健康檢查</label>
+                                                        <select class="form-input-styled text-xs">
+                                                            <option value="6">每6個月</option>
+                                                            <option value="12" selected>每年</option>
+                                                            <option value="18">每18個月</option>
+                                                            <option value="custom">自訂</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs text-[#886364] mb-1">下次提醒日期</label>
+                                                    <input type="date" value="2025-06-15" class="form-input-styled text-xs">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-3">
+                                            <div class="flex justify-between items-center">
+                                                <div>
+                                                    <label class="block text-sm font-medium text-[#181111]">寵物檔案同步</label>
+                                                    <p class="text-xs text-[#886364]">自動同步寵物資訊到雲端</p>
+                                                </div>
+                                                <label class="toggle-switch">
+                                                    <input type="checkbox" checked>
+                                                    <span class="toggle-slider"></span>
+                                                </label>
+                                            </div>
+                                            
+                                            <!-- 同步詳細設定 -->
+                                            <div class="pl-4 space-y-2 border-l-2 border-gray-200">
+                                                <div class="grid grid-cols-2 gap-2">
+                                                    <div>
+                                                        <label class="block text-xs text-[#886364] mb-1">同步頻率</label>
+                                                        <select class="form-input-styled text-xs">
+                                                            <option value="realtime">即時同步</option>
+                                                            <option value="hourly">每小時</option>
+                                                            <option value="daily" selected>每天</option>
+                                                            <option value="weekly">每週</option>
+                                                        </select>
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-xs text-[#886364] mb-1">同步內容</label>
+                                                        <select class="form-input-styled text-xs">
+                                                            <option value="all" selected>全部資訊</option>
+                                                            <option value="basic">基本資訊</option>
+                                                            <option value="health">健康記錄</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center gap-2">
+                                                    <input type="checkbox" id="sync-photos" checked class="w-4 h-4">
+                                                    <label for="sync-photos" class="text-xs text-[#886364]">同步寵物照片</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs text-[#886364] mb-1">過敏原</label>
+                                            <input type="text" value="海鮮、花生" class="form-input-styled text-sm" placeholder="輸入寵物的過敏原...">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs text-[#886364] mb-1">特殊需求</label>
+                                            <textarea class="form-input-styled text-sm" rows="2" placeholder="記錄寵物的特殊需求、醫療狀況等...">需要定期服藥，關節較敏感</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 儲存按鈕 -->
+                                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                    <div class="flex gap-3">
+                                        <button class="btn-main h-11 flex-1">儲存變更</button>
+                                        <button class="btn-secondary h-11 flex-1">取消</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -3499,6 +3632,19 @@
                         switchSettingsTab(tabName);
                     });
                 });
+
+                // 寵物選擇器
+                document.querySelectorAll('.pet-selector-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const petId = btn.dataset.pet;
+                        switchPetSettings(petId);
+                    });
+                });
+
+                // 新增寵物按鈕
+                document.querySelector('.add-pet-btn')?.addEventListener('click', () => {
+                    addNewPet();
+                });
             }
 
             function switchSettingsTab(activeTab) {
@@ -3517,6 +3663,30 @@
                 if (targetContent) {
                     targetContent.classList.remove('hidden');
                 }
+            }
+
+            function switchPetSettings(petId) {
+                // 更新寵物選擇器按鈕狀態
+                document.querySelectorAll('.pet-selector-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.pet === petId);
+                    if (btn.dataset.pet === petId) {
+                        btn.classList.remove('bg-gray-200', 'text-[#181111]');
+                        btn.classList.add('bg-[#181111]', 'text-white');
+                    } else {
+                        btn.classList.remove('bg-[#181111]', 'text-white');
+                        btn.classList.add('bg-gray-200', 'text-[#181111]');
+                    }
+                });
+
+                // 這裡可以根據選擇的寵物更新表單內容
+                // 實際應用中會從資料庫或狀態管理中獲取寵物資訊
+                console.log('切換到寵物:', petId);
+            }
+
+            function addNewPet() {
+                // 新增寵物的邏輯
+                // 實際應用中會開啟新增寵物的模態視窗或導航到新增頁面
+                alert('新增寵物功能 - 這裡會開啟新增寵物的表單');
             }
 
             function renderMerchantDashboard() {
