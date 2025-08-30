@@ -888,82 +888,240 @@
                     <div class="p-4 rounded-xl border border-gray-100 bg-white">
                         <h2 class="text-lg font-bold text-[#181111] mb-4">預訂服務</h2>
                         
-                        <!-- 日期選擇 -->
-                        <div class="mb-4">
-                            <h3 class="font-medium text-[#181111] mb-3">選擇日期</h3>
-                            
-                            <!-- 過夜寄宿的日期選擇 -->
-                            <div id="overnight-date-selection" class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="text-sm text-gray-600 block mb-1">入住日期</label>
-                                    <input type="date" id="detail-checkin-date" class="form-input-styled text-center">
+                        <!-- 步驟指示器 -->
+                        <div class="mb-6">
+                            <div class="flex items-center justify-center space-x-2">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 rounded-full bg-[#181111] text-white flex items-center justify-center text-sm font-bold">1</div>
+                                    <span class="ml-2 text-sm font-medium text-[#181111]">服務類型</span>
                                 </div>
-                                <div>
-                                    <label class="text-sm text-gray-600 block mb-1">退房日期</label>
-                                    <input type="date" id="detail-checkout-date" class="form-input-styled text-center">
+                                <div class="w-8 h-1 bg-gray-300"></div>
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-bold">2</div>
+                                    <span class="ml-2 text-sm font-medium text-gray-500">選擇方案</span>
+                                </div>
+                                <div class="w-8 h-1 bg-gray-300"></div>
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-bold">3</div>
+                                    <span class="ml-2 text-sm font-medium text-gray-500">選擇時段</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 步驟 1: 服務類型選擇 -->
+                        <div id="step-1-service-type" class="booking-step">
+                            <h3 class="font-medium text-[#181111] mb-4 text-center">請選擇您需要的服務類型</h3>
+                            <div class="grid grid-cols-2 gap-4 mb-6">
+                                <button id="select-overnight" class="service-type-btn p-6 border-2 border-gray-200 rounded-xl text-center hover:border-[#181111] hover:shadow-lg transition-all" data-service="overnight">
+                                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">🏠</div>
+                                    <div class="font-bold text-[#181111] text-lg mb-2">寄宿過夜</div>
+                                    <div class="text-sm text-gray-600 mb-3">適合出差旅行、度假時使用</div>
+                                    <div class="text-xs text-blue-600 font-medium">24小時專業照護</div>
+                                </button>
+                                <button id="select-daycare" class="service-type-btn p-6 border-2 border-gray-200 rounded-xl text-center hover:border-[#181111] hover:shadow-lg transition-all" data-service="daycare">
+                                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">⏰</div>
+                                    <div class="font-bold text-[#181111] text-lg mb-2">日間安親</div>
+                                    <div class="text-sm text-gray-600 mb-3">上班時間的專業陪伴</div>
+                                    <div class="text-xs text-green-600 font-medium">彈性時段選擇</div>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 步驟 2: 方案選擇 -->
+                        <div id="step-2-plan-selection" class="booking-step hidden">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-medium text-[#181111]">選擇方案</h3>
+                                <button id="back-to-service-type" class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
+                                    <span class="mr-1">←</span> 返回
+                                </button>
+                            </div>
+                            
+                            <!-- 寄宿過夜方案 -->
+                            <div id="overnight-plans" class="space-y-3 hidden">
+                                <div class="plan-option p-4 border-2 border-gray-200 rounded-lg hover:border-[#181111] cursor-pointer transition-all" data-plan="standard" data-price="1200">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <div class="font-bold text-[#181111]">標準套房</div>
+                                            <div class="text-sm text-gray-600">舒適單人房，適合小型寵物</div>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="text-lg font-bold text-green-600">NT$ 1,200</div>
+                                            <div class="text-xs text-gray-500">每晚</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="plan-option p-4 border-2 border-gray-200 rounded-lg hover:border-[#181111] cursor-pointer transition-all" data-plan="deluxe" data-price="1800">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <div class="font-bold text-[#181111]">豪華套房</div>
+                                            <div class="text-sm text-gray-600">寬敞雙人房，含獨立陽台</div>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="text-lg font-bold text-green-600">NT$ 1,800</div>
+                                            <div class="text-xs text-gray-500">每晚</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="plan-option p-4 border-2 border-gray-200 rounded-lg hover:border-[#181111] cursor-pointer transition-all" data-plan="premium" data-price="2500">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <div class="font-bold text-[#181111]">頂級套房</div>
+                                            <div class="text-sm text-gray-600">總統級待遇，含專屬管家</div>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="text-lg font-bold text-green-600">NT$ 2,500</div>
+                                            <div class="text-xs text-gray-500">每晚</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 日間安親方案 -->
+                            <div id="daycare-plans" class="space-y-3 hidden">
+                                <div class="plan-option p-4 border-2 border-gray-200 rounded-lg hover:border-[#181111] cursor-pointer transition-all" data-plan="basic" data-price="600">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <div class="font-bold text-[#181111]">基礎照護</div>
+                                            <div class="text-sm text-gray-600">基本陪伴與照護服務</div>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="text-lg font-bold text-green-600">NT$ 600</div>
+                                            <div class="text-xs text-gray-500">4小時</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="plan-option p-4 border-2 border-gray-200 rounded-lg hover:border-[#181111] cursor-pointer transition-all" data-plan="standard" data-price="960">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <div class="font-bold text-[#181111]">標準照護</div>
+                                            <div class="text-sm text-gray-600">含戶外活動與營養餐點</div>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="text-lg font-bold text-green-600">NT$ 960</div>
+                                            <div class="text-xs text-gray-500">8小時</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="plan-option p-4 border-2 border-gray-200 rounded-lg hover:border-[#181111] cursor-pointer transition-all" data-plan="premium" data-price="1200">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <div class="font-bold text-[#181111]">頂級照護</div>
+                                            <div class="text-sm text-gray-600">含洗澡、美容等增值服務</div>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="text-lg font-bold text-green-600">NT$ 1,200</div>
+                                            <div class="text-xs text-gray-500">8小時</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 步驟 3: 時段選擇 -->
+                        <div id="step-3-time-selection" class="booking-step hidden">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-medium text-[#181111]">選擇時段</h3>
+                                <button id="back-to-plan-selection" class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
+                                    <span class="mr-1">←</span> 返回
+                                </button>
+                            </div>
+                            
+                            <!-- 寄宿過夜的日期選擇 -->
+                            <div id="overnight-date-selection" class="space-y-4 hidden">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="text-sm text-gray-600 block mb-2 font-medium">入住日期</label>
+                                        <input type="date" id="detail-checkin-date" class="form-input-styled text-center w-full">
+                                    </div>
+                                    <div>
+                                        <label class="text-sm text-gray-600 block mb-2 font-medium">退房日期</label>
+                                        <input type="date" id="detail-checkout-date" class="form-input-styled text-center w-full">
+                                    </div>
+                                </div>
+                                <div class="bg-blue-50 p-3 rounded-lg">
+                                    <div class="text-sm text-blue-800">
+                                        <span class="font-medium">入住天數：</span>
+                                        <span id="stay-duration">請選擇日期</span>
+                                    </div>
                                 </div>
                             </div>
                             
                             <!-- 日間安親的日期+時段選擇 -->
-                            <div id="daycare-date-selection" class="hidden">
+                            <div id="daycare-date-selection" class="space-y-4 hidden">
                                 <div class="mb-4">
-                                    <label class="text-sm text-gray-600 block mb-1">服務日期</label>
+                                    <label class="text-sm text-gray-600 block mb-2 font-medium">服務日期</label>
                                     <input type="date" id="detail-service-date" class="form-input-styled text-center w-full">
                                 </div>
                                 
-                                <!-- 簡化的時段選擇 -->
+                                <!-- 時段選擇 -->
                                 <div class="daycare-time-selection">
                                     <h4 class="font-medium text-[#181111] mb-3">選擇服務時段</h4>
                                     
                                     <!-- 預設時段選項 -->
-                                    <div class="preset-time-slots">
-                                        <div class="preset-time-slot" data-hours="4" data-time="09:00-13:00" data-price="600">
-                                            <div class="time-header">
-                                                <span class="time-label">上午時段</span>
-                                                <span class="price">NT$ 600</span>
-                                            </div>
-                                            <div class="time-detail">09:00-13:00 (4小時)</div>
-                                            <div class="features">
-                                                <span class="feature-tag">專業照護</span>
-                                                <span class="feature-tag">戶外活動</span>
-                                                <span class="feature-tag">營養餐點</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="preset-time-slot" data-hours="8" data-time="09:00-17:00" data-price="960">
-                                            <div class="time-header">
-                                                <span class="time-label">全日時段</span>
-                                                <span class="price">NT$ 960</span>
-                                            </div>
-                                            <div class="time-detail">09:00-17:00 (8小時)</div>
-                                            <div class="features">
-                                                <span class="feature-tag">專業照護</span>
-                                                <span class="feature-tag">戶外活動</span>
-                                                <span class="feature-tag">營養餐點</span>
-                                                <span class="feature-tag">洗澡服務</span>
+                                    <div class="preset-time-slots space-y-3">
+                                        <div class="preset-time-slot p-4 border-2 border-gray-200 rounded-lg hover:border-[#181111] cursor-pointer transition-all" data-hours="4" data-time="09:00-13:00" data-price="600">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <div class="font-bold text-[#181111]">上午時段</div>
+                                                    <div class="text-sm text-gray-600">09:00-13:00 (4小時)</div>
+                                                    <div class="flex flex-wrap gap-1 mt-2">
+                                                        <span class="feature-tag text-xs">專業照護</span>
+                                                        <span class="feature-tag text-xs">戶外活動</span>
+                                                        <span class="feature-tag text-xs">營養餐點</span>
+                                                    </div>
+                                                </div>
+                                                <div class="text-right">
+                                                    <div class="text-lg font-bold text-green-600">NT$ 600</div>
+                                                </div>
                                             </div>
                                         </div>
                                         
-                                        <div class="preset-time-slot" data-hours="6" data-time="10:00-16:00" data-price="720">
-                                            <div class="time-header">
-                                                <span class="time-label">下午時段</span>
-                                                <span class="price">NT$ 720</span>
+                                        <div class="preset-time-slot p-4 border-2 border-gray-200 rounded-lg hover:border-[#181111] cursor-pointer transition-all" data-hours="8" data-time="09:00-17:00" data-price="960">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <div class="font-bold text-[#181111]">全日時段</div>
+                                                    <div class="text-sm text-gray-600">09:00-17:00 (8小時)</div>
+                                                    <div class="flex flex-wrap gap-1 mt-2">
+                                                        <span class="feature-tag text-xs">專業照護</span>
+                                                        <span class="feature-tag text-xs">戶外活動</span>
+                                                        <span class="feature-tag text-xs">營養餐點</span>
+                                                        <span class="feature-tag text-xs">洗澡服務</span>
+                                                    </div>
+                                                </div>
+                                                <div class="text-right">
+                                                    <div class="text-lg font-bold text-green-600">NT$ 960</div>
+                                                </div>
                                             </div>
-                                            <div class="time-detail">10:00-16:00 (6小時)</div>
-                                            <div class="features">
-                                                <span class="feature-tag">專業照護</span>
-                                                <span class="feature-tag">戶外活動</span>
-                                                <span class="feature-tag">營養餐點</span>
+                                        </div>
+                                        
+                                        <div class="preset-time-slot p-4 border-2 border-gray-200 rounded-lg hover:border-[#181111] cursor-pointer transition-all" data-hours="6" data-time="10:00-16:00" data-price="720">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <div class="font-bold text-[#181111]">下午時段</div>
+                                                    <div class="text-sm text-gray-600">10:00-16:00 (6小時)</div>
+                                                    <div class="flex flex-wrap gap-1 mt-2">
+                                                        <span class="feature-tag text-xs">專業照護</span>
+                                                        <span class="feature-tag text-xs">戶外活動</span>
+                                                        <span class="feature-tag text-xs">營養餐點</span>
+                                                    </div>
+                                                </div>
+                                                <div class="text-right">
+                                                    <div class="text-lg font-bold text-green-600">NT$ 720</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     
                                     <!-- 自訂時段選項 -->
-                                    <div class="custom-time-section">
-                                        <button class="custom-time-toggle" type="button">
-                                            <span>自訂時段</span>
+                                    <div class="custom-time-section mt-4">
+                                        <button class="custom-time-toggle w-full p-3 border-2 border-dashed border-gray-300 rounded-lg text-center hover:border-[#181111] transition-all" type="button">
+                                            <span class="text-[#181111] font-medium">+ 自訂時段</span>
                                         </button>
-                                        <div class="time-sliders hidden">
+                                        <div class="time-sliders hidden mt-4 p-4 bg-gray-50 rounded-lg">
                                             <div class="mb-4">
                                                 <label class="text-sm text-gray-600 block mb-2">開始時間</label>
                                                 <input type="range" id="start-time-slider" min="9" max="17" value="9" step="1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
@@ -982,11 +1140,11 @@
                                                     <span>10:00</span><span>11:00</span><span>12:00</span><span>13:00</span><span>14:00</span><span>15:00</span><span>16:00</span><span>17:00</span><span>18:00</span>
                                                 </div>
                                                 <div class="text-center mt-2">
-                                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-medium" id="end-time-display">13:00</span>
+                                                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium" id="end-time-display">13:00</span>
                                                 </div>
                                             </div>
                                             
-                                            <div class="bg-gray-50 rounded-lg p-3">
+                                            <div class="bg-white rounded-lg p-3 border">
                                                 <div class="flex justify-between items-center">
                                                     <span class="text-sm text-gray-600">服務時長</span>
                                                     <span class="font-medium" id="duration-display">4 小時</span>
@@ -999,26 +1157,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- 服務類型選擇 -->
-                        <div class="mb-4">
-                            <h3 class="font-medium text-[#181111] mb-3">選擇服務類型</h3>
-                            <div class="grid grid-cols-2 gap-3 mb-4">
-                                <button id="select-overnight" class="service-type-btn p-4 border-2 border-gray-200 rounded-lg text-center hover:border-[#181111] transition-all" data-service="overnight">
-                                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2 text-sm">🏠</div>
-                                    <div class="font-medium text-[#181111]">寄宿過夜</div>
-                                    <div class="text-xs text-gray-500 mt-1">適合出差旅行</div>
-                                </button>
-                                <button id="select-daycare" class="service-type-btn p-4 border-2 border-gray-200 rounded-lg text-center hover:border-[#181111] transition-all" data-service="daycare">
-                                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2 text-sm">⏰</div>
-                                    <div class="font-medium text-[#181111]">日間安親</div>
-                                    <div class="text-xs text-gray-500 mt-1">專業照護陪伴</div>
-                                </button>
-                            </div>
-                            <div id="room-service-list" class="space-y-3 hidden">
-                                <!-- 房型與服務選項由 JavaScript 動態生成 -->
                             </div>
                         </div>
 
@@ -1231,6 +1369,23 @@
                     checkinInput.value = today.toISOString().split('T')[0];
                     checkoutInput.value = tomorrow.toISOString().split('T')[0];
                     
+                    // 設定預設日期後，自動計算入住天數
+                    bookingData.checkinDate = today.toISOString().split('T')[0];
+                    bookingData.checkoutDate = tomorrow.toISOString().split('T')[0];
+                    bookingData.stayDuration = 1; // 預設1晚
+                    
+                    console.log('預設日期已設定:', { 
+                        checkin: bookingData.checkinDate, 
+                        checkout: bookingData.checkoutDate, 
+                        duration: bookingData.stayDuration 
+                    });
+                    
+                    // 如果有選擇方案，自動更新價格顯示
+                    if (bookingData.selectedPlan && bookingData.planPrice) {
+                        console.log('檢測到已選擇方案，自動更新價格顯示');
+                        updatePriceTransparency();
+                    }
+                    
                     checkinInput.addEventListener('change', function() {
                         selectedCheckinDate = new Date(this.value);
                         if (this.value >= checkoutInput.value) {
@@ -1293,86 +1448,385 @@
                 
                 // 綁定時段選擇
                 attachTimeSlotListeners();
+                
+                // 初始化其他訂房功能
+                initializeBookingFunctions();
             }
 
-            // 綁定服務類型選擇事件
+            // 綁定服務類型選擇事件 - 新的三步驟流程
             function attachServiceTypeListeners() {
                 const overnightBtn = document.getElementById('select-overnight');
                 const daycareBtn = document.getElementById('select-daycare');
-                const overnightDateSection = document.getElementById('overnight-date-selection');
-                const daycareDateSection = document.getElementById('daycare-date-selection');
                 
-                let selectedServiceType = null;
+                overnightBtn?.addEventListener('click', function() {
+                    console.log('寄宿過夜按鈕被點擊');
+                    
+                    // 簡單測試：直接切換步驟
+                    const step1 = document.getElementById('step-1-service-type');
+                    const step2 = document.getElementById('step-2-plan-selection');
+                    
+                    console.log('找到的元素:', { step1, step2 });
+                    
+                    if (step1 && step2) {
+                        // 隱藏步驟1
+                        step1.style.display = 'none';
+                        console.log('步驟1已隱藏');
+                        
+                        // 顯示步驟2
+                        step2.style.display = 'block';
+                        console.log('步驟2已顯示');
+                        
+                        // 顯示寄宿過夜方案
+                        const overnightPlans = document.getElementById('overnight-plans');
+                        const daycarePlans = document.getElementById('daycare-plans');
+                        
+                        if (overnightPlans && daycarePlans) {
+                            overnightPlans.style.display = 'block';
+                            daycarePlans.style.display = 'none';
+                            console.log('方案顯示切換完成');
+                        }
+                        
+                        // 更新預訂資料
+                        bookingData.serviceType = 'overnight';
+                        console.log('預訂資料已更新:', bookingData);
+                    } else {
+                        console.error('找不到步驟元素');
+                    }
+                });
                 
-                                 overnightBtn?.addEventListener('click', function() {
-                     // 重置按鈕狀態
-                     document.querySelectorAll('.service-type-btn').forEach(btn => {
-                         btn.classList.remove('border-[#181111]', 'bg-blue-50', 'bg-green-50');
-                         btn.classList.add('border-gray-200');
-                     });
-                     
-                     // 選中當前按鈕
-                     this.classList.remove('border-gray-200');
-                     this.classList.add('border-[#181111]', 'bg-blue-50');
-                     
-                     // 切換日期選擇界面
-                     overnightDateSection.classList.remove('hidden');
-                     daycareDateSection.classList.add('hidden');
-                     
-                     selectedServiceType = 'overnight';
-                     bookingData.serviceType = 'overnight';
-                     
-                     // 重置日間安親相關資料
-                     bookingData.duration = '';
-                     bookingData.timeSlot = '';
-                     bookingData.preferredRoomId = null;
-                     
-                     // 隱藏日間安親的時段選擇區域
-                     const timeSlotSelection = document.getElementById('time-slot-selection');
-                     if (timeSlotSelection) timeSlotSelection.classList.add('hidden');
-                     
-                     // 直接顯示過夜寄宿的房型選項
-                     showRoomServiceOptions('overnight');
-                     
-                     checkCanContinueBooking();
-                 });
+                daycareBtn?.addEventListener('click', function() {
+                    console.log('日間安親按鈕被點擊');
+                    
+                    // 簡單測試：直接切換步驟
+                    const step1 = document.getElementById('step-1-service-type');
+                    const step2 = document.getElementById('step-2-plan-selection');
+                    
+                    console.log('找到的元素:', { step1, step2 });
+                    
+                    if (step1 && step2) {
+                        // 隱藏步驟1
+                        step1.style.display = 'none';
+                        console.log('步驟1已隱藏');
+                        
+                        // 顯示步驟2
+                        step2.style.display = 'block';
+                        console.log('步驟2已顯示');
+                        
+                        // 顯示日間安親方案
+                        const daycarePlans = document.getElementById('daycare-plans');
+                        const overnightPlans = document.getElementById('overnight-plans');
+                        
+                        if (daycarePlans && overnightPlans) {
+                            daycarePlans.style.display = 'block';
+                            overnightPlans.style.display = 'none';
+                            console.log('方案顯示切換完成');
+                        }
+                        
+                        // 更新預訂資料
+                        bookingData.serviceType = 'daycare';
+                        console.log('預訂資料已更新:', bookingData);
+                    } else {
+                        console.error('找不到步驟元素');
+                    }
+                });
+            }
+            
+            // 更新步驟指示器
+            function updateStepIndicator(currentStep) {
+                console.log('更新步驟指示器到步驟:', currentStep);
                 
-                                 daycareBtn?.addEventListener('click', function() {
-                     // 重置按鈕狀態
-                     document.querySelectorAll('.service-type-btn').forEach(btn => {
-                         btn.classList.remove('border-[#181111]', 'bg-blue-50', 'bg-green-50');
-                         btn.classList.add('border-gray-200');
-                     });
-                     
-                     // 選中當前按鈕
-                     this.classList.remove('border-gray-200');
-                     this.classList.add('border-[#181111]', 'bg-green-50');
-                     
-                     // 顯示日間安親的日期選擇
-                     overnightDateSection.classList.add('hidden');
-                     daycareDateSection.classList.remove('hidden');
-                     
-                     selectedServiceType = 'daycare';
-                     bookingData.serviceType = 'daycare';
-                     
-                     // 重置相關資料
-                     bookingData.duration = '';
-                     bookingData.timeSlot = '';
-                     bookingData.preferredRoomId = null;
-                     
-                     // 隱藏房型選項，等待時段選擇完成
-                     const roomServiceList = document.getElementById('room-service-list');
-                     if (roomServiceList) {
-                         roomServiceList.classList.add('hidden');
-                     }
-                     
-                     // 重新綁定時段選擇事件
-                     setTimeout(() => {
-                         attachTimeSlotListeners();
-                     }, 100);
-                     
-                     checkCanContinueBooking();
-                 });
+                // 修正選擇器：找到步驟指示器容器下的每個步驟
+                const stepIndicators = document.querySelectorAll('.mb-6 .flex.items-center.justify-center.space-x-2 > .flex.items-center');
+                console.log('找到步驟指示器:', stepIndicators.length);
+                
+                stepIndicators.forEach((indicator, index) => {
+                    const stepNumber = indicator.querySelector('.w-8.h-8');
+                    const stepText = indicator.querySelector('span');
+                    
+                    console.log(`步驟 ${index + 1}:`, { stepNumber, stepText });
+                    
+                    if (index + 1 < currentStep) {
+                        // 已完成的步驟
+                        stepNumber.classList.remove('bg-gray-300', 'text-gray-600');
+                        stepNumber.classList.add('bg-[#181111]', 'text-white');
+                        stepText.classList.remove('text-gray-500');
+                        stepText.classList.add('text-[#181111]');
+                    } else if (index + 1 === currentStep) {
+                        // 當前步驟
+                        stepNumber.classList.remove('bg-gray-300', 'text-gray-600');
+                        stepNumber.classList.add('bg-[#181111]', 'text-white');
+                        stepText.classList.remove('text-gray-500');
+                        stepText.classList.add('text-[#181111]');
+                    } else {
+                        // 未完成的步驟
+                        stepNumber.classList.remove('bg-[#181111]', 'text-white');
+                        stepNumber.classList.add('bg-gray-300', 'text-gray-600');
+                        stepText.classList.remove('text-[#181111]');
+                        stepText.classList.add('text-gray-500');
+                    }
+                });
+                
+                // 更新連接線
+                const connectors = document.querySelectorAll('.mb-6 .flex.items-center.justify-center.space-x-2 > .w-8.h-1');
+                console.log('找到連接線:', connectors.length);
+                
+                connectors.forEach((connector, index) => {
+                    if (index + 1 < currentStep) {
+                        connector.classList.remove('bg-gray-300');
+                        connector.classList.add('bg-[#181111]');
+                    } else {
+                        connector.classList.remove('bg-[#181111]');
+                        connector.classList.add('bg-gray-300');
+                    }
+                });
+                
+                console.log('步驟指示器更新完成');
+            }
+            
+            // 綁定方案選擇事件 - 新的三步驟流程
+            function attachPlanSelectionListeners() {
+                // 綁定返回按鈕
+                document.getElementById('back-to-service-type')?.addEventListener('click', function() {
+                    console.log('返回按鈕被點擊');
+                    
+                    // 返回步驟1
+                    const step1 = document.getElementById('step-1-service-type');
+                    const step2 = document.getElementById('step-2-plan-selection');
+                    
+                    if (step1 && step2) {
+                        // 隱藏步驟2
+                        step2.style.display = 'none';
+                        console.log('步驟2已隱藏');
+                        
+                        // 顯示步驟1
+                        step1.style.display = 'block';
+                        console.log('步驟1已顯示');
+                        
+                        // 重置方案選擇狀態
+                        document.querySelectorAll('.plan-option').forEach(option => {
+                            option.classList.remove('border-[#181111]', 'bg-blue-50');
+                            option.classList.add('border-gray-200');
+                        });
+                        
+                        console.log('方案選擇狀態已重置');
+                    } else {
+                        console.error('找不到步驟元素');
+                    }
+                });
+                
+                // 綁定方案選項點擊事件
+                document.querySelectorAll('.plan-option').forEach(option => {
+                    option.addEventListener('click', function() {
+                        console.log('方案被選擇:', this.dataset.plan);
+                        
+                        // 移除其他方案的選中狀態
+                        document.querySelectorAll('.plan-option').forEach(opt => {
+                            opt.classList.remove('border-[#181111]', 'bg-blue-50');
+                            opt.classList.add('border-gray-200');
+                        });
+                        
+                        // 選中當前方案
+                        this.classList.remove('border-gray-200');
+                        this.classList.add('border-[#181111]', 'bg-blue-50');
+                        
+                        // 更新預訂資料
+                        const plan = this.dataset.plan;
+                        const price = parseInt(this.dataset.price);
+                        bookingData.selectedPlan = plan;
+                        bookingData.planPrice = price;
+                        
+                        console.log('預訂資料已更新:', { plan, price });
+                        
+                        // 立即更新價格顯示（如果有預設日期）
+                        if (bookingData.checkinDate && bookingData.checkoutDate) {
+                            console.log('檢測到預設日期，立即更新價格顯示');
+                            updatePriceTransparency();
+                        }
+                        
+                        // 延遲一下再進入下一步，讓使用者看到選中效果
+                        setTimeout(() => {
+                            // 進入步驟3
+                            const step2 = document.getElementById('step-2-plan-selection');
+                            const step3 = document.getElementById('step-3-time-selection');
+                            
+                            if (step2 && step3) {
+                                // 隱藏步驟2
+                                step2.style.display = 'none';
+                                console.log('步驟2已隱藏');
+                                
+                                // 顯示步驟3
+                                step3.style.display = 'block';
+                                console.log('步驟3已顯示');
+                                
+                                // 根據服務類型顯示對應的時段選擇
+                                if (bookingData.serviceType === 'overnight') {
+                                    const overnightDateSelection = document.getElementById('overnight-date-selection');
+                                    const daycareDateSelection = document.getElementById('daycare-date-selection');
+                                    
+                                    if (overnightDateSelection && daycareDateSelection) {
+                                        overnightDateSelection.style.display = 'block';
+                                        daycareDateSelection.style.display = 'none';
+                                        console.log('寄宿過夜日期選擇已顯示');
+                                    }
+                                } else {
+                                    const daycareDateSelection = document.getElementById('daycare-date-selection');
+                                    const overnightDateSelection = document.getElementById('overnight-date-selection');
+                                    
+                                    if (daycareDateSelection && overnightDateSelection) {
+                                        daycareDateSelection.style.display = 'block';
+                                        overnightDateSelection.style.display = 'none';
+                                        console.log('日間安親日期選擇已顯示');
+                                    }
+                                }
+                            } else {
+                                console.error('找不到步驟3元素');
+                            }
+                        }, 300);
+                    });
+                });
+            }
+            
+            // 綁定時段選擇事件 - 新的三步驟流程
+            function attachTimeSelectionListeners() {
+                // 綁定返回按鈕
+                document.getElementById('back-to-plan-selection')?.addEventListener('click', function() {
+                    console.log('返回方案選擇按鈕被點擊');
+                    
+                    // 返回步驟2
+                    const step2 = document.getElementById('step-2-plan-selection');
+                    const step3 = document.getElementById('step-3-time-selection');
+                    
+                    if (step2 && step3) {
+                        // 隱藏步驟3
+                        step3.style.display = 'none';
+                        console.log('步驟3已隱藏');
+                        
+                        // 顯示步驟2
+                        step2.style.display = 'block';
+                        console.log('步驟2已顯示');
+                        
+                        // 重置時段選擇狀態
+                        if (bookingData.serviceType === 'overnight') {
+                            const checkinDate = document.getElementById('detail-checkin-date');
+                            const checkoutDate = document.getElementById('detail-checkout-date');
+                            const stayDuration = document.getElementById('stay-duration');
+                            
+                            if (checkinDate && checkoutDate && stayDuration) {
+                                checkinDate.value = '';
+                                checkoutDate.value = '';
+                                stayDuration.textContent = '請選擇日期';
+                                console.log('寄宿過夜日期選擇已重置');
+                            }
+                        } else {
+                            const serviceDate = document.getElementById('detail-service-date');
+                            if (serviceDate) {
+                                serviceDate.value = '';
+                                console.log('日間安親日期已重置');
+                            }
+                            
+                            document.querySelectorAll('.preset-time-slot').forEach(slot => {
+                                slot.classList.remove('border-[#181111]', 'bg-blue-50');
+                                slot.classList.add('border-gray-200');
+                            });
+                            console.log('時段選擇狀態已重置');
+                        }
+                    } else {
+                        console.error('找不到步驟元素');
+                    }
+                });
+                
+                // 綁定寄宿過夜的日期選擇
+                const checkinDate = document.getElementById('detail-checkin-date');
+                const checkoutDate = document.getElementById('detail-checkout-date');
+                
+                if (checkinDate && checkoutDate) {
+                    checkinDate.addEventListener('change', updateStayDuration);
+                    checkoutDate.addEventListener('change', updateStayDuration);
+                }
+                
+                // 綁定日間安親的時段選擇
+                document.querySelectorAll('.preset-time-slot').forEach(slot => {
+                    slot.addEventListener('click', function() {
+                        // 移除其他時段的選中狀態
+                        document.querySelectorAll('.preset-time-slot').forEach(s => {
+                            s.classList.remove('border-[#181111]', 'bg-blue-50');
+                            s.classList.add('border-gray-200');
+                        });
+                        
+                        // 選中當前時段
+                        this.classList.remove('border-gray-200');
+                        this.classList.add('border-[#181111]', 'bg-blue-50');
+                        
+                        // 更新預訂資料
+                        const hours = parseInt(this.dataset.hours);
+                        const time = this.dataset.time;
+                        const price = parseInt(this.dataset.price);
+                        
+                        bookingData.duration = hours;
+                        bookingData.timeSlot = time;
+                        bookingData.timeSlotName = `${hours}小時 (${time})`;
+                        bookingData.customPrice = price;
+                        
+                        console.log('時段選擇已更新:', { hours, time, price });
+                        
+                        // 檢查是否可以繼續預訂
+                        checkCanContinueBooking();
+                    });
+                });
+                
+                // 綁定自訂時段切換
+                document.querySelector('.custom-time-toggle')?.addEventListener('click', function() {
+                    const timeSliders = document.querySelector('.time-sliders');
+                    const isHidden = timeSliders.classList.contains('hidden');
+                    
+                    if (isHidden) {
+                        timeSliders.classList.remove('hidden');
+                        this.innerHTML = '<span class="text-[#181111] font-medium">收起自訂時段</span>';
+                        
+                        // 清除預設時段選擇
+                        document.querySelectorAll('.preset-time-slot').forEach(s => {
+                            s.classList.remove('border-[#181111]', 'bg-blue-50');
+                            s.classList.add('border-gray-200');
+                        });
+                    } else {
+                        timeSliders.classList.add('hidden');
+                        this.innerHTML = '<span class="text-[#181111] font-medium">+ 自訂時段</span>';
+                    }
+                });
+            }
+            
+            // 更新入住天數顯示
+            function updateStayDuration() {
+                const checkinDate = document.getElementById('detail-checkin-date').value;
+                const checkoutDate = document.getElementById('detail-checkout-date').value;
+                const durationDisplay = document.getElementById('stay-duration');
+                
+                if (checkinDate && checkoutDate) {
+                    const checkin = new Date(checkinDate);
+                    const checkout = new Date(checkoutDate);
+                    const diffTime = Math.abs(checkout - checkin);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    if (diffDays > 0) {
+                        durationDisplay.textContent = `${diffDays} 晚`;
+                        bookingData.checkinDate = checkinDate;
+                        bookingData.checkoutDate = checkoutDate;
+                        bookingData.stayDuration = diffDays;
+                        
+                        console.log('入住天數已更新:', { checkinDate, checkoutDate, diffDays });
+                        
+                        // 檢查是否可以繼續預訂
+                        checkCanContinueBooking();
+                    } else {
+                        durationDisplay.textContent = '請選擇有效的退房日期';
+                    }
+                }
+            }
+            
+            // 在函數定義完成後，調用必要的初始化函數
+            function initializeBookingFunctions() {
+                attachPlanSelectionListeners();
+                attachTimeSelectionListeners();
             }
 
             // 綁定時段選擇事件
@@ -1771,30 +2225,48 @@
                 let total = 0;
                 let hasValidData = false;
                 
-                // 房型費用
-                if (bookingData.preferredRoomId) {
-                    const selectedRoom = mockRoomTypes.find(room => room.id === bookingData.preferredRoomId);
-                    if (selectedRoom) {
-                        const basePrice = bookingData.serviceType === 'overnight' ? 800 : 600;
-                        roomPriceDetail.textContent = selectedRoom.name;
-                        roomPrice.textContent = `NT$ ${basePrice.toLocaleString()}`;
-                        total += basePrice;
-                        hasValidData = true;
+                // 方案費用 (新的邏輯)
+                if (bookingData.selectedPlan && bookingData.planPrice) {
+                    // 根據服務類型顯示不同的標籤
+                    if (bookingData.serviceType === 'overnight') {
+                        roomPriceDetail.textContent = `${getPlanDisplayName(bookingData.selectedPlan)}套房`;
+                    } else {
+                        roomPriceDetail.textContent = `${getPlanDisplayName(bookingData.selectedPlan)}照護`;
                     }
+                    
+                    roomPrice.textContent = `NT$ ${bookingData.planPrice.toLocaleString()}`;
+                    total += bookingData.planPrice;
+                    hasValidData = true;
+                    
+                    console.log('方案費用已計算:', { plan: bookingData.selectedPlan, price: bookingData.planPrice });
                 } else {
-                    roomPriceDetail.textContent = '請選擇房型';
+                    roomPriceDetail.textContent = '請選擇方案';
                     roomPrice.textContent = 'NT$ 0';
                 }
                 
-                // 服務時長 (僅日間安親)
-                if (bookingData.serviceType === 'daycare' && bookingData.duration) {
+                // 服務時長和費用計算
+                if (bookingData.serviceType === 'overnight' && bookingData.stayDuration) {
+                    // 寄宿過夜：按天數計算
+                    durationItem.style.display = 'flex';
+                    durationDetail.textContent = `${bookingData.stayDuration} 晚`;
+                    
+                    const durationCost = bookingData.planPrice * bookingData.stayDuration;
+                    durationPrice.textContent = `NT$ ${durationCost.toLocaleString()}`;
+                    total = durationCost; // 總價就是天數 × 每晚價格
+                    hasValidData = true;
+                    
+                    console.log('寄宿過夜費用已計算:', { days: bookingData.stayDuration, totalCost: durationCost });
+                } else if (bookingData.serviceType === 'daycare' && bookingData.duration) {
+                    // 日間安親：按時數計算
                     durationItem.style.display = 'flex';
                     durationDetail.textContent = `${bookingData.duration}小時`;
                     
                     const durationCost = bookingData.customPrice || (bookingData.duration * 150);
                     durationPrice.textContent = `NT$ ${durationCost.toLocaleString()}`;
-                    total += durationCost;
+                    total = durationCost; // 總價就是時段費用
                     hasValidData = true;
+                    
+                    console.log('日間安親費用已計算:', { hours: bookingData.duration, totalCost: durationCost });
                 } else {
                     durationItem.style.display = 'none';
                 }
@@ -1825,49 +2297,67 @@
                 });
                 
                 // 更新總價
-                totalPrice.textContent = `NT$ ${total.toLocaleString()}`;
+                if (totalPrice) {
+                    totalPrice.textContent = `NT$ ${total.toLocaleString()}`;
+                }
                 
                 // 顯示/隱藏價格透明度區域
                 if (hasValidData) {
                     priceTransparency.classList.remove('hidden');
+                    console.log('價格透明度區域已顯示，總價:', total);
                 } else {
                     priceTransparency.classList.add('hidden');
+                    console.log('價格透明度區域已隱藏，沒有有效資料');
                 }
             }
             
-            // 驗證預訂資料
+            // 輔助函數：獲取方案顯示名稱
+            function getPlanDisplayName(plan) {
+                const planNames = {
+                    'standard': '標準',
+                    'deluxe': '豪華',
+                    'premium': '頂級',
+                    'basic': '基礎'
+                };
+                return planNames[plan] || plan;
+            }
+            
+            // 驗證預訂資料 - 新的三步驟流程
             function validateBookingData() {
                 const errors = [];
                 
+                console.log('驗證預訂資料:', bookingData);
+                
+                // 檢查服務類型
                 if (!bookingData.serviceType) {
                     errors.push('請選擇服務類型');
                 }
                 
-                if (!selectedCheckinDate) {
-                    errors.push('請選擇服務日期');
+                // 檢查方案選擇
+                if (!bookingData.selectedPlan) {
+                    errors.push('請選擇方案');
                 }
                 
+                // 根據服務類型檢查時段選擇
                 if (bookingData.serviceType === 'overnight') {
-                    if (!selectedCheckoutDate) {
+                    if (!bookingData.checkinDate) {
+                        errors.push('請選擇入住日期');
+                    }
+                    if (!bookingData.checkoutDate) {
                         errors.push('請選擇退房日期');
-                    } else if (selectedCheckoutDate <= selectedCheckinDate) {
+                    } else if (new Date(bookingData.checkoutDate) <= new Date(bookingData.checkinDate)) {
                         errors.push('退房日期必須晚於入住日期');
                     }
-                }
-                
-                if (bookingData.serviceType === 'daycare') {
-                    if (!bookingData.duration) {
-                        errors.push('請選擇服務時長');
-                    }
+                } else if (bookingData.serviceType === 'daycare') {
                     if (!bookingData.timeSlot) {
                         errors.push('請選擇服務時段');
                     }
+                    if (!bookingData.duration) {
+                        errors.push('請選擇服務時長');
+                    }
                 }
                 
-                if (!bookingData.preferredRoomId) {
-                    errors.push('請選擇房型');
-                }
-                
+                console.log('驗證結果:', errors);
                 return errors;
             }
             
