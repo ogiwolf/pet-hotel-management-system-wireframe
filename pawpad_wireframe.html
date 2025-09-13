@@ -1789,6 +1789,9 @@
                                         overnightDateSelection.style.display = 'block';
                                         daycareDateSelection.style.display = 'none';
                                         console.log('寄宿過夜日期選擇已顯示');
+                                        
+                                        // 初始化寄宿過夜的預設日期和入住天數顯示
+                                        initializeOvernightDates();
                                     }
                                 } else {
                                     const daycareDateSelection = document.getElementById('daycare-date-selection');
@@ -2166,6 +2169,35 @@
                         segment.classList.add('selected');
                     }
                 });
+            }
+            
+            // 初始化寄宿過夜的預設日期和入住天數顯示
+            function initializeOvernightDates() {
+                const checkinInput = document.getElementById('detail-checkin-date');
+                const checkoutInput = document.getElementById('detail-checkout-date');
+                
+                if (checkinInput && checkoutInput) {
+                    // 設定預設日期
+                    const today = new Date();
+                    const tomorrow = new Date(today.getTime() + (24 * 60 * 60 * 1000));
+                    
+                    checkinInput.value = today.toISOString().split('T')[0];
+                    checkoutInput.value = tomorrow.toISOString().split('T')[0];
+                    
+                    // 更新預訂資料
+                    bookingData.checkinDate = today.toISOString().split('T')[0];
+                    bookingData.checkoutDate = tomorrow.toISOString().split('T')[0];
+                    bookingData.stayDuration = 1;
+                    
+                    // 更新入住天數顯示
+                    updateStayDuration();
+                    
+                    console.log('寄宿過夜預設日期已初始化:', {
+                        checkin: bookingData.checkinDate,
+                        checkout: bookingData.checkoutDate,
+                        duration: bookingData.stayDuration
+                    });
+                }
             }
             
             // 更新入住天數顯示
