@@ -975,31 +975,36 @@
                     <h1 class="text-2xl font-bold text-center text-[#181111]">快樂爪子旅館</h1>
                     <div class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover rounded-xl" style='background-image: url("https://images.unsplash.com/photo-1548681528-6a5c45b66b42?q=80&w=600");'></div>
                     
-                    <div class="p-4 rounded-xl border border-gray-100 bg-white">
+                    <div id="about-section" class="p-4 rounded-xl border border-gray-100 bg-white">
                          <p class="text-[#181111] text-lg font-bold">關於</p>
                          <p class="text-[#886364] text-sm mt-2">提供最溫馨舒適的環境，讓您的寵物如同在家一般自在。我們有專業的照護人員與寬敞的活動空間。</p>
                     </div>
 
                     <!-- 預訂區塊 -->
-                    <div class="p-4 rounded-xl border border-gray-100 bg-white">
+                    <div id="booking-section" class="p-4 rounded-xl border border-gray-100 bg-white">
                         <h2 class="text-lg font-bold text-[#181111] mb-4">預訂服務</h2>
                         
                         <!-- 步驟指示器 -->
                         <div class="mb-6">
-                            <div class="flex items-center justify-center space-x-2">
+                            <div class="flex items-center justify-center space-x-1">
                                 <div class="flex items-center">
                                     <div class="w-8 h-8 rounded-full bg-[#181111] text-white flex items-center justify-center text-sm font-bold">1</div>
                                     <span class="ml-2 text-sm font-medium text-[#181111]">服務類型</span>
                                 </div>
-                                <div class="w-8 h-1 bg-gray-300"></div>
+                                <div class="w-6 h-1 bg-gray-300"></div>
                                 <div class="flex items-center">
                                     <div class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-bold">2</div>
                                     <span class="ml-2 text-sm font-medium text-gray-500">選擇方案</span>
                                 </div>
-                                <div class="w-8 h-1 bg-gray-300"></div>
+                                <div class="w-6 h-1 bg-gray-300"></div>
                                 <div class="flex items-center">
                                     <div class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-bold">3</div>
                                     <span class="ml-2 text-sm font-medium text-gray-500">選擇時段</span>
+                                </div>
+                                <div class="w-6 h-1 bg-gray-300"></div>
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-bold">4</div>
+                                    <span class="ml-2 text-sm font-medium text-gray-500">確認明細</span>
                                 </div>
                             </div>
                         </div>
@@ -1297,9 +1302,96 @@
                                 繼續預訂
                             </button>
                         </div>
+                        
+                        <!-- 步驟 4: 完整明細確認 -->
+                        <div id="step-4-order-confirmation" class="booking-step hidden">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-medium text-[#181111]">確認訂單明細</h3>
+                                <button id="back-to-time-selection" class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
+                                    <span class="mr-1">←</span> 返回
+                                </button>
+                            </div>
+                            
+                            <!-- 訂單明細卡片 -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+                                <!-- 旅館資訊 -->
+                                <div class="border-b border-gray-100 pb-4 mb-4">
+                                    <h4 class="font-semibold text-[#181111] mb-2">🏨 快樂爪子旅館</h4>
+                                    <p class="text-sm text-gray-600">台北市信義區信義路五段7號</p>
+                                </div>
+                                
+                                <!-- 服務明細 -->
+                                <div class="space-y-4">
+                                    <!-- 服務類型 -->
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <span class="font-medium text-[#181111]">服務類型</span>
+                                            <p class="text-sm text-gray-600" id="confirmation-service-type">寄宿過夜</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- 方案選擇 -->
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <span class="font-medium text-[#181111]">選擇方案</span>
+                                            <p class="text-sm text-gray-600" id="confirmation-plan">標準套房</p>
+                                        </div>
+                                        <span class="font-semibold text-green-600" id="confirmation-plan-price">NT$ 1,200</span>
+                                    </div>
+                                    
+                                    <!-- 日期時間 -->
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <span class="font-medium text-[#181111]">入住時間</span>
+                                            <p class="text-sm text-gray-600" id="confirmation-dates">2024年1月15日 - 2024年1月16日</p>
+                                        </div>
+                                        <span class="text-sm text-gray-500" id="confirmation-duration">1 晚</span>
+                                    </div>
+                                    
+                                    <!-- 寵物資訊 -->
+                                    <div class="border-t border-gray-100 pt-4">
+                                        <h5 class="font-medium text-[#181111] mb-3">🐕 寵物資訊</h5>
+                                        <div class="space-y-3">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                                    <span class="text-lg">🐕</span>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <p class="font-medium text-[#181111]" id="confirmation-pet-name">小白</p>
+                                                    <p class="text-sm text-gray-600" id="confirmation-pet-details">柴犬 • 3歲 • 公</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- 特殊需求 -->
+                                    <div class="border-t border-gray-100 pt-4">
+                                        <h5 class="font-medium text-[#181111] mb-2">📝 特殊需求</h5>
+                                        <div class="bg-gray-50 rounded-lg p-3">
+                                            <textarea id="special-requirements" placeholder="請輸入特殊需求或注意事項..." class="w-full bg-transparent border-none resize-none text-sm text-gray-600 focus:outline-none" rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 取消政策 -->
+                            <div class="bg-blue-50 rounded-xl p-4 mb-6">
+                                <h4 class="font-semibold text-blue-800 mb-2">📋 取消政策</h4>
+                                <ul class="text-sm text-blue-700 space-y-1">
+                                    <li>• 入住前24小時內取消：收取50%費用</li>
+                                    <li>• 入住當天取消：收取100%費用</li>
+                                    <li>• 提前24小時以上取消：全額退款</li>
+                                </ul>
+                            </div>
+                            
+                            <!-- 確認並付款按鈕 -->
+                            <button id="confirm-and-pay-btn" class="btn-main w-full h-12 text-base">
+                                確認並前往付款
+                            </button>
+                        </div>
                     </div>
 
-                     <div class="p-4 rounded-xl border border-gray-100 bg-white">
+                     <div id="user-reviews-section" class="p-4 rounded-xl border border-gray-100 bg-white">
                          <p class="text-[#181111] text-lg font-bold">用戶評價</p>
                          <div class="mt-2 space-y-3">
                             <div class="border-b pb-2">
@@ -1314,7 +1406,7 @@
                     </div>
 
                     <!-- 位置地圖 -->
-                    <div class="p-4 rounded-xl border border-gray-100 bg-white">
+                    <div id="location-section" class="p-4 rounded-xl border border-gray-100 bg-white">
                         <div class="flex items-center justify-between mb-4">
                             <p class="text-[#181111] text-lg font-bold">位置資訊</p>
                             <button id="open-map-btn" class="text-sm bg-[#181111] text-white px-3 py-1 rounded-full hover:bg-gray-800 transition-colors">
@@ -1639,7 +1731,7 @@
                 console.log('更新步驟指示器到步驟:', currentStep);
                 
                 // 修正選擇器：找到步驟指示器容器下的每個步驟
-                const stepIndicators = document.querySelectorAll('.mb-6 .flex.items-center.justify-center.space-x-2 > .flex.items-center');
+                const stepIndicators = document.querySelectorAll('.mb-6 .flex.items-center.justify-center.space-x-1 > .flex.items-center');
                 console.log('找到步驟指示器:', stepIndicators.length);
                 
                 stepIndicators.forEach((indicator, index) => {
@@ -1761,6 +1853,9 @@
                             console.log('檢測到預設日期，立即更新價格顯示');
                             updatePriceTransparency();
                         }
+                        
+                        // 檢查是否可以繼續預訂
+                        checkCanContinueBooking();
                         
                         // 延遲一下再進入下一步，讓使用者看到選中效果
                         setTimeout(() => {
@@ -2200,6 +2295,103 @@
                 }
             }
             
+            // 更新訂單確認頁面的明細
+            function updateOrderConfirmation() {
+                console.log('更新訂單確認頁面明細:', bookingData);
+                
+                // 隱藏其他不相關的內容
+                const aboutSection = document.getElementById('about-section');
+                const userReviewsSection = document.getElementById('user-reviews-section');
+                const locationSection = document.getElementById('location-section');
+                
+                // 隱藏步驟1-3的內容
+                const step1 = document.getElementById('step-1-service-type');
+                const step2 = document.getElementById('step-2-plan-selection');
+                const step3 = document.getElementById('step-3-time-selection');
+                const continueSection = document.getElementById('continue-booking-section');
+                
+                if (aboutSection) {
+                    aboutSection.style.display = 'none';
+                    console.log('關於區塊已隱藏');
+                }
+                
+                if (userReviewsSection) {
+                    userReviewsSection.style.display = 'none';
+                    console.log('用戶評價區塊已隱藏');
+                }
+                
+                if (locationSection) {
+                    locationSection.style.display = 'none';
+                    console.log('位置資訊區塊已隱藏');
+                }
+                
+                // 隱藏步驟1-3和繼續按鈕
+                if (step1) {
+                    step1.style.display = 'none';
+                    console.log('步驟1已隱藏');
+                }
+                
+                if (step2) {
+                    step2.style.display = 'none';
+                    console.log('步驟2已隱藏');
+                }
+                
+                if (step3) {
+                    step3.style.display = 'none';
+                    console.log('步驟3已隱藏');
+                }
+                
+                if (continueSection) {
+                    continueSection.style.display = 'none';
+                    console.log('繼續預訂按鈕已隱藏');
+                }
+                
+                // 隱藏價格透明度區塊
+                const priceTransparency = document.getElementById('price-transparency');
+                if (priceTransparency) {
+                    priceTransparency.style.display = 'none';
+                    console.log('價格透明度區塊已隱藏');
+                }
+                
+                // 更新服務類型
+                const serviceTypeElement = document.getElementById('confirmation-service-type');
+                if (serviceTypeElement) {
+                    serviceTypeElement.textContent = bookingData.serviceType === 'overnight' ? '寄宿過夜' : '日間安親';
+                }
+                
+                // 更新方案選擇
+                const planElement = document.getElementById('confirmation-plan');
+                const planPriceElement = document.getElementById('confirmation-plan-price');
+                if (planElement && planPriceElement) {
+                    const planNames = {
+                        'standard': '標準套房',
+                        'deluxe': '豪華套房',
+                        'premium': '頂級套房',
+                        'basic': '基礎套房'
+                    };
+                    planElement.textContent = planNames[bookingData.selectedPlan] || bookingData.selectedPlan;
+                    planPriceElement.textContent = `NT$ ${bookingData.planPrice?.toLocaleString() || '0'}`;
+                }
+                
+                // 更新日期時間
+                const datesElement = document.getElementById('confirmation-dates');
+                const durationElement = document.getElementById('confirmation-duration');
+                if (datesElement && durationElement) {
+                    if (bookingData.serviceType === 'overnight') {
+                        const checkinDate = new Date(bookingData.checkinDate);
+                        const checkoutDate = new Date(bookingData.checkoutDate);
+                        datesElement.textContent = `${checkinDate.getFullYear()}年${checkinDate.getMonth() + 1}月${checkinDate.getDate()}日 - ${checkoutDate.getFullYear()}年${checkoutDate.getMonth() + 1}月${checkoutDate.getDate()}日`;
+                        durationElement.textContent = `${bookingData.stayDuration} 晚`;
+                    } else {
+                        const serviceDate = new Date(bookingData.serviceDate);
+                        datesElement.textContent = `${serviceDate.getFullYear()}年${serviceDate.getMonth() + 1}月${serviceDate.getDate()}日`;
+                        durationElement.textContent = bookingData.duration || '1 小時';
+                    }
+                }
+                
+                console.log('訂單確認頁面明細更新完成');
+            }
+            
             // 更新入住天數顯示
             function updateStayDuration() {
                 const checkinDate = document.getElementById('detail-checkin-date').value;
@@ -2228,10 +2420,85 @@
                 }
             }
             
+            // 綁定訂單確認事件 - 步驟4
+            function attachOrderConfirmationListeners() {
+                // 綁定返回按鈕
+                document.getElementById('back-to-time-selection')?.addEventListener('click', function() {
+                    console.log('返回時段選擇按鈕被點擊');
+                    
+                    // 重新顯示其他內容
+                    const aboutSection = document.getElementById('about-section');
+                    const userReviewsSection = document.getElementById('user-reviews-section');
+                    const locationSection = document.getElementById('location-section');
+                    
+                    if (aboutSection) {
+                        aboutSection.style.display = 'block';
+                        console.log('關於區塊已顯示');
+                    }
+                    
+                    if (userReviewsSection) {
+                        userReviewsSection.style.display = 'block';
+                        console.log('用戶評價區塊已顯示');
+                    }
+                    
+                    if (locationSection) {
+                        locationSection.style.display = 'block';
+                        console.log('位置資訊區塊已顯示');
+                    }
+                    
+                    // 重新顯示價格透明度區塊
+                    const priceTransparency = document.getElementById('price-transparency');
+                    if (priceTransparency) {
+                        priceTransparency.style.display = 'block';
+                        console.log('價格透明度區塊已顯示');
+                    }
+                    
+                    // 返回步驟3
+                    const step3 = document.getElementById('step-3-time-selection');
+                    const step4 = document.getElementById('step-4-order-confirmation');
+                    
+                    if (step3 && step4) {
+                        // 隱藏步驟4
+                        step4.style.display = 'none';
+                        console.log('步驟4已隱藏');
+                        
+                        // 顯示步驟3
+                        step3.style.display = 'block';
+                        console.log('步驟3已顯示');
+                        
+                        // 更新步驟指示器回到步驟3
+                        updateStepIndicator(3);
+                    }
+                });
+                
+                // 綁定確認並付款按鈕
+                document.getElementById('confirm-and-pay-btn')?.addEventListener('click', function() {
+                    console.log('確認並付款按鈕被點擊');
+                    
+                    // 獲取特殊需求
+                    const specialRequirements = document.getElementById('special-requirements');
+                    if (specialRequirements) {
+                        bookingData.specialRequirements = specialRequirements.value;
+                    }
+                    
+                    // 這裡將來會整合藍星支付
+                    console.log('準備進入付款流程，訂單資料:', bookingData);
+                    
+                    // 暫時顯示成功訊息
+                    alert('訂單確認成功！\n\n即將進入付款流程...\n\n（藍星支付整合將在下一步實作）');
+                    
+                    // TODO: 整合藍星支付
+                    // 1. 建立訂單
+                    // 2. 跳轉到藍星支付頁面
+                    // 3. 處理付款結果
+                });
+            }
+            
             // 在函數定義完成後，調用必要的初始化函數
             function initializeBookingFunctions() {
                 attachPlanSelectionListeners();
                 attachTimeSelectionListeners();
+                attachOrderConfirmationListeners();
                 
                 // 初始化步驟指示器為步驟1
                 updateStepIndicator(1);
@@ -2837,28 +3104,29 @@
                     continueBtn.replaceWith(continueBtn.cloneNode(true));
                     const newBtn = document.getElementById('continue-booking-btn');
                     newBtn.addEventListener('click', function() {
-                        // 確保選中的房型資料完整
-                        const selectedRoomBtn = document.querySelector('.room-service-option-btn.selected');
-                        if (selectedRoomBtn) {
-                            const roomId = parseInt(selectedRoomBtn.dataset.roomId);
-                            const serviceType = selectedRoomBtn.dataset.serviceType;
-                            
-                            // 找到對應的方案
-                            const selectedPackage = mockPackages.find(pkg => 
-                                pkg.roomId === roomId && 
-                                pkg.type === serviceType && 
-                                pkg.status === 'active'
-                            );
-                            
-                            if (selectedPackage) {
-                                bookingData.roomId = roomId;
-                                bookingData.packageId = selectedPackage.id;
-                            }
-                        }
+                        console.log('繼續預訂按鈕被點擊，當前預訂資料:', bookingData);
                         
-                        // 直接跳到確認訂單步驟
-                        bookingStep = 4;
-                        showPage('bookingFlow');
+                        // 進入步驟4：完整明細確認
+                        const step3 = document.getElementById('step-3-time-selection');
+                        const step4 = document.getElementById('step-4-order-confirmation');
+                        
+                        if (step3 && step4) {
+                            // 隱藏步驟3
+                            step3.style.display = 'none';
+                            console.log('步驟3已隱藏');
+                            
+                            // 顯示步驟4
+                            step4.style.display = 'block';
+                            console.log('步驟4已顯示');
+                            
+                            // 更新步驟指示器到步驟4
+                            updateStepIndicator(4);
+                            
+                            // 更新確認頁面的明細
+                            updateOrderConfirmation();
+                        } else {
+                            console.error('找不到步驟3或步驟4元素');
+                        }
                     });
                 } else {
                     continueSection.classList.add('hidden');
