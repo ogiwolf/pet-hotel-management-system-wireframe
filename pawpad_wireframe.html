@@ -1006,6 +1006,11 @@
                                     <div class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-bold">4</div>
                                     <span class="ml-2 text-sm font-medium text-gray-500">確認明細</span>
                                 </div>
+                                <div class="w-6 h-1 bg-gray-300"></div>
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-bold">5</div>
+                                    <span class="ml-2 text-sm font-medium text-gray-500">付款</span>
+                                </div>
                             </div>
                         </div>
                         
@@ -1388,6 +1393,125 @@
                             <button id="confirm-and-pay-btn" class="btn-main w-full h-12 text-base">
                                 確認並前往付款
                             </button>
+                        </div>
+                        
+                        <!-- 步驟 5: 藍星支付頁面 -->
+                        <div id="step-5-payment" class="booking-step hidden">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-medium text-[#181111]">藍星支付</h3>
+                                <button id="back-to-confirmation" class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
+                                    <span class="mr-1">←</span> 返回
+                                </button>
+                            </div>
+                            
+                            <!-- 付款資訊卡片 -->
+                            <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+                                <!-- 藍星支付標誌 -->
+                                <div class="text-center mb-6">
+                                    <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        <span class="text-white text-2xl font-bold">藍</span>
+                                    </div>
+                                    <h4 class="font-semibold text-[#181111] mb-2">藍星支付</h4>
+                                    <p class="text-sm text-gray-600">安全、快速、便捷的第三方支付服務</p>
+                                </div>
+                                
+                                <!-- 訂單資訊 -->
+                                <div class="border-b border-gray-100 pb-4 mb-4">
+                                    <h5 class="font-medium text-[#181111] mb-3">📋 訂單資訊</h5>
+                                    <div class="space-y-2 text-sm">
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">訂單編號</span>
+                                            <span class="font-mono text-gray-800" id="order-number">PTH20250115001</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">服務項目</span>
+                                            <span class="text-gray-800" id="payment-service-type">寄宿過夜</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">方案</span>
+                                            <span class="text-gray-800" id="payment-plan">頂級套房</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">入住時間</span>
+                                            <span class="text-gray-800" id="payment-dates">2025年9月13日 - 2025年9月14日</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 付款金額 -->
+                                <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-lg font-medium text-[#181111]">應付金額</span>
+                                        <span class="text-2xl font-bold text-green-600" id="payment-amount">NT$ 2,500</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- 付款方式選擇 -->
+                                <div class="mb-6">
+                                    <h5 class="font-medium text-[#181111] mb-3">💳 選擇付款方式</h5>
+                                    <div class="space-y-3">
+                                        <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
+                                            <input type="radio" name="payment-method" value="credit-card" class="mr-3" checked>
+                                            <div class="flex items-center">
+                                                <span class="text-lg mr-2">💳</span>
+                                                <div>
+                                                    <div class="font-medium text-[#181111]">信用卡</div>
+                                                    <div class="text-sm text-gray-600">Visa、Mastercard、JCB</div>
+                                                </div>
+                                            </div>
+                                        </label>
+                                        
+                                        <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
+                                            <input type="radio" name="payment-method" value="bank-transfer" class="mr-3">
+                                            <div class="flex items-center">
+                                                <span class="text-lg mr-2">🏦</span>
+                                                <div>
+                                                    <div class="font-medium text-[#181111]">銀行轉帳</div>
+                                                    <div class="text-sm text-gray-600">ATM、網路銀行、臨櫃</div>
+                                                </div>
+                                            </div>
+                                        </label>
+                                        
+                                        <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
+                                            <input type="radio" name="payment-method" value="mobile-payment" class="mr-3">
+                                            <div class="flex items-center">
+                                                <span class="text-lg mr-2">📱</span>
+                                                <div>
+                                                    <div class="font-medium text-[#181111]">行動支付</div>
+                                                    <div class="text-sm text-gray-600">Apple Pay、Google Pay</div>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- 安全提示 -->
+                                <div class="bg-blue-50 rounded-lg p-4 mb-6">
+                                    <div class="flex items-start">
+                                        <span class="text-blue-600 mr-2">🔒</span>
+                                        <div class="text-sm text-blue-800">
+                                            <div class="font-medium mb-1">安全保證</div>
+                                            <ul class="space-y-1">
+                                                <li>• 採用SSL加密技術保護您的資料</li>
+                                                <li>• 符合PCI DSS國際安全標準</li>
+                                                <li>• 24小時監控系統安全</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 付款按鈕 -->
+                                <button id="process-payment-btn" class="btn-main w-full h-12 text-base">
+                                    <span id="payment-btn-text">確認付款 NT$ 2,500</span>
+                                    <span id="payment-loading" class="hidden">
+                                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        處理中...
+                                    </span>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -2392,6 +2516,62 @@
                 console.log('訂單確認頁面明細更新完成');
             }
             
+            // 更新付款頁面的資訊
+            function updatePaymentPage() {
+                console.log('更新付款頁面資訊:', bookingData);
+                
+                // 生成訂單編號
+                const orderNumber = 'PTH' + new Date().getFullYear() + 
+                    String(new Date().getMonth() + 1).padStart(2, '0') + 
+                    String(new Date().getDate()).padStart(2, '0') + 
+                    String(Math.floor(Math.random() * 1000)).padStart(3, '0');
+                
+                // 更新訂單資訊
+                const orderNumberElement = document.getElementById('order-number');
+                const serviceTypeElement = document.getElementById('payment-service-type');
+                const planElement = document.getElementById('payment-plan');
+                const datesElement = document.getElementById('payment-dates');
+                const amountElement = document.getElementById('payment-amount');
+                const btnTextElement = document.getElementById('payment-btn-text');
+                
+                if (orderNumberElement) {
+                    orderNumberElement.textContent = orderNumber;
+                }
+                
+                if (serviceTypeElement) {
+                    serviceTypeElement.textContent = bookingData.serviceType === 'overnight' ? '寄宿過夜' : '日間安親';
+                }
+                
+                if (planElement) {
+                    const planNames = {
+                        'standard': '標準套房',
+                        'deluxe': '豪華套房',
+                        'premium': '頂級套房',
+                        'basic': '基礎套房'
+                    };
+                    planElement.textContent = planNames[bookingData.selectedPlan] || bookingData.selectedPlan;
+                }
+                
+                if (datesElement) {
+                    if (bookingData.serviceType === 'overnight') {
+                        const checkinDate = new Date(bookingData.checkinDate);
+                        const checkoutDate = new Date(bookingData.checkoutDate);
+                        datesElement.textContent = `${checkinDate.getFullYear()}年${checkinDate.getMonth() + 1}月${checkinDate.getDate()}日 - ${checkoutDate.getFullYear()}年${checkoutDate.getMonth() + 1}月${checkoutDate.getDate()}日`;
+                    } else {
+                        const serviceDate = new Date(bookingData.serviceDate);
+                        datesElement.textContent = `${serviceDate.getFullYear()}年${serviceDate.getMonth() + 1}月${serviceDate.getDate()}日`;
+                    }
+                }
+                
+                if (amountElement && btnTextElement) {
+                    const amount = bookingData.planPrice || 0;
+                    amountElement.textContent = `NT$ ${amount.toLocaleString()}`;
+                    btnTextElement.textContent = `確認付款 NT$ ${amount.toLocaleString()}`;
+                }
+                
+                console.log('付款頁面資訊更新完成');
+            }
+            
             // 更新入住天數顯示
             function updateStayDuration() {
                 const checkinDate = document.getElementById('detail-checkin-date').value;
@@ -2481,16 +2661,96 @@
                         bookingData.specialRequirements = specialRequirements.value;
                     }
                     
-                    // 這裡將來會整合藍星支付
-                    console.log('準備進入付款流程，訂單資料:', bookingData);
+                    // 進入步驟5：藍星支付
+                    const step4 = document.getElementById('step-4-order-confirmation');
+                    const step5 = document.getElementById('step-5-payment');
                     
-                    // 暫時顯示成功訊息
-                    alert('訂單確認成功！\n\n即將進入付款流程...\n\n（藍星支付整合將在下一步實作）');
+                    if (step4 && step5) {
+                        // 隱藏步驟4
+                        step4.style.display = 'none';
+                        console.log('步驟4已隱藏');
+                        
+                        // 顯示步驟5
+                        step5.style.display = 'block';
+                        console.log('步驟5已顯示');
+                        
+                        // 更新步驟指示器到步驟5
+                        updateStepIndicator(5);
+                        
+                        // 更新付款頁面的資訊
+                        updatePaymentPage();
+                    } else {
+                        console.error('找不到步驟4或步驟5元素');
+                    }
+                });
+            }
+            
+            // 綁定付款頁面事件 - 步驟5
+            function attachPaymentListeners() {
+                // 綁定返回按鈕
+                document.getElementById('back-to-confirmation')?.addEventListener('click', function() {
+                    console.log('返回確認明細按鈕被點擊');
                     
-                    // TODO: 整合藍星支付
-                    // 1. 建立訂單
-                    // 2. 跳轉到藍星支付頁面
-                    // 3. 處理付款結果
+                    // 返回步驟4
+                    const step4 = document.getElementById('step-4-order-confirmation');
+                    const step5 = document.getElementById('step-5-payment');
+                    
+                    if (step4 && step5) {
+                        // 隱藏步驟5
+                        step5.style.display = 'none';
+                        console.log('步驟5已隱藏');
+                        
+                        // 顯示步驟4
+                        step4.style.display = 'block';
+                        console.log('步驟4已顯示');
+                        
+                        // 更新步驟指示器回到步驟4
+                        updateStepIndicator(4);
+                    }
+                });
+                
+                // 綁定付款按鈕
+                document.getElementById('process-payment-btn')?.addEventListener('click', function() {
+                    console.log('付款按鈕被點擊');
+                    
+                    // 獲取選擇的付款方式
+                    const selectedPaymentMethod = document.querySelector('input[name="payment-method"]:checked');
+                    if (!selectedPaymentMethod) {
+                        alert('請選擇付款方式');
+                        return;
+                    }
+                    
+                    // 顯示載入狀態
+                    const btnText = document.getElementById('payment-btn-text');
+                    const btnLoading = document.getElementById('payment-loading');
+                    
+                    if (btnText && btnLoading) {
+                        btnText.classList.add('hidden');
+                        btnLoading.classList.remove('hidden');
+                    }
+                    
+                    // 模擬付款處理
+                    setTimeout(() => {
+                        // 模擬付款成功
+                        const isSuccess = Math.random() > 0.1; // 90% 成功率
+                        
+                        if (isSuccess) {
+                            // 付款成功
+                            alert('付款成功！\n\n訂單已確認，我們會盡快與您聯繫確認入住細節。\n\n感謝您選擇快樂爪子旅館！');
+                            
+                            // 這裡可以跳轉到成功頁面或重置流程
+                            console.log('付款成功，訂單資料:', bookingData);
+                        } else {
+                            // 付款失敗
+                            alert('付款失敗！\n\n請檢查您的付款資訊或選擇其他付款方式。\n\n如有問題，請聯繫客服。');
+                            
+                            // 恢復按鈕狀態
+                            if (btnText && btnLoading) {
+                                btnText.classList.remove('hidden');
+                                btnLoading.classList.add('hidden');
+                            }
+                        }
+                    }, 2000); // 模擬2秒處理時間
                 });
             }
             
@@ -2499,6 +2759,7 @@
                 attachPlanSelectionListeners();
                 attachTimeSelectionListeners();
                 attachOrderConfirmationListeners();
+                attachPaymentListeners();
                 
                 // 初始化步驟指示器為步驟1
                 updateStepIndicator(1);
