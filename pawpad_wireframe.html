@@ -860,6 +860,28 @@
                 }
             ];
             
+            // 收藏的假資料
+            let favoriteHotels = [
+                {
+                    id: 1,
+                    name: '貓語天堂',
+                    location: '新北市',
+                    rating: 4.9,
+                    reviewCount: 150,
+                    petTypes: ['cat'],
+                    imageUrl: 'https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?q=80&w=800'
+                },
+                {
+                    id: 3,
+                    name: '汪星人度假村',
+                    location: '台中市',
+                    rating: 4.7,
+                    reviewCount: 85,
+                    petTypes: ['dog'],
+                    imageUrl: 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=600'
+                }
+            ];
+            
             let mockRoomTypes = [
                 { id: 1, name: '標準犬房', description: '舒適的標準房，適合中小型犬。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 5, status: 'active' },
                 { id: 2, name: '豪華貓別墅', description: '寬敞的豪華別墅，附有貓跳台與獨立通風。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 3, status: 'active' },
@@ -5608,36 +5630,141 @@
             
             function renderFavoritesPage() {
                 const container = pages.favorites;
-                container.innerHTML = `
-                <div class="p-4">
-                    <h1 class="text-2xl font-bold mb-4 text-center text-[#181111]">我的收藏</h1>
-                    <div class="space-y-4">
-                        <div class="listing-card">
-                            <div class="info-section">
-                                <div class="flex flex-col gap-1">
-                                    <p class="text-[#886364] text-sm font-normal leading-normal">⭐️ 4.9 • 150 則評價</p>
-                                    <p class="text-[#181111] text-base font-bold leading-tight">貓語天堂</p>
-                                    <p class="text-[#886364] text-sm font-normal leading-normal">新北市 • 僅接受貓</p>
-                                </div>
-                                <button class="text-sm text-red-600 w-fit">移除收藏</button>
+                
+                if (favoriteHotels.length === 0) {
+                    container.innerHTML = `
+                        <div class="p-4">
+                            <h1 class="text-2xl font-bold mb-4 text-center text-[#181111]">我的收藏</h1>
+                            <div class="text-center py-12">
+                                <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                </svg>
+                                <h3 class="text-lg font-medium text-gray-600 mb-2">還沒有收藏任何旅館</h3>
+                                <p class="text-sm text-gray-500 mb-4">開始探索並收藏您喜歡的寵物旅館吧！</p>
+                                <button id="explore-hotels-btn" class="px-6 py-2 bg-[#181111] text-white rounded-xl text-sm">
+                                    開始探索
+                                </button>
                             </div>
-                            <div class="image-section" style='background-image: url("https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?q=80&w=800");'></div>
                         </div>
-                         <div class="listing-card">
-                            <div class="info-section">
-                                <div class="flex flex-col gap-1">
-                                    <p class="text-[#886364] text-sm font-normal leading-normal">⭐️ 4.7 • 85 則評價</p>
-                                    <p class="text-[#181111] text-base font-bold leading-tight">汪星人度假村</p>
-                                    <p class="text-[#886364] text-sm font-normal leading-normal">台中市 • 僅接受犬</p>
-                                </div>
-                                 <button class="text-sm text-red-600 w-fit">移除收藏</button>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="p-4">
+                            <h1 class="text-2xl font-bold mb-4 text-center text-[#181111]">我的收藏</h1>
+                            <div class="space-y-4">
+                                ${favoriteHotels.map(hotel => `
+                                    <div class="listing-card" data-hotel-id="${hotel.id}">
+                                        <div class="info-section">
+                                            <div class="flex flex-col gap-1">
+                                                <p class="text-[#886364] text-sm font-normal leading-normal">⭐️ ${hotel.rating} • ${hotel.reviewCount} 則評價</p>
+                                                <p class="text-[#181111] text-base font-bold leading-tight">${hotel.name}</p>
+                                                <p class="text-[#886364] text-sm font-normal leading-normal">${hotel.location} • ${hotel.petTypes.map(type => {
+                                                    const typeMap = {
+                                                        'dog': '僅接受犬',
+                                                        'cat': '僅接受貓',
+                                                        'rabbit': '僅接受兔子',
+                                                        'bird': '僅接受鳥類',
+                                                        'other': '僅接受其他'
+                                                    };
+                                                    return typeMap[type] || type;
+                                                }).join('、')}</p>
+                                            </div>
+                                            <button class="remove-favorite-btn text-sm text-red-600 w-fit" data-hotel-id="${hotel.id}">移除收藏</button>
+                                        </div>
+                                        <div class="image-section" style='background-image: url("${hotel.imageUrl}");'></div>
+                                    </div>
+                                `).join('')}
                             </div>
-                            <div class="image-section" style='background-image: url("https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=600");'></div>
                         </div>
-                         <div class="p-4 text-center text-[#886364]">沒有更多收藏了。</div>
-                    </div>
-                </div>
-                `;
+                    `;
+                }
+                
+                // 綁定事件
+                attachFavoritesListeners();
+            }
+            
+            // 綁定收藏頁面事件
+            function attachFavoritesListeners() {
+                // 開始探索按鈕
+                document.getElementById('explore-hotels-btn')?.addEventListener('click', function() {
+                    showPage('searchResult');
+                });
+                
+                // 移除收藏按鈕
+                document.querySelectorAll('.remove-favorite-btn').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation(); // 防止觸發卡片點擊事件
+                        const hotelId = parseInt(this.dataset.hotelId);
+                        removeFromFavorites(hotelId);
+                    });
+                });
+                
+                // 旅館卡片點擊事件
+                document.querySelectorAll('.listing-card[data-hotel-id]').forEach(card => {
+                    card.addEventListener('click', function() {
+                        const hotelId = parseInt(this.dataset.hotelId);
+                        const hotel = mockHotels.find(h => h.id === hotelId);
+                        if (hotel) {
+                            showPage('detail', { hotel: hotel });
+                        }
+                    });
+                });
+            }
+            
+            // 移除收藏功能
+            function removeFromFavorites(hotelId) {
+                const hotelIndex = favoriteHotels.findIndex(hotel => hotel.id === hotelId);
+                if (hotelIndex !== -1) {
+                    const hotelName = favoriteHotels[hotelIndex].name;
+                    favoriteHotels.splice(hotelIndex, 1);
+                    
+                    // 重新渲染收藏頁面
+                    renderFavoritesPage();
+                    
+                    // 顯示成功提示
+                    showToast(`${hotelName} 已從收藏中移除`, 'success');
+                }
+            }
+            
+            // 新增收藏功能
+            function addToFavorites(hotelId) {
+                const hotel = mockHotels.find(h => h.id === hotelId);
+                if (hotel && !favoriteHotels.find(f => f.id === hotelId)) {
+                    favoriteHotels.push({
+                        id: hotel.id,
+                        name: hotel.name,
+                        location: hotel.location,
+                        rating: hotel.rating,
+                        reviewCount: hotel.reviewCount,
+                        petTypes: hotel.petTypes,
+                        imageUrl: hotel.imageUrl
+                    });
+                    
+                    showToast(`${hotel.name} 已加入收藏`, 'success');
+                }
+            }
+            
+            // 顯示提示訊息
+            function showToast(message, type = 'info') {
+                // 建立提示元素
+                const toast = document.createElement('div');
+                toast.className = `fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-4 py-2 rounded-lg text-white text-sm font-medium transition-all duration-300 ${
+                    type === 'success' ? 'bg-green-500' : 
+                    type === 'error' ? 'bg-red-500' : 
+                    'bg-blue-500'
+                }`;
+                toast.textContent = message;
+                
+                document.body.appendChild(toast);
+                
+                // 3秒後自動移除
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translate(-50%, -100%)';
+                    setTimeout(() => {
+                        document.body.removeChild(toast);
+                    }, 300);
+                }, 3000);
             }
 
             // 付款成功頁面
