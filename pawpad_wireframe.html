@@ -677,6 +677,7 @@
             <!-- 所有頁面容器 -->
             <div id="home-page" class="page-content"></div>
             <div id="search-result-page" class="page-content hidden"></div>
+            <div id="search-results-page" class="page-content hidden"></div>
             <div id="detail-page" class="page-content hidden"></div>
             <div id="favorites-page" class="page-content hidden"></div>
             <div id="orders-page" class="page-content hidden"></div>
@@ -751,6 +752,114 @@
                 { id: 5, name: '快樂爪子旅館', date: '2025-04-10 - 2025-04-12', pet: '1 貓', total: 1300, status: 'completed' },
             ];
             
+            // 寵物旅館假資料
+            const mockHotels = [
+                {
+                    id: 1,
+                    name: '快樂爪子旅館',
+                    location: '台北市中山區',
+                    rating: 4.8,
+                    reviewCount: 120,
+                    price: 800,
+                    imageUrl: 'https://images.unsplash.com/photo-1548681528-6a5c45b66b42?q=80&w=600',
+                    petTypes: ['dog', 'cat'],
+                    services: ['overnight', 'daycare'],
+                    features: ['24小時監控', '專業獸醫', '大型活動區'],
+                    distance: '0.5km'
+                },
+                {
+                    id: 2,
+                    name: '貓語天堂',
+                    location: '新北市板橋區',
+                    rating: 4.9,
+                    reviewCount: 150,
+                    price: 650,
+                    imageUrl: 'https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?q=80&w=800',
+                    petTypes: ['cat'],
+                    services: ['overnight', 'daycare'],
+                    features: ['專屬貓跳台', '獨立空調', '貓咪專用玩具'],
+                    distance: '1.2km'
+                },
+                {
+                    id: 3,
+                    name: '汪星人度假村',
+                    location: '台北市信義區',
+                    rating: 4.7,
+                    reviewCount: 89,
+                    price: 1200,
+                    imageUrl: 'https://images.unsplash.com/photo-1552053831-71594a27632d?q=80&w=1000',
+                    petTypes: ['dog'],
+                    services: ['overnight'],
+                    features: ['大型戶外空間', '專業訓練師', 'SPA服務'],
+                    distance: '2.1km'
+                },
+                {
+                    id: 4,
+                    name: '寵物樂園',
+                    location: '台北市大安區',
+                    rating: 4.6,
+                    reviewCount: 203,
+                    price: 900,
+                    imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600',
+                    petTypes: ['dog', 'cat', 'rabbit'],
+                    services: ['overnight', 'daycare'],
+                    features: ['多種寵物服務', '24小時照護', '定期健康檢查'],
+                    distance: '0.8km'
+                },
+                {
+                    id: 5,
+                    name: '毛孩之家',
+                    location: '台北市松山區',
+                    rating: 4.5,
+                    reviewCount: 67,
+                    price: 750,
+                    imageUrl: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?q=80&w=600',
+                    petTypes: ['dog', 'cat', 'bird'],
+                    services: ['daycare'],
+                    features: ['溫馨環境', '專業照護', '個別關注'],
+                    distance: '1.5km'
+                },
+                {
+                    id: 6,
+                    name: '寵物皇宮',
+                    location: '台北市內湖區',
+                    rating: 4.9,
+                    reviewCount: 156,
+                    price: 1500,
+                    imageUrl: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?q=80&w=600',
+                    petTypes: ['dog', 'cat'],
+                    services: ['overnight'],
+                    features: ['豪華套房', '專屬管家', '頂級服務'],
+                    distance: '3.2km'
+                },
+                {
+                    id: 7,
+                    name: '小動物天堂',
+                    location: '台北市士林區',
+                    rating: 4.4,
+                    reviewCount: 45,
+                    price: 500,
+                    imageUrl: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?q=80&w=600',
+                    petTypes: ['rabbit', 'bird', 'other'],
+                    services: ['daycare'],
+                    features: ['小動物專區', '專業照護', '安全環境'],
+                    distance: '2.8km'
+                },
+                {
+                    id: 8,
+                    name: '寵物溫馨小屋',
+                    location: '台北市萬華區',
+                    rating: 4.7,
+                    reviewCount: 98,
+                    price: 850,
+                    imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600',
+                    petTypes: ['dog', 'cat'],
+                    services: ['overnight', 'daycare'],
+                    features: ['家庭式照護', '溫馨環境', '個別關注'],
+                    distance: '1.8km'
+                }
+            ];
+            
             let mockRoomTypes = [
                 { id: 1, name: '標準犬房', description: '舒適的標準房，適合中小型犬。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 5, status: 'active' },
                 { id: 2, name: '豪華貓別墅', description: '寬敞的豪華別墅，附有貓跳台與獨立通風。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 3, status: 'active' },
@@ -800,6 +909,7 @@
             const pages = {
                 home: document.getElementById('home-page'),
                 searchResult: document.getElementById('search-result-page'),
+                searchResults: document.getElementById('search-results-page'),
                 detail: document.getElementById('detail-page'),
                 favorites: document.getElementById('favorites-page'),
                 orders: document.getElementById('orders-page'),
@@ -834,6 +944,7 @@
                     if (pageKey === 'chat') renderChatPage();
                     if (pageKey === 'home') renderHomePage();
                     if (pageKey === 'searchResult') renderSearchResultPage();
+                    if (pageKey === 'searchResults') renderSearchResultsPage(state);
                     if (pageKey === 'favorites') renderFavoritesPage();
                     if (pageKey === 'calendarManagement') renderCalendarManagementPage();
                     if (pageKey === 'bookingFlow') renderBookingFlowPage();
@@ -1266,12 +1377,8 @@
                     
                     console.log('搜尋條件:', searchData);
                     
-                    // 這裡可以實作搜尋邏輯
-                    // 目前先顯示提示
-                    alert(`搜尋條件：\n地點：${searchData.location || '不限'}\n寵物數量：${searchData.petCount}\n服務類型：${searchData.serviceType === 'overnight' ? '寄宿過夜' : '日間安親'}\n寵物種類：${searchData.petTypes.join('、')}`);
-                    
-                    // 可以跳轉到搜尋結果頁面
-                    // showPage('searchResults', { searchData });
+                    // 跳轉到搜尋結果頁面
+                    showPage('searchResults', { searchData });
                 });
                 
                 // 最近搜尋點擊事件
@@ -1290,6 +1397,184 @@
                         // 實作附近區域搜尋邏輯
                         alert('附近區域搜尋功能開發中...');
                     }
+                });
+            }
+            
+            // 搜尋結果頁面
+            function renderSearchResultsPage(state) {
+                const container = pages.searchResults;
+                const searchData = state?.searchData || {};
+                
+                // 根據搜尋條件篩選旅館
+                let filteredHotels = mockHotels.filter(hotel => {
+                    // 根據寵物種類篩選
+                    if (searchData.petTypes && searchData.petTypes.length > 0) {
+                        const hasMatchingPetType = searchData.petTypes.some(type => 
+                            hotel.petTypes.includes(type)
+                        );
+                        if (!hasMatchingPetType) return false;
+                    }
+                    
+                    // 根據服務類型篩選
+                    if (searchData.serviceType) {
+                        if (!hotel.services.includes(searchData.serviceType)) return false;
+                    }
+                    
+                    // 根據地點篩選（簡單的字串匹配）
+                    if (searchData.location) {
+                        if (!hotel.location.includes(searchData.location)) return false;
+                    }
+                    
+                    return true;
+                });
+                
+                // 如果沒有搜尋條件，顯示所有旅館
+                if (!searchData.petTypes || searchData.petTypes.length === 0) {
+                    filteredHotels = mockHotels;
+                }
+                
+                container.innerHTML = `
+                    <div class="min-h-full bg-gray-50">
+                        <!-- 頁首 -->
+                        <div class="bg-white border-b border-gray-100 sticky top-0 z-10">
+                            <div class="px-4 py-3 flex items-center justify-between">
+                                <button id="search-results-back-btn" class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100">
+                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                    </svg>
+                                </button>
+                                <h1 class="text-lg font-bold text-[#181111]">搜尋結果</h1>
+                                <div class="w-8"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- 搜尋條件顯示 -->
+                        <div class="bg-white border-b border-gray-100 px-4 py-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm text-gray-600">找到</span>
+                                    <span class="text-sm font-bold text-[#181111]">${filteredHotels.length}</span>
+                                    <span class="text-sm text-gray-600">間旅館</span>
+                                </div>
+                                <button id="filter-btn" class="flex items-center space-x-1 text-sm text-[#181111]">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                                    </svg>
+                                    <span>篩選</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 搜尋結果列表 -->
+                        <div class="p-4 pb-20">
+                            ${filteredHotels.length === 0 ? `
+                                <div class="text-center py-12">
+                                    <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                    <h3 class="text-lg font-medium text-gray-600 mb-2">找不到符合條件的旅館</h3>
+                                    <p class="text-sm text-gray-500 mb-4">請嘗試調整搜尋條件</p>
+                                    <button id="adjust-search-btn" class="px-6 py-2 bg-[#181111] text-white rounded-xl text-sm">
+                                        調整搜尋條件
+                                    </button>
+                                </div>
+                            ` : `
+                                <div class="space-y-4">
+                                    ${filteredHotels.map(hotel => `
+                                        <div class="bg-white rounded-xl border border-gray-100 overflow-hidden cursor-pointer hover:shadow-lg transition-shadow" data-hotel-id="${hotel.id}">
+                                            <div class="flex">
+                                                <!-- 旅館圖片 -->
+                                                <div class="w-24 h-24 bg-cover bg-center flex-shrink-0" style="background-image: url('${hotel.imageUrl}')"></div>
+                                                
+                                                <!-- 旅館資訊 -->
+                                                <div class="flex-1 p-4">
+                                                    <div class="flex justify-between items-start mb-2">
+                                                        <h3 class="font-bold text-[#181111] text-base">${hotel.name}</h3>
+                                                        <div class="flex items-center space-x-1">
+                                                            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                                            </svg>
+                                                            <span class="text-sm font-medium text-gray-800">${hotel.rating}</span>
+                                                            <span class="text-xs text-gray-500">(${hotel.reviewCount})</span>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <p class="text-sm text-gray-600 mb-1">${hotel.location}</p>
+                                                    <p class="text-xs text-gray-500 mb-2">${hotel.distance}</p>
+                                                    
+                                                    <!-- 寵物種類標籤 -->
+                                                    <div class="flex flex-wrap gap-1 mb-2">
+                                                        ${hotel.petTypes.map(type => {
+                                                            const typeMap = {
+                                                                'dog': { name: '犬', color: 'bg-orange-100 text-orange-800' },
+                                                                'cat': { name: '貓', color: 'bg-blue-100 text-blue-800' },
+                                                                'rabbit': { name: '兔子', color: 'bg-gray-100 text-gray-800' },
+                                                                'bird': { name: '鳥類', color: 'bg-yellow-100 text-yellow-800' },
+                                                                'other': { name: '其他', color: 'bg-green-100 text-green-800' }
+                                                            };
+                                                            const typeInfo = typeMap[type] || { name: type, color: 'bg-gray-100 text-gray-800' };
+                                                            return `<span class="px-2 py-1 rounded-full text-xs ${typeInfo.color}">${typeInfo.name}</span>`;
+                                                        }).join('')}
+                                                    </div>
+                                                    
+                                                    <!-- 特色功能 -->
+                                                    <div class="flex flex-wrap gap-1 mb-3">
+                                                        ${hotel.features.slice(0, 2).map(feature => 
+                                                            `<span class="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">${feature}</span>`
+                                                        ).join('')}
+                                                    </div>
+                                                    
+                                                    <!-- 價格和按鈕 -->
+                                                    <div class="flex justify-between items-center">
+                                                        <div>
+                                                            <span class="text-lg font-bold text-[#181111]">NT$ ${hotel.price.toLocaleString()}</span>
+                                                            <span class="text-sm text-gray-500">/晚起</span>
+                                                        </div>
+                                                        <button class="px-4 py-2 bg-[#181111] text-white rounded-lg text-sm font-medium">
+                                                            查看詳情
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                `;
+                
+                // 綁定事件
+                attachSearchResultsListeners(searchData);
+            }
+            
+            // 綁定搜尋結果頁面事件
+            function attachSearchResultsListeners(searchData) {
+                // 返回按鈕
+                document.getElementById('search-results-back-btn')?.addEventListener('click', function() {
+                    showPage('searchResult');
+                });
+                
+                // 調整搜尋條件按鈕
+                document.getElementById('adjust-search-btn')?.addEventListener('click', function() {
+                    showPage('searchResult');
+                });
+                
+                // 篩選按鈕
+                document.getElementById('filter-btn')?.addEventListener('click', function() {
+                    // 這裡可以實作篩選功能
+                    alert('篩選功能開發中...');
+                });
+                
+                // 旅館卡片點擊事件
+                document.querySelectorAll('[data-hotel-id]').forEach(card => {
+                    card.addEventListener('click', function() {
+                        const hotelId = parseInt(this.dataset.hotelId);
+                        const hotel = mockHotels.find(h => h.id === hotelId);
+                        if (hotel) {
+                            showPage('detail', { hotel: hotel });
+                        }
+                    });
                 });
             }
             
