@@ -833,6 +833,7 @@
                     if (pageKey === 'packageManagement') renderPackageListPage(state.roomId);
                     if (pageKey === 'chat') renderChatPage();
                     if (pageKey === 'home') renderHomePage();
+                    if (pageKey === 'searchResult') renderSearchResultPage();
                     if (pageKey === 'favorites') renderFavoritesPage();
                     if (pageKey === 'calendarManagement') renderCalendarManagementPage();
                     if (pageKey === 'bookingFlow') renderBookingFlowPage();
@@ -850,6 +851,448 @@
             }
 
             // --- 渲染函式 ---
+            
+            // 搜尋頁面
+            function renderSearchResultPage() {
+                const container = pages.searchResult;
+                
+                // 預設搜尋條件
+                const defaultSearchData = {
+                    location: '',
+                    checkinDate: new Date().toISOString().split('T')[0],
+                    checkoutDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    petCount: 1,
+                    serviceType: 'overnight',
+                    petTypes: ['dog', 'cat']
+                };
+                
+                container.innerHTML = `
+                    <div class="min-h-full bg-gray-50">
+                        <!-- 頁首 -->
+                        <div class="bg-white border-b border-gray-100 sticky top-0 z-10">
+                            <div class="px-4 py-3 flex items-center justify-between">
+                                <button id="search-back-btn" class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100">
+                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                    </svg>
+                                </button>
+                                <h1 class="text-lg font-bold text-[#181111]">搜尋</h1>
+                                <div class="w-8"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- 搜尋內容 -->
+                        <div class="p-4 pb-20">
+                            <!-- 搜尋地點 -->
+                            <div class="bg-white rounded-xl border border-gray-100 p-4 mb-4">
+                                <h3 class="font-bold text-[#181111] mb-3">搜尋地點</h3>
+                                <div class="flex w-full items-stretch rounded-xl h-12 mb-3">
+                                    <div class="text-[#886364] flex border-none bg-[#f4f0f0] items-center justify-center pl-4 rounded-l-xl">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+                                            <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
+                                        </svg>
+                                    </div>
+                                    <input id="search-location-input" placeholder="輸入地點" class="form-input-styled placeholder:text-[#886364] px-4 rounded-l-none pl-2 text-base font-normal leading-normal">
+                                </div>
+                                
+                                <!-- 附近區域選項 -->
+                                <div class="flex items-center text-[#886364] cursor-pointer hover:text-[#181111] transition-colors">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    <span class="text-sm">附近區域</span>
+                                </div>
+                                
+                                <!-- 最近搜尋 -->
+                                <div class="mt-4">
+                                    <h4 class="font-bold text-[#181111] mb-2">最近搜尋</h4>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center text-[#886364] cursor-pointer hover:text-[#181111] transition-colors">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            <span class="text-sm">台北市中山區</span>
+                                        </div>
+                                        <div class="flex items-center text-[#886364] cursor-pointer hover:text-[#181111] transition-colors">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            <span class="text-sm">台北101</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 篩選選項 -->
+                            <div class="space-y-3 mb-6">
+                                <!-- 日期選擇 -->
+                                <div class="bg-white rounded-xl border border-gray-100 p-4 cursor-pointer" id="date-filter">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-medium text-[#181111]">日期</span>
+                                        <div class="flex items-center">
+                                            <span class="text-sm text-[#181111]" id="date-display">8月20日 週三 - 8月23日 週五</span>
+                                            <svg class="w-4 h-4 ml-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 寵物數量 -->
+                                <div class="bg-white rounded-xl border border-gray-100 p-4 cursor-pointer" id="pet-count-filter">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-medium text-[#181111]">寵物數量</span>
+                                        <div class="flex items-center">
+                                            <span class="text-sm text-[#181111]" id="pet-count-display">1</span>
+                                            <svg class="w-4 h-4 ml-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 服務類型 -->
+                                <div class="bg-white rounded-xl border border-gray-100 p-4 cursor-pointer" id="service-type-filter">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-medium text-[#181111]">服務類型</span>
+                                        <div class="flex items-center">
+                                            <span class="text-sm text-[#181111]" id="service-type-display">寄宿過夜</span>
+                                            <svg class="w-4 h-4 ml-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 寵物種類 -->
+                                <div class="bg-white rounded-xl border border-gray-100 p-4 cursor-pointer" id="pet-type-filter">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-medium text-[#181111]">寵物種類</span>
+                                        <div class="flex items-center">
+                                            <span class="text-sm text-[#181111]" id="pet-type-display">犬、貓</span>
+                                            <svg class="w-4 h-4 ml-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 底部按鈕 -->
+                            <div class="flex justify-between items-center">
+                                <button id="clear-search-btn" class="px-6 py-3 text-[#886364] font-medium">
+                                    清除
+                                </button>
+                                <button id="search-btn" class="px-8 py-3 bg-[#181111] text-white rounded-xl font-medium">
+                                    搜尋
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 日期選擇模態框 -->
+                        <div id="search-date-modal" class="modal-overlay hidden">
+                            <div class="modal-content max-w-md">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-lg font-bold text-[#181111]">選擇日期</h3>
+                                    <button id="close-date-modal" class="text-2xl text-gray-400">&times;</button>
+                                </div>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">入住日期</label>
+                                        <input type="date" id="search-checkin-date" class="form-input-styled w-full">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">退房日期</label>
+                                        <input type="date" id="search-checkout-date" class="form-input-styled w-full">
+                                    </div>
+                                    <button id="confirm-date" class="btn-main w-full">確認</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 寵物數量選擇模態框 -->
+                        <div id="pet-count-modal" class="modal-overlay hidden">
+                            <div class="modal-content max-w-sm">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-lg font-bold text-[#181111]">寵物數量</h3>
+                                    <button id="close-pet-count-modal" class="text-2xl text-gray-400">&times;</button>
+                                </div>
+                                <div class="text-center">
+                                    <div class="flex items-center justify-center mb-6">
+                                        <button id="decrease-pet-count" class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center text-xl">-</button>
+                                        <span id="pet-count-value" class="mx-6 text-2xl font-bold">1</span>
+                                        <button id="increase-pet-count" class="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center text-xl">+</button>
+                                    </div>
+                                    <button id="confirm-pet-count" class="btn-main w-full">確認</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 服務類型選擇模態框 -->
+                        <div id="service-type-modal" class="modal-overlay hidden">
+                            <div class="modal-content max-w-sm">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-lg font-bold text-[#181111]">服務類型</h3>
+                                    <button id="close-service-type-modal" class="text-2xl text-gray-400">&times;</button>
+                                </div>
+                                <div class="space-y-3">
+                                    <label class="flex items-center p-3 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#181111] transition-colors">
+                                        <input type="radio" name="service-type" value="overnight" class="mr-3" checked>
+                                        <div>
+                                            <div class="font-medium text-[#181111]">寄宿過夜</div>
+                                            <div class="text-sm text-gray-500">24小時住宿服務</div>
+                                        </div>
+                                    </label>
+                                    <label class="flex items-center p-3 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#181111] transition-colors">
+                                        <input type="radio" name="service-type" value="daycare" class="mr-3">
+                                        <div>
+                                            <div class="font-medium text-[#181111]">日間安親</div>
+                                            <div class="text-sm text-gray-500">白天托育服務</div>
+                                        </div>
+                                    </label>
+                                </div>
+                                <button id="confirm-service-type" class="btn-main w-full mt-4">確認</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 寵物種類選擇模態框 -->
+                        <div id="pet-type-modal" class="modal-overlay hidden">
+                            <div class="modal-content max-w-sm">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-lg font-bold text-[#181111]">寵物種類</h3>
+                                    <button id="close-pet-type-modal" class="text-2xl text-gray-400">&times;</button>
+                                </div>
+                                <div class="space-y-3">
+                                    <label class="flex items-center p-3 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#181111] transition-colors">
+                                        <input type="checkbox" name="pet-type" value="dog" class="mr-3" checked>
+                                        <div class="flex items-center">
+                                            <svg class="w-6 h-6 mr-2 text-orange-500" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                            </svg>
+                                            <span class="font-medium text-[#181111]">犬</span>
+                                        </div>
+                                    </label>
+                                    <label class="flex items-center p-3 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#181111] transition-colors">
+                                        <input type="checkbox" name="pet-type" value="cat" class="mr-3" checked>
+                                        <div class="flex items-center">
+                                            <svg class="w-6 h-6 mr-2 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                            </svg>
+                                            <span class="font-medium text-[#181111]">貓</span>
+                                        </div>
+                                    </label>
+                                    <label class="flex items-center p-3 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#181111] transition-colors">
+                                        <input type="checkbox" name="pet-type" value="rabbit" class="mr-3">
+                                        <div class="flex items-center">
+                                            <svg class="w-6 h-6 mr-2 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                            </svg>
+                                            <span class="font-medium text-[#181111]">兔子</span>
+                                        </div>
+                                    </label>
+                                    <label class="flex items-center p-3 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#181111] transition-colors">
+                                        <input type="checkbox" name="pet-type" value="bird" class="mr-3">
+                                        <div class="flex items-center">
+                                            <svg class="w-6 h-6 mr-2 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                            </svg>
+                                            <span class="font-medium text-[#181111]">鳥類</span>
+                                        </div>
+                                    </label>
+                                    <label class="flex items-center p-3 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#181111] transition-colors">
+                                        <input type="checkbox" name="pet-type" value="other" class="mr-3">
+                                        <div class="flex items-center">
+                                            <svg class="w-6 h-6 mr-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                            </svg>
+                                            <span class="font-medium text-[#181111]">其他</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                <button id="confirm-pet-type" class="btn-main w-full mt-4">確認</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // 綁定事件
+                attachSearchPageListeners();
+            }
+            
+            // 綁定搜尋頁面事件
+            function attachSearchPageListeners() {
+                // 返回按鈕
+                document.getElementById('search-back-btn')?.addEventListener('click', function() {
+                    showPage('home');
+                });
+                
+                // 日期篩選
+                document.getElementById('date-filter')?.addEventListener('click', function() {
+                    document.getElementById('search-date-modal').classList.remove('hidden');
+                });
+                
+                // 寵物數量篩選
+                document.getElementById('pet-count-filter')?.addEventListener('click', function() {
+                    document.getElementById('pet-count-modal').classList.remove('hidden');
+                });
+                
+                // 服務類型篩選
+                document.getElementById('service-type-filter')?.addEventListener('click', function() {
+                    document.getElementById('service-type-modal').classList.remove('hidden');
+                });
+                
+                // 寵物種類篩選
+                document.getElementById('pet-type-filter')?.addEventListener('click', function() {
+                    document.getElementById('pet-type-modal').classList.remove('hidden');
+                });
+                
+                // 日期模態框事件
+                document.getElementById('close-date-modal')?.addEventListener('click', function() {
+                    document.getElementById('search-date-modal').classList.add('hidden');
+                });
+                
+                document.getElementById('confirm-date')?.addEventListener('click', function() {
+                    const checkinDate = document.getElementById('search-checkin-date').value;
+                    const checkoutDate = document.getElementById('search-checkout-date').value;
+                    
+                    if (checkinDate && checkoutDate) {
+                        const checkin = new Date(checkinDate);
+                        const checkout = new Date(checkoutDate);
+                        const dateDisplay = document.getElementById('date-display');
+                        
+                        const formatDate = (date) => {
+                            const month = date.getMonth() + 1;
+                            const day = date.getDate();
+                            const weekdays = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+                            const weekday = weekdays[date.getDay()];
+                            return `${month}月${day}日 ${weekday}`;
+                        };
+                        
+                        dateDisplay.textContent = `${formatDate(checkin)} - ${formatDate(checkout)}`;
+                        document.getElementById('search-date-modal').classList.add('hidden');
+                    }
+                });
+                
+                // 寵物數量模態框事件
+                document.getElementById('close-pet-count-modal')?.addEventListener('click', function() {
+                    document.getElementById('pet-count-modal').classList.add('hidden');
+                });
+                
+                let petCount = 1;
+                document.getElementById('decrease-pet-count')?.addEventListener('click', function() {
+                    if (petCount > 1) {
+                        petCount--;
+                        document.getElementById('pet-count-value').textContent = petCount;
+                    }
+                });
+                
+                document.getElementById('increase-pet-count')?.addEventListener('click', function() {
+                    if (petCount < 10) {
+                        petCount++;
+                        document.getElementById('pet-count-value').textContent = petCount;
+                    }
+                });
+                
+                document.getElementById('confirm-pet-count')?.addEventListener('click', function() {
+                    document.getElementById('pet-count-display').textContent = petCount;
+                    document.getElementById('pet-count-modal').classList.add('hidden');
+                });
+                
+                // 服務類型模態框事件
+                document.getElementById('close-service-type-modal')?.addEventListener('click', function() {
+                    document.getElementById('service-type-modal').classList.add('hidden');
+                });
+                
+                document.getElementById('confirm-service-type')?.addEventListener('click', function() {
+                    const selectedType = document.querySelector('input[name="service-type"]:checked');
+                    if (selectedType) {
+                        const displayText = selectedType.value === 'overnight' ? '寄宿過夜' : '日間安親';
+                        document.getElementById('service-type-display').textContent = displayText;
+                        document.getElementById('service-type-modal').classList.add('hidden');
+                    }
+                });
+                
+                // 寵物種類模態框事件
+                document.getElementById('close-pet-type-modal')?.addEventListener('click', function() {
+                    document.getElementById('pet-type-modal').classList.add('hidden');
+                });
+                
+                document.getElementById('confirm-pet-type')?.addEventListener('click', function() {
+                    const selectedTypes = Array.from(document.querySelectorAll('input[name="pet-type"]:checked'))
+                        .map(input => {
+                            const typeMap = {
+                                'dog': '犬',
+                                'cat': '貓',
+                                'rabbit': '兔子',
+                                'bird': '鳥類',
+                                'other': '其他'
+                            };
+                            return typeMap[input.value] || input.value;
+                        });
+                    
+                    if (selectedTypes.length > 0) {
+                        document.getElementById('pet-type-display').textContent = selectedTypes.join('、');
+                        document.getElementById('pet-type-modal').classList.add('hidden');
+                    }
+                });
+                
+                // 清除按鈕
+                document.getElementById('clear-search-btn')?.addEventListener('click', function() {
+                    // 重置所有搜尋條件
+                    document.getElementById('search-location-input').value = '';
+                    document.getElementById('date-display').textContent = '8月20日 週三 - 8月23日 週五';
+                    document.getElementById('pet-count-display').textContent = '1';
+                    document.getElementById('service-type-display').textContent = '寄宿過夜';
+                    document.getElementById('pet-type-display').textContent = '犬、貓';
+                    
+                    // 重置模態框中的值
+                    petCount = 1;
+                    document.getElementById('pet-count-value').textContent = '1';
+                    document.querySelector('input[name="service-type"][value="overnight"]').checked = true;
+                    document.querySelectorAll('input[name="pet-type"]').forEach(input => {
+                        input.checked = (input.value === 'dog' || input.value === 'cat');
+                    });
+                });
+                
+                // 搜尋按鈕
+                document.getElementById('search-btn')?.addEventListener('click', function() {
+                    const searchData = {
+                        location: document.getElementById('search-location-input').value,
+                        petCount: parseInt(document.getElementById('pet-count-display').textContent),
+                        serviceType: document.querySelector('input[name="service-type"]:checked')?.value || 'overnight',
+                        petTypes: Array.from(document.querySelectorAll('input[name="pet-type"]:checked')).map(input => input.value)
+                    };
+                    
+                    console.log('搜尋條件:', searchData);
+                    
+                    // 這裡可以實作搜尋邏輯
+                    // 目前先顯示提示
+                    alert(`搜尋條件：\n地點：${searchData.location || '不限'}\n寵物數量：${searchData.petCount}\n服務類型：${searchData.serviceType === 'overnight' ? '寄宿過夜' : '日間安親'}\n寵物種類：${searchData.petTypes.join('、')}`);
+                    
+                    // 可以跳轉到搜尋結果頁面
+                    // showPage('searchResults', { searchData });
+                });
+                
+                // 最近搜尋點擊事件
+                document.querySelectorAll('.flex.items-center.text-\\[\\#886364\\].cursor-pointer').forEach(item => {
+                    if (item.textContent.includes('台北市中山區') || item.textContent.includes('台北101')) {
+                        item.addEventListener('click', function() {
+                            const location = this.textContent.trim();
+                            document.getElementById('search-location-input').value = location;
+                        });
+                    }
+                });
+                
+                // 附近區域點擊事件
+                document.querySelector('.flex.items-center.text-\\[\\#886364\\].cursor-pointer')?.addEventListener('click', function() {
+                    if (this.textContent.includes('附近區域')) {
+                        // 實作附近區域搜尋邏輯
+                        alert('附近區域搜尋功能開發中...');
+                    }
+                });
+            }
+            
             function renderHomePage() {
                 const container = pages.home;
                 container.innerHTML = `
