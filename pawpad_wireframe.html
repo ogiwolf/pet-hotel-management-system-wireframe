@@ -4560,6 +4560,14 @@
                         </div>
                         <div class="text-[#886364]">›</div>
                     </div>
+                </div>
+                <div class="px-4 py-2">
+                    <button id="quick-merchant-backend-btn" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-xl font-medium hover:from-blue-600 hover:to-purple-700 transition-all duration-200 flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256">
+                            <path d="M208,80H48A16,16,0,0,0,32,96V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V96A16,16,0,0,0,208,80ZM48,96H208V112H48Zm0,32H208v80H48Zm32,48a8,8,0,0,1,8-8h32a8,8,0,0,1,0,16H88A8,8,0,0,1,80,176Zm80-8a8,8,0,0,1,0,16H136a8,8,0,0,1,0-16Z"></path>
+                        </svg>
+                        直接進入商家後台
+                    </button>
                 </div>` : `
                 <div class="px-4 py-3">
                     <div id="merchant-entry" class="bg-white border border-gray-100 rounded-xl p-4 flex items-center justify-between cursor-pointer">
@@ -4617,6 +4625,7 @@
                 document.getElementById('become-merchant-card')?.addEventListener('click', () => { renderMerchantApplicationFlow(); });
                 document.getElementById('merchant-entry')?.addEventListener('click', () => showPage('merchantDashboard'));
                 document.getElementById('merchant-backend-btn')?.addEventListener('click', () => showPage('merchantDashboard'));
+                document.getElementById('quick-merchant-backend-btn')?.addEventListener('click', () => showPage('merchantDashboard'));
                 document.getElementById('account-support')?.addEventListener('click', () => showPage('chat'));
                 document.getElementById('account-privacy')?.addEventListener('click', openPrivacyModal);
                 document.getElementById('account-referral')?.addEventListener('click', openReferralModal);
