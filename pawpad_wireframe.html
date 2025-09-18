@@ -7244,7 +7244,7 @@
                             <!-- 評分統計 -->
                             <div class="mb-4">
                                 <h3 class="text-sm font-medium text-[#181111] mb-2">平均評分</h3>
-                                <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-3 mb-3">
                                     <div class="text-3xl font-bold text-yellow-500">4.8</div>
                                     <div class="flex items-center">
                                         <div class="flex text-yellow-400">
@@ -7253,10 +7253,34 @@
                                         <span class="text-sm text-gray-600 ml-2">(156 則評論)</span>
                                     </div>
                                 </div>
+                                
+                                <!-- 評分趨勢 -->
+                                <div class="bg-gray-50 rounded-lg p-3 h-32 flex items-end justify-between mb-2">
+                                    <div class="flex flex-col items-center">
+                                        <div class="bg-yellow-500 w-3 h-16 rounded-t"></div>
+                                        <span class="text-xs text-gray-600 mt-1">1週</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="bg-yellow-500 w-3 h-20 rounded-t"></div>
+                                        <span class="text-xs text-gray-600 mt-1">2週</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="bg-yellow-500 w-3 h-24 rounded-t"></div>
+                                        <span class="text-xs text-gray-600 mt-1">3週</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="bg-yellow-500 w-3 h-28 rounded-t"></div>
+                                        <span class="text-xs text-gray-600 mt-1">4週</span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>4.0</span>
+                                    <span>5.0</span>
+                                </div>
                             </div>
 
                             <!-- 評分分布 -->
-                            <div>
+                            <div class="mb-4">
                                 <h3 class="text-sm font-medium text-[#181111] mb-2">評分分布</h3>
                                 <div class="space-y-2">
                                     <div class="flex items-center gap-2">
@@ -7293,6 +7317,142 @@
                                             <div class="bg-gray-400 h-2 rounded-full" style="width: 0%"></div>
                                         </div>
                                         <span class="text-xs text-gray-600">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 評論分析 -->
+                            <div class="mb-4">
+                                <h3 class="text-sm font-medium text-[#181111] mb-2">評論分析</h3>
+                                
+                                <!-- 評論情感分析 -->
+                                <div class="grid grid-cols-3 gap-3 mb-3">
+                                    <div class="bg-green-50 rounded-lg p-3 text-center">
+                                        <div class="text-lg font-bold text-green-700">89%</div>
+                                        <div class="text-xs text-green-600">正面評論</div>
+                                    </div>
+                                    <div class="bg-yellow-50 rounded-lg p-3 text-center">
+                                        <div class="text-lg font-bold text-yellow-700">8%</div>
+                                        <div class="text-xs text-yellow-600">中性評論</div>
+                                    </div>
+                                    <div class="bg-red-50 rounded-lg p-3 text-center">
+                                        <div class="text-lg font-bold text-red-700">3%</div>
+                                        <div class="text-xs text-red-600">負面評論</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 熱門關鍵詞 -->
+                                <div class="bg-gray-50 rounded-lg p-3">
+                                    <h4 class="text-xs font-medium text-gray-600 mb-2">熱門關鍵詞</h4>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">環境舒適</span>
+                                        <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">服務專業</span>
+                                        <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">價格合理</span>
+                                        <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">寵物開心</span>
+                                        <span class="bg-pink-100 text-pink-800 text-xs px-2 py-1 rounded-full">設施完善</span>
+                                        <span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full">交通便利</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 情感分析趨勢 -->
+                            <div class="mb-4">
+                                <h3 class="text-sm font-medium text-[#181111] mb-2">情感分析趨勢</h3>
+                                <div class="bg-gray-50 rounded-lg p-3 h-32 flex items-end justify-between mb-2">
+                                    <div class="flex flex-col items-center">
+                                        <div class="bg-green-500 w-3 h-20 rounded-t"></div>
+                                        <span class="text-xs text-gray-600 mt-1">1週</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="bg-green-500 w-3 h-24 rounded-t"></div>
+                                        <span class="text-xs text-gray-600 mt-1">2週</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="bg-green-500 w-3 h-28 rounded-t"></div>
+                                        <span class="text-xs text-gray-600 mt-1">3週</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="bg-green-500 w-3 h-32 rounded-t"></div>
+                                        <span class="text-xs text-gray-600 mt-1">4週</span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>80%</span>
+                                    <span>95%</span>
+                                </div>
+                            </div>
+
+                            <!-- 各房型滿意度 -->
+                            <div class="mb-4">
+                                <h3 class="text-sm font-medium text-[#181111] mb-2">各房型滿意度</h3>
+                                <div class="space-y-3">
+                                    <div class="bg-white border border-gray-200 rounded-lg p-3">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="text-sm font-medium text-gray-700">標準犬房</span>
+                                            <div class="flex items-center gap-1">
+                                                <div class="flex text-yellow-400">
+                                                    ★★★★★
+                                                </div>
+                                                <span class="text-sm font-bold text-yellow-600">4.9</span>
+                                            </div>
+                                        </div>
+                                        <div class="text-xs text-gray-500">(45 則評論)</div>
+                                    </div>
+                                    
+                                    <div class="bg-white border border-gray-200 rounded-lg p-3">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="text-sm font-medium text-gray-700">豪華貓別墅</span>
+                                            <div class="flex items-center gap-1">
+                                                <div class="flex text-yellow-400">
+                                                    ★★★★★
+                                                </div>
+                                                <span class="text-sm font-bold text-yellow-600">4.7</span>
+                                            </div>
+                                        </div>
+                                        <div class="text-xs text-gray-500">(32 則評論)</div>
+                                    </div>
+                                    
+                                    <div class="bg-white border border-gray-200 rounded-lg p-3">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="text-sm font-medium text-gray-700">小型寵物寄宿籠</span>
+                                            <div class="flex items-center gap-1">
+                                                <div class="flex text-yellow-400">
+                                                    ★★★★☆
+                                                </div>
+                                                <span class="text-sm font-bold text-yellow-600">4.5</span>
+                                            </div>
+                                        </div>
+                                        <div class="text-xs text-gray-500">(28 則評論)</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 改進建議 -->
+                            <div>
+                                <h3 class="text-sm font-medium text-[#181111] mb-2">改進建議</h3>
+                                <div class="bg-gray-50 rounded-lg p-3">
+                                    <div class="space-y-2">
+                                        <div class="flex items-start gap-2">
+                                            <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                            <div>
+                                                <div class="text-xs font-medium text-gray-700">提升服務速度</div>
+                                                <div class="text-xs text-gray-500">3% 的評論提到服務速度可以更快</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start gap-2">
+                                            <div class="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                                            <div>
+                                                <div class="text-xs font-medium text-gray-700">增加戶外活動空間</div>
+                                                <div class="text-xs text-gray-500">5% 的評論希望有更多戶外活動</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start gap-2">
+                                            <div class="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
+                                            <div>
+                                                <div class="text-xs font-medium text-gray-700">改善網路連線</div>
+                                                <div class="text-xs text-gray-500">2% 的評論提到網路連線不穩定</div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -9447,6 +9607,53 @@
                         </div>
                     `).join('');
                 }
+                
+                // 更新客戶滿意度分析圖表
+                const satisfactionChartContainers = document.querySelectorAll('#satisfaction-content .bg-gray-50.rounded-lg.p-3.h-32');
+                satisfactionChartContainers.forEach((chartContainer, index) => {
+                    let satisfactionData = [];
+                    let satisfactionLabels = [];
+                    
+                    if (period === '7') {
+                        satisfactionLabels = ['週一', '週二', '週三', '週四', '週五', '週六', '週日'];
+                        if (index === 0) {
+                            // 評分趨勢
+                            satisfactionData = [4.5, 4.6, 4.7, 4.8, 4.8, 4.9, 4.9];
+                        } else {
+                            // 情感分析趨勢
+                            satisfactionData = [85, 87, 88, 89, 90, 92, 93];
+                        }
+                    } else if (period === '30') {
+                        satisfactionLabels = ['第1週', '第2週', '第3週', '第4週'];
+                        if (index === 0) {
+                            satisfactionData = [4.6, 4.7, 4.8, 4.8];
+                        } else {
+                            satisfactionData = [87, 89, 90, 92];
+                        }
+                    } else if (period === '90') {
+                        satisfactionLabels = ['1月', '2月', '3月'];
+                        if (index === 0) {
+                            satisfactionData = [4.5, 4.7, 4.8];
+                        } else {
+                            satisfactionData = [85, 88, 91];
+                        }
+                    } else if (period === '365') {
+                        satisfactionLabels = ['Q1', 'Q2', 'Q3', 'Q4'];
+                        if (index === 0) {
+                            satisfactionData = [4.4, 4.6, 4.7, 4.8];
+                        } else {
+                            satisfactionData = [82, 86, 89, 92];
+                        }
+                    }
+                    
+                    // 更新滿意度圖表
+                    chartContainer.innerHTML = satisfactionData.map((height, chartIndex) => `
+                        <div class="flex flex-col items-center">
+                            <div class="w-3 rounded-t ${index === 0 ? 'bg-yellow-500' : 'bg-green-500'}" style="height: ${index === 0 ? height*6 : height/3}px"></div>
+                            <span class="text-xs text-gray-600 mt-1">${satisfactionLabels[chartIndex]}</span>
+                        </div>
+                    `).join('');
+                });
             }
 
             // 切換數據分析頁簽
