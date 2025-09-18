@@ -6795,6 +6795,7 @@
                         <div class="flex border-b border-gray-200 mb-4">
                             <button id="revenue-tab" class="analytics-tab px-4 py-2 text-sm font-medium text-blue-600 border-b-2 border-blue-600">💰 營收分析</button>
                             <button id="order-tab" class="analytics-tab px-4 py-2 text-sm font-medium text-gray-500 border-b-2 border-transparent">📋 訂單分析</button>
+                            <button id="occupancy-tab" class="analytics-tab px-4 py-2 text-sm font-medium text-gray-500 border-b-2 border-transparent">🏠 房況分析</button>
                             <button id="satisfaction-tab" class="analytics-tab px-4 py-2 text-sm font-medium text-gray-500 border-b-2 border-transparent">😊 滿意度</button>
                         </div>
                         
@@ -7050,6 +7051,188 @@
                                                 </div>
                                                 <span class="text-xs">20%</span>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 房況分析內容 -->
+                        <div id="occupancy-content" class="analytics-content hidden">
+                            <!-- 整體入住率 -->
+                            <div class="mb-4">
+                                <h3 class="text-sm font-medium text-[#181111] mb-2">整體入住率</h3>
+                                <div class="bg-gray-50 rounded-lg p-3 h-32 flex items-end justify-between mb-2">
+                                    <div class="flex flex-col items-center">
+                                        <div class="bg-blue-500 w-4 h-20 rounded-t"></div>
+                                        <span class="text-xs text-gray-600 mt-1">週一</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="bg-blue-500 w-4 h-24 rounded-t"></div>
+                                        <span class="text-xs text-gray-600 mt-1">週二</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="bg-blue-500 w-4 h-28 rounded-t"></div>
+                                        <span class="text-xs text-gray-600 mt-1">週三</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="bg-blue-500 w-4 h-32 rounded-t"></div>
+                                        <span class="text-xs text-gray-600 mt-1">週四</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="bg-blue-500 w-4 h-36 rounded-t"></div>
+                                        <span class="text-xs text-gray-600 mt-1">週五</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="bg-emerald-500 w-4 h-40 rounded-t"></div>
+                                        <span class="text-xs text-gray-600 mt-1">週六</span>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="bg-emerald-500 w-4 h-44 rounded-t"></div>
+                                        <span class="text-xs text-gray-600 mt-1">週日</span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                    <span>0%</span>
+                                    <span>100%</span>
+                                </div>
+                            </div>
+
+                            <!-- 各房型入住率 -->
+                            <div class="mb-4">
+                                <h3 class="text-sm font-medium text-[#181111] mb-2">各房型入住率</h3>
+                                <div class="space-y-3">
+                                    <div class="bg-white border border-gray-200 rounded-lg p-3">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="text-sm font-medium text-gray-700">標準犬房</span>
+                                            <span class="text-sm font-bold text-blue-600">75%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-blue-500 h-2 rounded-full" style="width: 75%"></div>
+                                        </div>
+                                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                            <span>已入住: 15/20</span>
+                                            <span>可用: 5 間</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-white border border-gray-200 rounded-lg p-3">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="text-sm font-medium text-gray-700">豪華貓別墅</span>
+                                            <span class="text-sm font-bold text-pink-600">60%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-pink-500 h-2 rounded-full" style="width: 60%"></div>
+                                        </div>
+                                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                            <span>已入住: 9/15</span>
+                                            <span>可用: 6 間</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-white border border-gray-200 rounded-lg p-3">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="text-sm font-medium text-gray-700">小型寵物寄宿籠</span>
+                                            <span class="text-sm font-bold text-green-600">40%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-green-500 h-2 rounded-full" style="width: 40%"></div>
+                                        </div>
+                                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                            <span>已入住: 8/20</span>
+                                            <span>可用: 12 間</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 容量利用率分析 -->
+                            <div class="mb-4">
+                                <h3 class="text-sm font-medium text-[#181111] mb-2">容量利用率分析</h3>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="bg-blue-50 rounded-lg p-3 text-center">
+                                        <div class="text-lg font-bold text-blue-700">68%</div>
+                                        <div class="text-xs text-blue-600">平均利用率</div>
+                                    </div>
+                                    <div class="bg-green-50 rounded-lg p-3 text-center">
+                                        <div class="text-lg font-bold text-green-700">32</div>
+                                        <div class="text-xs text-green-600">總可用房間</div>
+                                    </div>
+                                    <div class="bg-yellow-50 rounded-lg p-3 text-center">
+                                        <div class="text-lg font-bold text-yellow-700">22</div>
+                                        <div class="text-xs text-yellow-600">已入住房間</div>
+                                    </div>
+                                    <div class="bg-gray-50 rounded-lg p-3 text-center">
+                                        <div class="text-lg font-bold text-gray-700">10</div>
+                                        <div class="text-xs text-gray-600">閒置房間</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 閒置時間分析 -->
+                            <div>
+                                <h3 class="text-sm font-medium text-[#181111] mb-2">閒置時間分析</h3>
+                                <div class="bg-gray-50 rounded-lg p-3">
+                                    <h4 class="text-xs font-medium text-gray-600 mb-2">各時段閒置率</h4>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-gray-600">上午 (9-12點)</span>
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-16 bg-gray-200 rounded-full h-1.5">
+                                                    <div class="bg-red-400 h-1.5 rounded-full" style="width: 25%"></div>
+                                                </div>
+                                                <span class="text-xs">25%</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-gray-600">下午 (13-17點)</span>
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-16 bg-gray-200 rounded-full h-1.5">
+                                                    <div class="bg-yellow-400 h-1.5 rounded-full" style="width: 15%"></div>
+                                                </div>
+                                                <span class="text-xs">15%</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-gray-600">晚上 (18-22點)</span>
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-16 bg-gray-200 rounded-full h-1.5">
+                                                    <div class="bg-green-400 h-1.5 rounded-full" style="width: 5%"></div>
+                                                </div>
+                                                <span class="text-xs">5%</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs text-gray-600">深夜 (23-8點)</span>
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-16 bg-gray-200 rounded-full h-1.5">
+                                                    <div class="bg-blue-400 h-1.5 rounded-full" style="width: 10%"></div>
+                                                </div>
+                                                <span class="text-xs">10%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 閒置房間分布 -->
+                                <div class="mt-3 bg-gray-50 rounded-lg p-3">
+                                    <h4 class="text-xs font-medium text-gray-600 mb-2">閒置房間分布</h4>
+                                    <div class="grid grid-cols-2 gap-2 text-xs">
+                                        <div class="bg-white rounded p-2 text-center">
+                                            <div class="font-medium text-gray-700">標準犬房</div>
+                                            <div class="text-blue-600">5 間閒置</div>
+                                        </div>
+                                        <div class="bg-white rounded p-2 text-center">
+                                            <div class="font-medium text-gray-700">豪華貓別墅</div>
+                                            <div class="text-pink-600">6 間閒置</div>
+                                        </div>
+                                        <div class="bg-white rounded p-2 text-center">
+                                            <div class="font-medium text-gray-700">小型寄宿籠</div>
+                                            <div class="text-green-600">12 間閒置</div>
+                                        </div>
+                                        <div class="bg-white rounded p-2 text-center">
+                                            <div class="font-medium text-gray-700">其他房型</div>
+                                            <div class="text-gray-600">2 間閒置</div>
                                         </div>
                                     </div>
                                 </div>
@@ -9235,6 +9418,35 @@
                         </div>
                     `).join('');
                 });
+                
+                // 更新房況分析圖表
+                const occupancyChartContainer = document.querySelector('#occupancy-content .bg-gray-50.rounded-lg.p-3.h-32');
+                if (occupancyChartContainer) {
+                    let occupancyData = [];
+                    let occupancyLabels = [];
+                    
+                    if (period === '7') {
+                        occupancyLabels = ['週一', '週二', '週三', '週四', '週五', '週六', '週日'];
+                        occupancyData = [60, 65, 70, 75, 80, 85, 90]; // 入住率百分比
+                    } else if (period === '30') {
+                        occupancyLabels = ['第1週', '第2週', '第3週', '第4週'];
+                        occupancyData = [70, 75, 72, 78];
+                    } else if (period === '90') {
+                        occupancyLabels = ['1月', '2月', '3月'];
+                        occupancyData = [68, 72, 75];
+                    } else if (period === '365') {
+                        occupancyLabels = ['Q1', 'Q2', 'Q3', 'Q4'];
+                        occupancyData = [65, 70, 75, 80];
+                    }
+                    
+                    // 更新入住率圖表
+                    occupancyChartContainer.innerHTML = occupancyData.map((height, index) => `
+                        <div class="flex flex-col items-center">
+                            <div class="w-4 rounded-t ${index >= 5 ? 'bg-emerald-500' : 'bg-blue-500'}" style="height: ${height/2.5}px"></div>
+                            <span class="text-xs text-gray-600 mt-1">${occupancyLabels[index]}</span>
+                        </div>
+                    `).join('');
+                }
             }
 
             // 切換數據分析頁簽
@@ -9318,6 +9530,9 @@
                 }
                 if (e.target.closest('#order-tab')) {
                     switchAnalyticsTab('order');
+                }
+                if (e.target.closest('#occupancy-tab')) {
+                    switchAnalyticsTab('occupancy');
                 }
                 if (e.target.closest('#satisfaction-tab')) {
                     switchAnalyticsTab('satisfaction');
