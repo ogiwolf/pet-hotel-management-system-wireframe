@@ -684,6 +684,7 @@
             <div id="order-detail-page" class="page-content hidden"></div>
             <div id="user-center-page" class="page-content hidden"></div>
             <div id="merchant-dashboard-page" class="page-content hidden"></div>
+            <div id="analytics-dashboard-page" class="page-content hidden"></div>
             <div id="room-management-page" class="page-content hidden"></div>
             <div id="package-management-page" class="page-content hidden"></div>
             <div id="chat-page" class="page-content hidden"></div>
@@ -939,6 +940,7 @@
                 account: document.getElementById('user-center-page'),
                 chat: document.getElementById('chat-page'),
                 merchantDashboard: document.getElementById('merchant-dashboard-page'),
+                analyticsDashboard: document.getElementById('analytics-dashboard-page'),
                 roomManagement: document.getElementById('room-management-page'),
                 packageManagement: document.getElementById('package-management-page'),
                 calendarManagement: document.getElementById('calendar-management-page'),
@@ -6736,23 +6738,68 @@
                         <button id="manage-calendar-btn" class="btn-main h-10 px-5 text-sm w-full">管理行事曆</button>
                     </div>
 
-                    <!-- 營收分析儀表板 -->
+                    <!-- 數據分析入口 -->
+                    <div class="p-4 rounded-xl border border-gray-100 bg-white cursor-pointer hover:bg-gray-50" id="analytics-dashboard-link">
+                        <h2 class="text-lg font-bold text-[#181111] mb-2">📊 數據分析</h2>
+                        <div class="flex justify-between items-center">
+                            <p class="text-sm text-[#886364]">營收分析、訂單統計、客戶滿意度等詳細數據</p>
+                            <span class="text-[#886364]">></span>
+                        </div>
+                    </div>
+
+                    <!-- 房型與方案管理 -->
+                    <div id="manage-rooms-link" class="p-4 rounded-xl border border-gray-100 bg-white cursor-pointer hover:bg-gray-50">
+                        <h2 class="text-lg font-bold text-[#181111] mb-2">房型與方案管理</h2>
+                        <div class="flex justify-between items-center">
+                            <p class="text-sm text-[#886364]">管理您的房型與價格方案</p>
+                            <span class="text-[#886364]">></span>
+                        </div>
+                    </div>
+                     <!-- 訂單管理 -->
+                    <div class="p-4 rounded-xl border border-gray-100 bg-white cursor-pointer hover:bg-gray-50">
+                        <h2 class="text-lg font-bold text-[#181111] mb-2">訂單管理</h2>
+                        <div class="flex justify-between items-center">
+                            <p class="text-sm text-[#886364]">查看與確認所有訂單</p>
+                            <span class="text-[#886364]">></span>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }
+
+            function renderAnalyticsDashboard() {
+                const container = pages.analyticsDashboard;
+                container.innerHTML = `
+                <div class="p-4 space-y-4">
+                    <!-- 頁面標題與返回按鈕 -->
+                    <div class="flex items-center gap-3 mb-4">
+                        <button id="back-to-merchant-dashboard-btn" class="text-2xl text-[#886364]">‹</button>
+                        <h1 class="text-2xl font-bold text-[#181111]">📊 數據分析</h1>
+                    </div>
+
+                    <!-- 時間範圍選擇器 -->
                     <div class="p-4 rounded-xl border border-gray-100 bg-white">
                         <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-lg font-bold text-[#181111]">營收分析</h2>
+                            <h2 class="text-lg font-bold text-[#181111]">分析時間範圍</h2>
                             <div class="flex gap-2">
-                                <select id="revenue-period-select" class="form-input-styled text-sm h-8 px-3">
+                                <select id="analytics-period-select" class="form-input-styled text-sm h-8 px-3">
                                     <option value="7">近7天</option>
                                     <option value="30" selected>近30天</option>
                                     <option value="90">近90天</option>
+                                    <option value="365">近一年</option>
                                 </select>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- 營收分析 -->
+                    <div class="p-4 rounded-xl border border-gray-100 bg-white">
+                        <h2 class="text-lg font-bold text-[#181111] mb-4">💰 營收分析</h2>
                         
                         <!-- 營收趨勢圖表 -->
                         <div class="mb-4">
                             <h3 class="text-sm font-medium text-[#181111] mb-2">營收趨勢</h3>
-                            <div class="bg-gray-50 rounded-lg p-3 h-32 flex items-end justify-between">
+                            <div class="bg-gray-50 rounded-lg p-3 h-40 flex items-end justify-between">
                                 <div class="flex flex-col items-center">
                                     <div class="bg-blue-500 w-4 h-16 rounded-t"></div>
                                     <span class="text-xs text-gray-600 mt-1">週一</span>
@@ -6840,20 +6887,115 @@
                         </div>
                     </div>
 
-                    <!-- 房型與方案管理 -->
-                    <div id="manage-rooms-link" class="p-4 rounded-xl border border-gray-100 bg-white cursor-pointer hover:bg-gray-50">
-                        <h2 class="text-lg font-bold text-[#181111] mb-2">房型與方案管理</h2>
-                        <div class="flex justify-between items-center">
-                            <p class="text-sm text-[#886364]">管理您的房型與價格方案</p>
-                            <span class="text-[#886364]">></span>
+                    <!-- 訂單分析 -->
+                    <div class="p-4 rounded-xl border border-gray-100 bg-white">
+                        <h2 class="text-lg font-bold text-[#181111] mb-4">📋 訂單分析</h2>
+                        
+                        <!-- 訂單狀態統計 -->
+                        <div class="mb-4">
+                            <h3 class="text-sm font-medium text-[#181111] mb-2">訂單狀態分布</h3>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="bg-blue-50 rounded-lg p-3 text-center">
+                                    <div class="text-lg font-bold text-blue-700">5</div>
+                                    <div class="text-xs text-blue-600">待確認</div>
+                                </div>
+                                <div class="bg-green-50 rounded-lg p-3 text-center">
+                                    <div class="text-lg font-bold text-green-700">12</div>
+                                    <div class="text-xs text-green-600">已確認</div>
+                                </div>
+                                <div class="bg-yellow-50 rounded-lg p-3 text-center">
+                                    <div class="text-lg font-bold text-yellow-700">8</div>
+                                    <div class="text-xs text-yellow-600">進行中</div>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-3 text-center">
+                                    <div class="text-lg font-bold text-gray-700">25</div>
+                                    <div class="text-xs text-gray-600">已完成</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 預約趨勢 -->
+                        <div>
+                            <h3 class="text-sm font-medium text-[#181111] mb-2">預約趨勢</h3>
+                            <div class="bg-gray-50 rounded-lg p-3 h-32 flex items-end justify-between">
+                                <div class="flex flex-col items-center">
+                                    <div class="bg-purple-500 w-3 h-12 rounded-t"></div>
+                                    <span class="text-xs text-gray-600 mt-1">1週</span>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <div class="bg-purple-500 w-3 h-16 rounded-t"></div>
+                                    <span class="text-xs text-gray-600 mt-1">2週</span>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <div class="bg-purple-500 w-3 h-20 rounded-t"></div>
+                                    <span class="text-xs text-gray-600 mt-1">3週</span>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <div class="bg-purple-500 w-3 h-24 rounded-t"></div>
+                                    <span class="text-xs text-gray-600 mt-1">4週</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                     <!-- 訂單管理 -->
-                    <div class="p-4 rounded-xl border border-gray-100 bg-white cursor-pointer hover:bg-gray-50">
-                        <h2 class="text-lg font-bold text-[#181111] mb-2">訂單管理</h2>
-                        <div class="flex justify-between items-center">
-                            <p class="text-sm text-[#886364]">查看與確認所有訂單</p>
-                            <span class="text-[#886364]">></span>
+
+                    <!-- 客戶滿意度分析 -->
+                    <div class="p-4 rounded-xl border border-gray-100 bg-white">
+                        <h2 class="text-lg font-bold text-[#181111] mb-4">😊 客戶滿意度</h2>
+                        
+                        <!-- 評分統計 -->
+                        <div class="mb-4">
+                            <h3 class="text-sm font-medium text-[#181111] mb-2">平均評分</h3>
+                            <div class="flex items-center gap-3">
+                                <div class="text-3xl font-bold text-yellow-500">4.8</div>
+                                <div class="flex items-center">
+                                    <div class="flex text-yellow-400">
+                                        ★★★★★
+                                    </div>
+                                    <span class="text-sm text-gray-600 ml-2">(156 則評論)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 評分分布 -->
+                        <div>
+                            <h3 class="text-sm font-medium text-[#181111] mb-2">評分分布</h3>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm text-gray-600 w-8">5★</span>
+                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-yellow-500 h-2 rounded-full" style="width: 85%"></div>
+                                    </div>
+                                    <span class="text-xs text-gray-600">85%</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm text-gray-600 w-8">4★</span>
+                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-yellow-400 h-2 rounded-full" style="width: 12%"></div>
+                                    </div>
+                                    <span class="text-xs text-gray-600">12%</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm text-gray-600 w-8">3★</span>
+                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-gray-400 h-2 rounded-full" style="width: 2%"></div>
+                                    </div>
+                                    <span class="text-xs text-gray-600">2%</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm text-gray-600 w-8">2★</span>
+                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-gray-400 h-2 rounded-full" style="width: 1%"></div>
+                                    </div>
+                                    <span class="text-xs text-gray-600">1%</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm text-gray-600 w-8">1★</span>
+                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-gray-400 h-2 rounded-full" style="width: 0%"></div>
+                                    </div>
+                                    <span class="text-xs text-gray-600">0%</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -8905,40 +9047,74 @@
                 });
             }
 
-            // 更新營收圖表
-            function updateRevenueChart() {
-                const periodSelect = document.getElementById('revenue-period-select');
+            // 更新數據分析圖表
+            function updateAnalyticsCharts() {
+                const periodSelect = document.getElementById('analytics-period-select');
                 if (!periodSelect) return;
                 
                 const period = periodSelect.value;
-                const chartContainer = document.querySelector('.bg-gray-50.rounded-lg.p-3.h-32');
-                if (!chartContainer) return;
                 
-                // 根據選擇的時間範圍生成不同的數據
-                let chartData = [];
-                let labels = [];
-                
-                if (period === '7') {
-                    // 近7天數據
-                    labels = ['週一', '週二', '週三', '週四', '週五', '週六', '週日'];
-                    chartData = [1600, 2000, 2400, 2800, 3200, 3600, 4000]; // 高度對應
-                } else if (period === '30') {
-                    // 近30天數據 (週平均)
-                    labels = ['第1週', '第2週', '第3週', '第4週'];
-                    chartData = [2500, 3000, 2800, 3200];
-                } else if (period === '90') {
-                    // 近90天數據 (月平均)
-                    labels = ['1月', '2月', '3月'];
-                    chartData = [2800, 3200, 3000];
+                // 更新營收趨勢圖表
+                const revenueChartContainer = document.querySelector('.bg-gray-50.rounded-lg.p-3.h-40');
+                if (revenueChartContainer) {
+                    let chartData = [];
+                    let labels = [];
+                    
+                    if (period === '7') {
+                        // 近7天數據
+                        labels = ['週一', '週二', '週三', '週四', '週五', '週六', '週日'];
+                        chartData = [1600, 2000, 2400, 2800, 3200, 3600, 4000];
+                    } else if (period === '30') {
+                        // 近30天數據 (週平均)
+                        labels = ['第1週', '第2週', '第3週', '第4週'];
+                        chartData = [2500, 3000, 2800, 3200];
+                    } else if (period === '90') {
+                        // 近90天數據 (月平均)
+                        labels = ['1月', '2月', '3月'];
+                        chartData = [2800, 3200, 3000];
+                    } else if (period === '365') {
+                        // 近一年數據 (季平均)
+                        labels = ['Q1', 'Q2', 'Q3', 'Q4'];
+                        chartData = [3000, 3500, 3200, 3800];
+                    }
+                    
+                    // 更新營收圖表
+                    revenueChartContainer.innerHTML = chartData.map((height, index) => `
+                        <div class="flex flex-col items-center">
+                            <div class="w-4 rounded-t ${index >= 5 ? 'bg-emerald-500' : 'bg-blue-500'}" style="height: ${height/100}px"></div>
+                            <span class="text-xs text-gray-600 mt-1">${labels[index]}</span>
+                        </div>
+                    `).join('');
                 }
                 
-                // 更新圖表
-                chartContainer.innerHTML = chartData.map((height, index) => `
-                    <div class="flex flex-col items-center">
-                        <div class="w-4 rounded-t ${index >= 5 ? 'bg-emerald-500' : 'bg-blue-500'}" style="height: ${height/100}px"></div>
-                        <span class="text-xs text-gray-600 mt-1">${labels[index]}</span>
-                    </div>
-                `).join('');
+                // 更新預約趨勢圖表
+                const bookingChartContainer = document.querySelector('.bg-gray-50.rounded-lg.p-3.h-32');
+                if (bookingChartContainer && bookingChartContainer !== revenueChartContainer) {
+                    let bookingData = [];
+                    let bookingLabels = [];
+                    
+                    if (period === '7') {
+                        bookingLabels = ['週一', '週二', '週三', '週四', '週五', '週六', '週日'];
+                        bookingData = [3, 4, 5, 6, 7, 8, 9];
+                    } else if (period === '30') {
+                        bookingLabels = ['第1週', '第2週', '第3週', '第4週'];
+                        bookingData = [15, 18, 16, 20];
+                    } else if (period === '90') {
+                        bookingLabels = ['1月', '2月', '3月'];
+                        bookingData = [65, 72, 68];
+                    } else if (period === '365') {
+                        bookingLabels = ['Q1', 'Q2', 'Q3', 'Q4'];
+                        bookingData = [200, 250, 220, 280];
+                    }
+                    
+                    // 更新預約圖表
+                    bookingChartContainer.innerHTML = bookingData.map((height, index) => `
+                        <div class="flex flex-col items-center">
+                            <div class="bg-purple-500 w-3 rounded-t" style="height: ${height*2}px"></div>
+                            <span class="text-xs text-gray-600 mt-1">${bookingLabels[index]}</span>
+                        </div>
+                    `).join('');
+                }
             }
 
             document.body.addEventListener('click', function(e) {
@@ -8957,6 +9133,11 @@
                 }
                 if (e.target.closest('#merchant-entry')) showPage('merchantDashboard');
                 if (e.target.closest('#back-to-dashboard-btn')) showPage('merchantDashboard');
+                if (e.target.closest('#analytics-dashboard-link')) {
+                    renderAnalyticsDashboard();
+                    showPage('analyticsDashboard');
+                }
+                if (e.target.closest('#back-to-merchant-dashboard-btn')) showPage('merchantDashboard');
                 if (e.target.closest('#manage-rooms-link')) showPage('roomManagement');
                 if (e.target.closest('#manage-calendar-btn')) showPage('calendarManagement');
                 // 新增：商家中心各入口
@@ -8978,9 +9159,9 @@
                 if (e.target.closest('#md-coupons')) {
                     openCouponManageModal();
                 }
-                // 營收分析時間範圍選擇器
-                if (e.target.closest('#revenue-period-select')) {
-                    updateRevenueChart();
+                // 數據分析時間範圍選擇器
+                if (e.target.closest('#analytics-period-select')) {
+                    updateAnalyticsCharts();
                 }
                 if (e.target.closest('#add-new-room-btn')) renderRoomForm();
                 if (e.target.closest('.edit-room-btn')) {
