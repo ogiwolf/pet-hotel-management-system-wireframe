@@ -6736,6 +6736,110 @@
                         <button id="manage-calendar-btn" class="btn-main h-10 px-5 text-sm w-full">管理行事曆</button>
                     </div>
 
+                    <!-- 營收分析儀表板 -->
+                    <div class="p-4 rounded-xl border border-gray-100 bg-white">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold text-[#181111]">營收分析</h2>
+                            <div class="flex gap-2">
+                                <select id="revenue-period-select" class="form-input-styled text-sm h-8 px-3">
+                                    <option value="7">近7天</option>
+                                    <option value="30" selected>近30天</option>
+                                    <option value="90">近90天</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- 營收趨勢圖表 -->
+                        <div class="mb-4">
+                            <h3 class="text-sm font-medium text-[#181111] mb-2">營收趨勢</h3>
+                            <div class="bg-gray-50 rounded-lg p-3 h-32 flex items-end justify-between">
+                                <div class="flex flex-col items-center">
+                                    <div class="bg-blue-500 w-4 h-16 rounded-t"></div>
+                                    <span class="text-xs text-gray-600 mt-1">週一</span>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <div class="bg-blue-500 w-4 h-20 rounded-t"></div>
+                                    <span class="text-xs text-gray-600 mt-1">週二</span>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <div class="bg-blue-500 w-4 h-24 rounded-t"></div>
+                                    <span class="text-xs text-gray-600 mt-1">週三</span>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <div class="bg-blue-500 w-4 h-28 rounded-t"></div>
+                                    <span class="text-xs text-gray-600 mt-1">週四</span>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <div class="bg-blue-500 w-4 h-32 rounded-t"></div>
+                                    <span class="text-xs text-gray-600 mt-1">週五</span>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <div class="bg-emerald-500 w-4 h-36 rounded-t"></div>
+                                    <span class="text-xs text-gray-600 mt-1">週六</span>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <div class="bg-emerald-500 w-4 h-40 rounded-t"></div>
+                                    <span class="text-xs text-gray-600 mt-1">週日</span>
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>NT$ 0</span>
+                                <span>NT$ 5,000</span>
+                            </div>
+                        </div>
+
+                        <!-- 房型營收分析 -->
+                        <div class="mb-4">
+                            <h3 class="text-sm font-medium text-[#181111] mb-2">房型營收分析</h3>
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">標準犬房</span>
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-16 bg-gray-200 rounded-full h-2">
+                                            <div class="bg-blue-500 h-2 rounded-full" style="width: 45%"></div>
+                                        </div>
+                                        <span class="text-sm font-medium">NT$ 6,750</span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">豪華貓別墅</span>
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-16 bg-gray-200 rounded-full h-2">
+                                            <div class="bg-pink-500 h-2 rounded-full" style="width: 35%"></div>
+                                        </div>
+                                        <span class="text-sm font-medium">NT$ 5,250</span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">小型寵物寄宿籠</span>
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-16 bg-gray-200 rounded-full h-2">
+                                            <div class="bg-green-500 h-2 rounded-full" style="width: 20%"></div>
+                                        </div>
+                                        <span class="text-sm font-medium">NT$ 3,000</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 服務類型營收 -->
+                        <div>
+                            <h3 class="text-sm font-medium text-[#181111] mb-2">服務類型營收</h3>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="bg-blue-50 rounded-lg p-3 text-center">
+                                    <div class="text-lg font-bold text-blue-700">NT$ 12,000</div>
+                                    <div class="text-xs text-blue-600">過夜住宿</div>
+                                    <div class="text-xs text-gray-500">80%</div>
+                                </div>
+                                <div class="bg-green-50 rounded-lg p-3 text-center">
+                                    <div class="text-lg font-bold text-green-700">NT$ 3,000</div>
+                                    <div class="text-xs text-green-600">日間安親</div>
+                                    <div class="text-xs text-gray-500">20%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- 房型與方案管理 -->
                     <div id="manage-rooms-link" class="p-4 rounded-xl border border-gray-100 bg-white cursor-pointer hover:bg-gray-50">
                         <h2 class="text-lg font-bold text-[#181111] mb-2">房型與方案管理</h2>
@@ -8801,6 +8905,42 @@
                 });
             }
 
+            // 更新營收圖表
+            function updateRevenueChart() {
+                const periodSelect = document.getElementById('revenue-period-select');
+                if (!periodSelect) return;
+                
+                const period = periodSelect.value;
+                const chartContainer = document.querySelector('.bg-gray-50.rounded-lg.p-3.h-32');
+                if (!chartContainer) return;
+                
+                // 根據選擇的時間範圍生成不同的數據
+                let chartData = [];
+                let labels = [];
+                
+                if (period === '7') {
+                    // 近7天數據
+                    labels = ['週一', '週二', '週三', '週四', '週五', '週六', '週日'];
+                    chartData = [1600, 2000, 2400, 2800, 3200, 3600, 4000]; // 高度對應
+                } else if (period === '30') {
+                    // 近30天數據 (週平均)
+                    labels = ['第1週', '第2週', '第3週', '第4週'];
+                    chartData = [2500, 3000, 2800, 3200];
+                } else if (period === '90') {
+                    // 近90天數據 (月平均)
+                    labels = ['1月', '2月', '3月'];
+                    chartData = [2800, 3200, 3000];
+                }
+                
+                // 更新圖表
+                chartContainer.innerHTML = chartData.map((height, index) => `
+                    <div class="flex flex-col items-center">
+                        <div class="w-4 rounded-t ${index >= 5 ? 'bg-emerald-500' : 'bg-blue-500'}" style="height: ${height/100}px"></div>
+                        <span class="text-xs text-gray-600 mt-1">${labels[index]}</span>
+                    </div>
+                `).join('');
+            }
+
             document.body.addEventListener('click', function(e) {
                 // 頁面切換
                 if (e.target.closest('.nav-item')) showPage(e.target.closest('.nav-item').dataset.page);
@@ -8837,6 +8977,10 @@
                 }
                 if (e.target.closest('#md-coupons')) {
                     openCouponManageModal();
+                }
+                // 營收分析時間範圍選擇器
+                if (e.target.closest('#revenue-period-select')) {
+                    updateRevenueChart();
                 }
                 if (e.target.closest('#add-new-room-btn')) renderRoomForm();
                 if (e.target.closest('.edit-room-btn')) {
