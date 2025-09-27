@@ -925,6 +925,59 @@
                 { id: 24, roomId: 3, packageId: 103, customer: '陳先生', startDate: '2025-01-15', endDate: '2025-01-17' },
                 { id: 25, roomId: 3, packageId: 103, customer: '張太太', startDate: '2025-01-15', endDate: '2025-01-19' },
             ];
+            
+            window.mockComments = [
+                { 
+                    id: 1, 
+                    customer: '陳先生', 
+                    rating: 5, 
+                    comment: '服務非常棒！我的狗狗住得很開心，環境乾淨舒適，工作人員也很專業。', 
+                    date: '2025-07-15', 
+                    roomType: '標準犬房',
+                    reply: '',
+                    status: 'pending'
+                },
+                { 
+                    id: 2, 
+                    customer: '林小姐', 
+                    rating: 4, 
+                    comment: '整體還不錯，但房間有點小，價格稍微貴了一點。', 
+                    date: '2025-07-20', 
+                    roomType: '豪華貓別墅',
+                    reply: '',
+                    status: 'pending'
+                },
+                { 
+                    id: 3, 
+                    customer: '王小姐', 
+                    rating: 5, 
+                    comment: '非常推薦！我的貓咪在這裡住得很安心，設施齊全，工作人員很細心。', 
+                    date: '2025-07-25', 
+                    roomType: '豪華貓別墅',
+                    reply: '謝謝您的肯定！我們會繼續努力提供更好的服務。',
+                    status: 'replied'
+                },
+                { 
+                    id: 4, 
+                    customer: '張先生', 
+                    rating: 3, 
+                    comment: '房間還可以，但隔音效果不太好，晚上有點吵。', 
+                    date: '2025-07-30', 
+                    roomType: '小型寵物寄宿籠',
+                    reply: '',
+                    status: 'pending'
+                },
+                { 
+                    id: 5, 
+                    customer: '李小姐', 
+                    rating: 5, 
+                    comment: '超級滿意！我的兔子在這裡住得很舒服，環境很好，價格合理。', 
+                    date: '2025-08-05', 
+                    roomType: '小型寵物寄宿籠',
+                    reply: '感謝您的支持！我們很開心能為您的兔子提供舒適的住宿環境。',
+                    status: 'replied'
+                }
+            ];
 
             // --- 元素選擇 ---
             const navItems = document.querySelectorAll('.nav-item');
@@ -6785,10 +6838,10 @@
                                 <button id="check-room-status-btn" class="bg-green-50 hover:bg-green-100 text-green-700 rounded-lg p-3 text-sm font-medium transition-colors" onclick="showRoomStatusModal()">
                                     🏠 檢查房況
                                 </button>
-                                <button class="bg-yellow-50 hover:bg-yellow-100 text-yellow-700 rounded-lg p-3 text-sm font-medium transition-colors">
+                                <button id="reply-comments-btn" class="bg-yellow-50 hover:bg-yellow-100 text-yellow-700 rounded-lg p-3 text-sm font-medium transition-colors" onclick="showReplyCommentsModal()">
                                     💬 回覆評論
                                 </button>
-                                <button class="bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg p-3 text-sm font-medium transition-colors">
+                                <button id="detailed-reports-btn" class="bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg p-3 text-sm font-medium transition-colors" onclick="showDetailedReportsModal()">
                                     📊 詳細報表
                                 </button>
                             </div>
@@ -7686,10 +7739,10 @@
                                     <button id="check-room-status-btn-2" class="bg-green-50 hover:bg-green-100 text-green-700 rounded-lg p-3 text-sm font-medium transition-colors" onclick="showRoomStatusModal()">
                                         🏠 檢查房況
                                     </button>
-                                    <button class="bg-yellow-50 hover:bg-yellow-100 text-yellow-700 rounded-lg p-3 text-sm font-medium transition-colors">
+                                    <button id="reply-comments-btn-2" class="bg-yellow-50 hover:bg-yellow-100 text-yellow-700 rounded-lg p-3 text-sm font-medium transition-colors" onclick="showReplyCommentsModal()">
                                         💬 回覆評論
                                     </button>
-                                    <button class="bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg p-3 text-sm font-medium transition-colors">
+                                    <button id="detailed-reports-btn-2" class="bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg p-3 text-sm font-medium transition-colors" onclick="showDetailedReportsModal()">
                                         📊 詳細報表
                                     </button>
                                 </div>
@@ -7768,6 +7821,64 @@
                             e.stopPropagation();
                             console.log('點擊了檢查房況按鈕-2');
                             showRoomStatusModal();
+                        });
+                    }
+                    
+                    // 回覆評論按鈕
+                    const replyCommentsBtn1 = document.getElementById('reply-comments-btn');
+                    const replyCommentsBtn2 = document.getElementById('reply-comments-btn-2');
+                    
+                    console.log('找到回覆評論按鈕1:', !!replyCommentsBtn1);
+                    console.log('找到回覆評論按鈕2:', !!replyCommentsBtn2);
+                    
+                    if (replyCommentsBtn1) {
+                        replyCommentsBtn1.replaceWith(replyCommentsBtn1.cloneNode(true));
+                        const newReplyBtn1 = document.getElementById('reply-comments-btn');
+                        newReplyBtn1.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('點擊了回覆評論按鈕');
+                            showReplyCommentsModal();
+                        });
+                    }
+                    
+                    if (replyCommentsBtn2) {
+                        replyCommentsBtn2.replaceWith(replyCommentsBtn2.cloneNode(true));
+                        const newReplyBtn2 = document.getElementById('reply-comments-btn-2');
+                        newReplyBtn2.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('點擊了回覆評論按鈕-2');
+                            showReplyCommentsModal();
+                        });
+                    }
+                    
+                    // 詳細報表按鈕
+                    const detailedReportsBtn1 = document.getElementById('detailed-reports-btn');
+                    const detailedReportsBtn2 = document.getElementById('detailed-reports-btn-2');
+                    
+                    console.log('找到詳細報表按鈕1:', !!detailedReportsBtn1);
+                    console.log('找到詳細報表按鈕2:', !!detailedReportsBtn2);
+                    
+                    if (detailedReportsBtn1) {
+                        detailedReportsBtn1.replaceWith(detailedReportsBtn1.cloneNode(true));
+                        const newReportsBtn1 = document.getElementById('detailed-reports-btn');
+                        newReportsBtn1.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('點擊了詳細報表按鈕');
+                            showDetailedReportsModal();
+                        });
+                    }
+                    
+                    if (detailedReportsBtn2) {
+                        detailedReportsBtn2.replaceWith(detailedReportsBtn2.cloneNode(true));
+                        const newReportsBtn2 = document.getElementById('detailed-reports-btn-2');
+                        newReportsBtn2.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('點擊了詳細報表按鈕-2');
+                            showDetailedReportsModal();
                         });
                     }
                 }, 100);
@@ -11210,6 +11321,264 @@
             document.getElementById('room-status-modal')?.remove();
             currentManagementRoomId = roomId;
             showPage('calendarManagement');
+        };
+        
+        window.showReplyCommentsModal = function() {
+            console.log('showReplyCommentsModal 被調用');
+            // 篩選出待回覆的評論
+            const pendingComments = window.mockComments.filter(comment => comment.status === 'pending');
+            console.log('待回覆評論數量:', pendingComments.length);
+            
+            const modalHTML = `
+                <div id="reply-comments-modal" class="modal-overlay">
+                    <div class="modal-content">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold text-[#181111]">💬 回覆評論</h2>
+                            <button id="close-reply-comments-modal" class="text-gray-500 hover:text-gray-700 text-xl">&times;</button>
+                        </div>
+                        
+                        <div class="space-y-4 max-h-96 overflow-y-auto">
+                            ${pendingComments.length === 0 ? 
+                                '<div class="text-center text-gray-500 py-8">🎉 目前沒有待回覆的評論</div>' :
+                                pendingComments.map(comment => `
+                                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                        <div class="flex justify-between items-start mb-3">
+                                            <div>
+                                                <h3 class="font-semibold text-[#181111]">${comment.customer}</h3>
+                                                <div class="flex items-center gap-2 mt-1">
+                                                    <div class="flex text-yellow-400">
+                                                        ${'★'.repeat(comment.rating)}${'☆'.repeat(5-comment.rating)}
+                                                    </div>
+                                                    <span class="text-xs text-gray-500">${comment.date}</span>
+                                                </div>
+                                            </div>
+                                            <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">待回覆</span>
+                                        </div>
+                                        <div class="text-sm text-gray-700 mb-3">
+                                            <div class="mb-2">📝 ${comment.comment}</div>
+                                            <div class="text-xs text-gray-500">🏠 ${comment.roomType}</div>
+                                        </div>
+                                        <div class="space-y-2">
+                                            <textarea id="reply-${comment.id}" class="w-full p-2 border border-gray-300 rounded-lg text-sm resize-none" rows="2" placeholder="回覆此評論..."></textarea>
+                                            <div class="flex gap-2">
+                                                <button class="flex-1 bg-blue-500 text-white text-xs py-2 rounded-lg hover:bg-blue-600 transition-colors" onclick="submitReply(${comment.id})">
+                                                    📤 發送回覆
+                                                </button>
+                                                <button class="flex-1 bg-gray-500 text-white text-xs py-2 rounded-lg hover:bg-gray-600 transition-colors" onclick="skipComment(${comment.id})">
+                                                    ⏭️ 稍後處理
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')
+                            }
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <button id="view-all-comments-btn" class="w-full bg-[#181111] text-white py-2 rounded-lg hover:bg-gray-800 transition-colors">
+                                查看所有評論
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 移除現有的模態框（如果有的話）
+            const existingModal = document.getElementById('reply-comments-modal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // 添加新模態框到頁面
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // 綁定關閉事件
+            document.getElementById('close-reply-comments-modal')?.addEventListener('click', function() {
+                document.getElementById('reply-comments-modal')?.remove();
+            });
+            
+            document.getElementById('view-all-comments-btn')?.addEventListener('click', function() {
+                document.getElementById('reply-comments-modal')?.remove();
+                // 這裡可以跳轉到評論管理頁面
+                alert('跳轉到評論管理頁面');
+            });
+            
+            // 點擊背景關閉模態框
+            document.getElementById('reply-comments-modal')?.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.remove();
+                }
+            });
+        };
+        
+        window.showDetailedReportsModal = function() {
+            console.log('showDetailedReportsModal 被調用');
+            
+            // 計算一些基本統計數據
+            const totalOrders = window.mockOrders.length;
+            const completedOrders = window.mockOrders.filter(order => order.status === 'completed').length;
+            const pendingOrders = window.mockOrders.filter(order => order.status === 'pending').length;
+            const cancelledOrders = window.mockOrders.filter(order => order.status === 'cancelled').length;
+            const totalRevenue = window.mockOrders.filter(order => order.status === 'completed').reduce((sum, order) => sum + order.total, 0);
+            const averageRating = window.mockComments.reduce((sum, comment) => sum + comment.rating, 0) / window.mockComments.length;
+            
+            const modalHTML = `
+                <div id="detailed-reports-modal" class="modal-overlay">
+                    <div class="modal-content max-w-4xl">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold text-[#181111]">📊 詳細報表</h2>
+                            <button id="close-detailed-reports-modal" class="text-gray-500 hover:text-gray-700 text-xl">&times;</button>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <!-- 訂單統計 -->
+                            <div class="bg-blue-50 rounded-lg p-4">
+                                <h3 class="font-semibold text-blue-800 mb-3">📋 訂單統計</h3>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span>總訂單數:</span>
+                                        <span class="font-medium">${totalOrders}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>已完成:</span>
+                                        <span class="font-medium text-green-600">${completedOrders}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>待處理:</span>
+                                        <span class="font-medium text-yellow-600">${pendingOrders}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>已取消:</span>
+                                        <span class="font-medium text-red-600">${cancelledOrders}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 營收統計 -->
+                            <div class="bg-green-50 rounded-lg p-4">
+                                <h3 class="font-semibold text-green-800 mb-3">💰 營收統計</h3>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span>總營收:</span>
+                                        <span class="font-medium text-green-600">NT$ ${totalRevenue.toLocaleString()}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>平均訂單金額:</span>
+                                        <span class="font-medium">NT$ ${completedOrders > 0 ? Math.round(totalRevenue / completedOrders).toLocaleString() : 0}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>完成率:</span>
+                                        <span class="font-medium">${totalOrders > 0 ? Math.round((completedOrders / totalOrders) * 100) : 0}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 客戶滿意度 -->
+                            <div class="bg-yellow-50 rounded-lg p-4">
+                                <h3 class="font-semibold text-yellow-800 mb-3">⭐ 客戶滿意度</h3>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span>平均評分:</span>
+                                        <span class="font-medium">${averageRating.toFixed(1)} / 5.0</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>總評論數:</span>
+                                        <span class="font-medium">${window.mockComments.length}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>已回覆:</span>
+                                        <span class="font-medium text-green-600">${window.mockComments.filter(c => c.status === 'replied').length}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>待回覆:</span>
+                                        <span class="font-medium text-yellow-600">${window.mockComments.filter(c => c.status === 'pending').length}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 房型使用率 -->
+                            <div class="bg-purple-50 rounded-lg p-4">
+                                <h3 class="font-semibold text-purple-800 mb-3">🏠 房型使用率</h3>
+                                <div class="space-y-2 text-sm">
+                                    ${window.mockRoomTypes.map(room => {
+                                        const roomBookings = window.mockBookings.filter(booking => booking.roomId === room.id);
+                                        const occupancyRate = room.stock > 0 ? Math.round((roomBookings.length / room.stock) * 100) : 0;
+                                        return `
+                                            <div class="flex justify-between">
+                                                <span>${room.name}:</span>
+                                                <span class="font-medium">${occupancyRate}%</span>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <button id="view-analytics-dashboard-btn" class="w-full bg-[#181111] text-white py-2 rounded-lg hover:bg-gray-800 transition-colors">
+                                前往數據分析頁面
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 移除現有的模態框（如果有的話）
+            const existingModal = document.getElementById('detailed-reports-modal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // 添加新模態框到頁面
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // 綁定關閉事件
+            document.getElementById('close-detailed-reports-modal')?.addEventListener('click', function() {
+                document.getElementById('detailed-reports-modal')?.remove();
+            });
+            
+            document.getElementById('view-analytics-dashboard-btn')?.addEventListener('click', function() {
+                document.getElementById('detailed-reports-modal')?.remove();
+                // 跳轉到數據分析頁面
+                const analyticsLink = document.getElementById('analytics-dashboard-link');
+                if (analyticsLink) {
+                    analyticsLink.click();
+                }
+            });
+            
+            // 點擊背景關閉模態框
+            document.getElementById('detailed-reports-modal')?.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.remove();
+                }
+            });
+        };
+        
+        window.submitReply = function(commentId) {
+            const replyTextarea = document.getElementById(`reply-${commentId}`);
+            const replyText = replyTextarea.value.trim();
+            
+            if (!replyText) {
+                alert('請輸入回覆內容');
+                return;
+            }
+            
+            const comment = window.mockComments.find(c => c.id === commentId);
+            if (comment) {
+                comment.reply = replyText;
+                comment.status = 'replied';
+                alert(`已回覆 ${comment.customer} 的評論！`);
+                // 重新顯示模態框以更新列表
+                showReplyCommentsModal();
+            }
+        };
+        
+        window.skipComment = function(commentId) {
+            const comment = window.mockComments.find(c => c.id === commentId);
+            if (comment) {
+                alert(`已標記 ${comment.customer} 的評論為稍後處理`);
+                // 這裡可以添加標記邏輯
+            }
         };
     </script>
 </body>
