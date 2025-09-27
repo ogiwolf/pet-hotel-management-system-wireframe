@@ -745,7 +745,7 @@
             let managementViewMode = 'monthly'; // 'monthly' or 'daily'
 
 
-            const mockOrders = [
+            window.mockOrders = [
                 { id: 1, name: '快樂爪子旅館', date: '2025/07/10 - 2025/07/12', pet: '1 犬', total: 1600, status: 'pending' },
                 { id: 2, name: '貓語天堂', date: '2025/06/01 - 2025/06/05', pet: '2 貓', total: 3250, status: 'completed' },
                 { id: 3, name: '寵物樂園', date: '2025/05/20 - 2025/05/22', pet: '1 犬', total: 1800, status: 'cancelled' },
@@ -883,7 +883,7 @@
                 }
             ];
             
-            let mockRoomTypes = [
+            window.mockRoomTypes = [
                 { id: 1, name: '標準犬房', description: '舒適的標準房，適合中小型犬。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 5, status: 'active' },
                 { id: 2, name: '豪華貓別墅', description: '寬敞的豪華別墅，附有貓跳台與獨立通風。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 3, status: 'active' },
                 { id: 3, name: '小型寵物寄宿籠', description: '安全舒適的寄宿籠，適合兔子、倉鼠等。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 10, status: 'disabled' },
@@ -897,7 +897,7 @@
                 { id: 201, roomId: 2, name: '豪華貓別墅日租', description: '專屬豪華空間，貓咪最愛。', type: 'overnight', basePrice: 1500, min: 1, max: 15, quota: 3, status: 'active', startDate: '', endDate: '', color: 'bg-pink-400' },
             ];
             
-            let mockBookings = [
+            window.mockBookings = [
                 { id: 1, roomId: 1, packageId: 101, customer: '陳先生', startDate: '2025-07-10', endDate: '2025-07-12' },
                 { id: 2, roomId: 2, packageId: 201, customer: '林小姐', startDate: '2025-07-15', endDate: '2025-07-18' },
                 { id: 3, roomId: 1, packageId: 101, customer: '王小姐', startDate: '2025-07-20', endDate: '2025-07-25' },
@@ -6779,10 +6779,10 @@
                         <div>
                             <h3 class="text-sm font-medium text-[#181111] mb-3">快速操作</h3>
                             <div class="grid grid-cols-2 gap-3">
-                                <button class="bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg p-3 text-sm font-medium transition-colors">
+                                <button id="view-pending-orders-btn" class="bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg p-3 text-sm font-medium transition-colors" onclick="showPendingOrdersModal()">
                                     📋 查看待處理訂單
                                 </button>
-                                <button class="bg-green-50 hover:bg-green-100 text-green-700 rounded-lg p-3 text-sm font-medium transition-colors">
+                                <button id="check-room-status-btn" class="bg-green-50 hover:bg-green-100 text-green-700 rounded-lg p-3 text-sm font-medium transition-colors" onclick="showRoomStatusModal()">
                                     🏠 檢查房況
                                 </button>
                                 <button class="bg-yellow-50 hover:bg-yellow-100 text-yellow-700 rounded-lg p-3 text-sm font-medium transition-colors">
@@ -7680,10 +7680,10 @@
                             <div>
                                 <h3 class="text-sm font-medium text-[#181111] mb-3">快速操作</h3>
                                 <div class="grid grid-cols-2 gap-3">
-                                    <button class="bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg p-3 text-sm font-medium transition-colors">
+                                    <button id="view-pending-orders-btn-2" class="bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg p-3 text-sm font-medium transition-colors" onclick="showPendingOrdersModal()">
                                         📋 查看待處理訂單
                                     </button>
-                                    <button class="bg-green-50 hover:bg-green-100 text-green-700 rounded-lg p-3 text-sm font-medium transition-colors">
+                                    <button id="check-room-status-btn-2" class="bg-green-50 hover:bg-green-100 text-green-700 rounded-lg p-3 text-sm font-medium transition-colors" onclick="showRoomStatusModal()">
                                         🏠 檢查房況
                                     </button>
                                     <button class="bg-yellow-50 hover:bg-yellow-100 text-yellow-700 rounded-lg p-3 text-sm font-medium transition-colors">
@@ -7698,6 +7698,79 @@
                     </div>
                 </div>
                 `;
+                
+                // 綁定快速操作按鈕事件
+                attachMerchantDashboardListeners();
+            }
+            
+            // 商家儀表板事件監聽器
+            function attachMerchantDashboardListeners() {
+                // 使用 setTimeout 確保 DOM 元素已經渲染
+                setTimeout(() => {
+                    console.log('開始綁定商家儀表板事件監聽器');
+                    
+                    // 查看待處理訂單按鈕
+                    const pendingOrdersBtn1 = document.getElementById('view-pending-orders-btn');
+                    const pendingOrdersBtn2 = document.getElementById('view-pending-orders-btn-2');
+                    
+                    console.log('找到按鈕1:', !!pendingOrdersBtn1);
+                    console.log('找到按鈕2:', !!pendingOrdersBtn2);
+                    
+                    if (pendingOrdersBtn1) {
+                        // 移除舊的事件監聽器（如果有的話）
+                        pendingOrdersBtn1.replaceWith(pendingOrdersBtn1.cloneNode(true));
+                        const newBtn1 = document.getElementById('view-pending-orders-btn');
+                        newBtn1.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('點擊了查看待處理訂單按鈕');
+                            showPendingOrdersModal();
+                        });
+                    }
+                    
+                    if (pendingOrdersBtn2) {
+                        // 移除舊的事件監聽器（如果有的話）
+                        pendingOrdersBtn2.replaceWith(pendingOrdersBtn2.cloneNode(true));
+                        const newBtn2 = document.getElementById('view-pending-orders-btn-2');
+                        newBtn2.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('點擊了查看待處理訂單按鈕-2');
+                            showPendingOrdersModal();
+                        });
+                    }
+                    
+                    // 檢查房況按鈕
+                    const roomStatusBtn1 = document.getElementById('check-room-status-btn');
+                    const roomStatusBtn2 = document.getElementById('check-room-status-btn-2');
+                    
+                    console.log('找到房況按鈕1:', !!roomStatusBtn1);
+                    console.log('找到房況按鈕2:', !!roomStatusBtn2);
+                    
+                    if (roomStatusBtn1) {
+                        // 移除舊的事件監聽器（如果有的話）
+                        roomStatusBtn1.replaceWith(roomStatusBtn1.cloneNode(true));
+                        const newRoomBtn1 = document.getElementById('check-room-status-btn');
+                        newRoomBtn1.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('點擊了檢查房況按鈕');
+                            showRoomStatusModal();
+                        });
+                    }
+                    
+                    if (roomStatusBtn2) {
+                        // 移除舊的事件監聽器（如果有的話）
+                        roomStatusBtn2.replaceWith(roomStatusBtn2.cloneNode(true));
+                        const newRoomBtn2 = document.getElementById('check-room-status-btn-2');
+                        newRoomBtn2.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('點擊了檢查房況按鈕-2');
+                            showRoomStatusModal();
+                        });
+                    }
+                }, 100);
             }
 
             function renderRoomListPage() {
@@ -10941,7 +11014,203 @@
                     `;
                 }).join('');
             }
+            
         }
+        
+        // 將全局函數移到script標籤的最外層
+        window.showPendingOrdersModal = function() {
+            console.log('showPendingOrdersModal 被調用');
+            // 篩選出待處理的訂單
+            const pendingOrders = window.mockOrders.filter(order => order.status === 'pending');
+            console.log('待處理訂單數量:', pendingOrders.length);
+            
+            const modalHTML = `
+                <div id="pending-orders-modal" class="modal-overlay">
+                    <div class="modal-content">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold text-[#181111]">📋 待處理訂單</h2>
+                            <button id="close-pending-orders-modal" class="text-gray-500 hover:text-gray-700 text-xl">&times;</button>
+                        </div>
+                        
+                        <div class="space-y-3 max-h-96 overflow-y-auto">
+                            ${pendingOrders.length === 0 ? 
+                                '<div class="text-center text-gray-500 py-8">🎉 目前沒有待處理的訂單</div>' :
+                                pendingOrders.map(order => `
+                                    <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <h3 class="font-semibold text-[#181111]">${order.name}</h3>
+                                            <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">待處理</span>
+                                        </div>
+                                        <div class="text-sm text-gray-600 mb-2">
+                                            <div>📅 ${order.date}</div>
+                                            <div>🐕 ${order.pet}</div>
+                                            <div>💰 NT$ ${order.total}</div>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <button class="flex-1 bg-green-500 text-white text-xs py-2 rounded-lg hover:bg-green-600 transition-colors" onclick="confirmOrder(${order.id})">
+                                                ✓ 確認訂單
+                                            </button>
+                                            <button class="flex-1 bg-red-500 text-white text-xs py-2 rounded-lg hover:bg-red-600 transition-colors" onclick="rejectOrder(${order.id})">
+                                                ✗ 拒絕訂單
+                                            </button>
+                                        </div>
+                                    </div>
+                                `).join('')
+                            }
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <button id="view-all-orders-btn" class="w-full bg-[#181111] text-white py-2 rounded-lg hover:bg-gray-800 transition-colors">
+                                查看所有訂單
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 移除現有的模態框（如果有的話）
+            const existingModal = document.getElementById('pending-orders-modal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // 添加新模態框到頁面
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // 綁定關閉事件
+            document.getElementById('close-pending-orders-modal')?.addEventListener('click', function() {
+                document.getElementById('pending-orders-modal')?.remove();
+            });
+            
+            document.getElementById('view-all-orders-btn')?.addEventListener('click', function() {
+                document.getElementById('pending-orders-modal')?.remove();
+                showPage('orders');
+            });
+            
+            // 點擊背景關閉模態框
+            document.getElementById('pending-orders-modal')?.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.remove();
+                }
+            });
+        };
+        
+        window.showRoomStatusModal = function() {
+            console.log('showRoomStatusModal 被調用');
+            const modalHTML = `
+                <div id="room-status-modal" class="modal-overlay">
+                    <div class="modal-content">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold text-[#181111]">🏠 房況檢查</h2>
+                            <button id="close-room-status-modal" class="text-gray-500 hover:text-gray-700 text-xl">&times;</button>
+                        </div>
+                        
+                        <div class="space-y-3 max-h-96 overflow-y-auto">
+                            ${window.mockRoomTypes.map(room => {
+                                // 計算該房型的預訂情況
+                                const roomBookings = window.mockBookings.filter(booking => booking.roomId === room.id);
+                                const today = new Date().toISOString().split('T')[0];
+                                const todayBookings = roomBookings.filter(booking => 
+                                    booking.startDate <= today && booking.endDate >= today
+                                );
+                                const availableCount = room.stock - todayBookings.length;
+                                const occupancyRate = Math.round((todayBookings.length / room.stock) * 100);
+                                
+                                return `
+                                    <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <h3 class="font-semibold text-[#181111]">${room.name}</h3>
+                                            <span class="text-xs px-2 py-1 rounded-full ${
+                                                room.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                                            }">
+                                                ${room.status === 'active' ? '啟用中' : '已禁用'}
+                                            </span>
+                                        </div>
+                                        <div class="text-sm text-gray-600 mb-2">
+                                            <div>📊 總庫存: ${room.stock} 間</div>
+                                            <div>✅ 今日可用: ${availableCount} 間</div>
+                                            <div>🏠 入住率: ${occupancyRate}%</div>
+                                            <div>📅 今日入住: ${todayBookings.length} 間</div>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <button class="flex-1 bg-blue-500 text-white text-xs py-2 rounded-lg hover:bg-blue-600 transition-colors" onclick="viewRoomDetails(${room.id})">
+                                                📋 查看詳情
+                                            </button>
+                                            <button class="flex-1 bg-green-500 text-white text-xs py-2 rounded-lg hover:bg-green-600 transition-colors" onclick="manageRoomCalendar(${room.id})">
+                                                📅 管理行事曆
+                                            </button>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <button id="view-room-management-btn" class="w-full bg-[#181111] text-white py-2 rounded-lg hover:bg-gray-800 transition-colors">
+                                前往房型管理
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 移除現有的模態框（如果有的話）
+            const existingModal = document.getElementById('room-status-modal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // 添加新模態框到頁面
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // 綁定關閉事件
+            document.getElementById('close-room-status-modal')?.addEventListener('click', function() {
+                document.getElementById('room-status-modal')?.remove();
+            });
+            
+            document.getElementById('view-room-management-btn')?.addEventListener('click', function() {
+                document.getElementById('room-status-modal')?.remove();
+                showPage('roomManagement');
+            });
+            
+            // 點擊背景關閉模態框
+            document.getElementById('room-status-modal')?.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.remove();
+                }
+            });
+        };
+        
+        window.confirmOrder = function(orderId) {
+            const order = window.mockOrders.find(o => o.id === orderId);
+            if (order) {
+                order.status = 'completed';
+                alert(`訂單 ${order.name} 已確認！`);
+                // 重新顯示模態框以更新列表
+                showPendingOrdersModal();
+            }
+        };
+        
+        window.rejectOrder = function(orderId) {
+            const order = window.mockOrders.find(o => o.id === orderId);
+            if (order) {
+                order.status = 'cancelled';
+                alert(`訂單 ${order.name} 已拒絕！`);
+                // 重新顯示模態框以更新列表
+                showPendingOrdersModal();
+            }
+        };
+        
+        window.viewRoomDetails = function(roomId) {
+            document.getElementById('room-status-modal')?.remove();
+            showPage('packageManagement', { roomId: roomId });
+        };
+        
+        window.manageRoomCalendar = function(roomId) {
+            document.getElementById('room-status-modal')?.remove();
+            currentManagementRoomId = roomId;
+            showPage('calendarManagement');
+        };
     </script>
 </body>
 </html>
