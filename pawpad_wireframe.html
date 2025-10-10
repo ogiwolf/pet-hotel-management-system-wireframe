@@ -694,6 +694,12 @@
                 <!-- 付款成功頁面內容將由 JavaScript 動態生成 -->
             </div>
             <div id="settings-page" class="page-content hidden"></div>
+            
+            <!-- == START: 新增的金流頁面容器 == -->
+            <div id="finance-dashboard-page" class="page-content hidden"></div>
+            <div id="payout-settings-page" class="page-content hidden"></div>
+            <div id="payout-history-page" class="page-content hidden"></div>
+            <!-- == END: 新增的金流頁面容器 == -->
         </div>
 
         <!-- 全螢幕模態框 (用於新增/編輯) -->
@@ -1000,6 +1006,12 @@
                 bookingFlow: document.getElementById('booking-flow-page'),
                 paymentSuccess: document.getElementById('payment-success-page'),
                 settings: document.getElementById('settings-page'),
+                
+                // == START: 新增的頁面參照 ==
+                financeDashboard: document.getElementById('finance-dashboard-page'),
+                payoutSettings: document.getElementById('payout-settings-page'),
+                payoutHistory: document.getElementById('payout-history-page'),
+                // == END: 新增的頁面參照 ==
             };
             const calendarModal = document.getElementById('calendar-modal');
             const formModal = document.getElementById('form-modal');
@@ -1016,6 +1028,13 @@
                     if (pageKey === 'orderDetail') renderOrderDetailPage(state);
                     if (pageKey === 'account') renderUserCenterPage();
                     if (pageKey === 'merchantDashboard') renderMerchantDashboard();
+                    
+                    // == START: 新增的頁面渲染呼叫 ==
+                    if (pageKey === 'financeDashboard') renderFinanceDashboardPage();
+                    if (pageKey === 'payoutSettings') renderPayoutSettingsPage();
+                    if (pageKey === 'payoutHistory') renderPayoutHistoryPage();
+                    // == END: 新增的頁面渲染呼叫 ==
+                    
                     if (pageKey === 'roomManagement') renderRoomListPage();
                     if (pageKey === 'packageManagement') renderPackageListPage(state.roomId);
                     if (pageKey === 'chat') renderChatPage(state);
@@ -6775,6 +6794,264 @@
                 document.body.removeChild(fileInput);
             }
 
+            // == START: 新增金流相關的渲染函式 ==
+
+            // 4.1 金流儀表板 (提領主頁)
+            function renderFinanceDashboardPage() {
+                const container = pages.financeDashboard;
+                const hasPayoutAccount = true; // 假設商家已設定帳戶，你可以根據實際狀態切換
+
+                container.innerHTML = `
+                    <div class="min-h-full bg-gray-50">
+                        <!-- 頁首 -->
+                        <div class="bg-white border-b border-gray-100 sticky top-0 z-10">
+                            <div class="px-4 py-3 flex items-center justify-between">
+                                <button id="back-to-merchant-dashboard-btn" class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100">
+                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                </button>
+                                <h1 class="text-lg font-bold text-[#181111]">金流儀表板</h1>
+                                <div class="w-8"></div>
+                            </div>
+                        </div>
+
+                        <!-- 內容區域 -->
+                        <div class="p-4 space-y-4">
+                            <!-- 餘額資訊 -->
+                            <div class="bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-xl p-6 shadow-lg">
+                                <p class="text-sm opacity-80">可提領餘額</p>
+                                <p class="text-4xl font-bold mt-2">NT$ 15,800</p>
+                                <div class="mt-4 pt-4 border-t border-white border-opacity-30 text-sm flex justify-between">
+                                    <div>
+                                        <p class="opacity-80">待處理餘額</p>
+                                        <p class="font-semibold">NT$ 3,200</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="opacity-80">上次提領</p>
+                                        <p class="font-semibold">NT$ 5,000 (09/15)</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            ${!hasPayoutAccount ? `
+                            <!-- 設定帳戶提示 -->
+                            <div id="setup-account-prompt" class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" /></svg>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm text-yellow-700">您尚未設定收款帳戶。請先完成設定才能提領款項。</p>
+                                        <p class="mt-2 text-sm"><a href="#" id="go-to-payout-settings-btn" class="font-medium text-yellow-700 hover:text-yellow-600">前往設定 →</a></p>
+                                    </div>
+                                </div>
+                            </div>
+                            ` : `
+                            <!-- 提領操作 -->
+                            <div class="bg-white rounded-xl border border-gray-100 p-4">
+                                <h3 class="font-bold text-[#181111] mb-3">發起提領</h3>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-500">提領金額</label>
+                                    <div class="relative mt-1">
+                                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">NT$</span>
+                                        <input type="number" id="withdrawal-amount" class="form-input-styled pl-10" placeholder="0">
+                                        <button id="withdraw-all-btn" class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm font-semibold text-blue-600">全部提領</button>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <p class="text-sm font-medium text-gray-500">收款帳戶</p>
+                                    <p class="text-sm text-gray-800 mt-1">中國信託 (822) **** **** 1234</p>
+                                </div>
+                                <div class="mt-4 text-xs text-gray-500 space-y-1">
+                                    <div class="flex justify-between"><span>銀行手續費:</span><span>NT$ 15</span></div>
+                                    <div class="flex justify-between"><span>預計 3-5 工作天到帳</span></div>
+                                </div>
+                                <button id="initiate-withdrawal-btn" class="btn-main w-full mt-4">確認提領</button>
+                            </div>
+                            `}
+
+                            <!-- 快速連結 -->
+                            <div class="grid grid-cols-2 gap-3">
+                                <button id="payout-history-link" class="bg-white p-3 rounded-lg border border-gray-200 text-center text-sm font-medium text-gray-700">提領紀錄</button>
+                                <button id="payout-settings-link" class="bg-white p-3 rounded-lg border border-gray-200 text-center text-sm font-medium text-gray-700">收款帳戶設定</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // 綁定事件
+                container.querySelector('#back-to-merchant-dashboard-btn').addEventListener('click', () => showPage('merchantDashboard'));
+                container.querySelector('#payout-history-link').addEventListener('click', () => showPage('payoutHistory'));
+                container.querySelector('#payout-settings-link').addEventListener('click', () => showPage('payoutSettings'));
+                container.querySelector('#go-to-payout-settings-btn')?.addEventListener('click', () => showPage('payoutSettings'));
+                container.querySelector('#initiate-withdrawal-btn')?.addEventListener('click', openWithdrawalConfirmationModal);
+            }
+
+            // 4.2 收款帳戶設定頁
+            function renderPayoutSettingsPage() {
+                const container = pages.payoutSettings;
+                const isAccountSet = true; // 假設已設定，可切換為 false 來測試初始狀態
+
+                container.innerHTML = `
+                    <div class="min-h-full bg-gray-50">
+                        <!-- 頁首 -->
+                        <div class="bg-white border-b border-gray-100 sticky top-0 z-10">
+                            <div class="px-4 py-3 flex items-center justify-between">
+                                <button id="back-to-finance-dashboard-btn" class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100">
+                                     <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                </button>
+                                <h1 class="text-lg font-bold text-[#181111]">收款帳戶設定</h1>
+                                <div class="w-8"></div>
+                            </div>
+                        </div>
+
+                        <!-- 內容 -->
+                        <div class="p-4 space-y-4">
+                            ${isAccountSet ? `
+                            <!-- 顯示已設定帳戶 -->
+                            <div class="bg-white rounded-xl border border-gray-100 p-4">
+                                <h3 class="font-bold text-[#181111] mb-4">目前的收款帳戶</h3>
+                                <div class="space-y-3 text-sm">
+                                    <div class="flex justify-between"><span class="text-gray-500">帳戶戶名</span><span>王*明</span></div>
+                                    <div class="flex justify-between"><span class="text-gray-500">銀行名稱</span><span>中國信託商業銀行</span></div>
+                                    <div class="flex justify-between"><span class="text-gray-500">分行</span><span>信義分行</span></div>
+                                    <div class="flex justify-between"><span class="text-gray-500">帳戶號碼</span><span>**** **** 1234</span></div>
+                                </div>
+                                <button id="change-account-btn" class="w-full border-2 border-gray-300 rounded-full py-2 mt-6 text-sm font-bold text-gray-700">更換帳戶</button>
+                            </div>
+                            ` : `
+                            <!-- 新增帳戶表單 -->
+                            <div class="bg-white rounded-xl border border-gray-100 p-4">
+                                <h3 class="font-bold text-[#181111] mb-4">新增收款帳戶</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-500">帳戶戶名</label>
+                                        <input type="text" class="form-input-styled mt-1" value="王小明" disabled>
+                                        <p class="text-xs text-gray-500 mt-1">為確保安全，戶名必須與您的註冊姓名一致。</p>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-500">銀行名稱</label>
+                                        <select class="form-input-styled mt-1">
+                                            <option>請選擇銀行</option>
+                                            <option>822 - 中國信託商業銀行</option>
+                                            <option>013 - 國泰世華銀行</option>
+                                            <option>004 - 臺灣銀行</option>
+                                        </select>
+                                    </div>
+                                     <div>
+                                        <label class="text-sm font-medium text-gray-500">分行名稱</label>
+                                        <input type="text" class="form-input-styled mt-1" placeholder="例如：信義分行">
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-500">帳戶號碼</label>
+                                        <input type="text" class="form-input-styled mt-1" placeholder="輸入您的銀行帳號">
+                                    </div>
+                                    <button id="save-account-btn" class="btn-main w-full mt-4">儲存帳戶</button>
+                                </div>
+                            </div>
+                            `}
+                        </div>
+                    </div>
+                `;
+
+                // 綁定事件
+                container.querySelector('#back-to-finance-dashboard-btn').addEventListener('click', () => showPage('financeDashboard'));
+            }
+
+            // 4.3 提領歷史紀錄頁
+            function renderPayoutHistoryPage() {
+                const container = pages.payoutHistory;
+                // 假資料
+                const history = [
+                    { date: '2025-09-15', amount: 5000, status: 'completed', fee: 15 },
+                    { date: '2025-08-28', amount: 8200, status: 'completed', fee: 15 },
+                    { date: '2025-08-10', amount: 3500, status: 'failed', fee: 0, reason: '帳戶資訊錯誤' },
+                    { date: '2025-07-25', amount: 12000, status: 'completed', fee: 15 },
+                ];
+
+                container.innerHTML = `
+                    <div class="min-h-full bg-gray-50">
+                        <!-- 頁首 -->
+                        <div class="bg-white border-b border-gray-100 sticky top-0 z-10">
+                            <div class="px-4 py-3 flex items-center justify-between">
+                                <button id="back-to-finance-dashboard-btn" class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100">
+                                     <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                </button>
+                                <h1 class="text-lg font-bold text-[#181111]">提領紀錄</h1>
+                                <div class="w-8"></div>
+                            </div>
+                        </div>
+
+                        <!-- 紀錄列表 -->
+                        <div class="p-4 space-y-3">
+                            ${history.map(item => `
+                                <div class="bg-white p-3 rounded-lg border border-gray-200">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <p class="font-bold text-base text-gray-800">NT$ ${item.amount.toLocaleString()}</p>
+                                            <p class="text-xs text-gray-500">${item.date}</p>
+                                        </div>
+                                        ${
+                                            item.status === 'completed' ? `<span class="text-xs font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-full">已完成</span>` :
+                                            item.status === 'failed' ? `<span class="text-xs font-semibold text-red-600 bg-red-100 px-2 py-1 rounded-full">失敗</span>` :
+                                            `<span class="text-xs font-semibold text-yellow-600 bg-yellow-100 px-2 py-1 rounded-full">處理中</span>`
+                                        }
+                                    </div>
+                                    ${item.status === 'failed' ? `<p class="text-xs text-red-500 mt-2">原因：${item.reason}</p>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+
+                // 綁定事件
+                container.querySelector('#back-to-finance-dashboard-btn').addEventListener('click', () => showPage('financeDashboard'));
+            }
+
+            // 輔助函式：開啟提領確認彈窗 (Modal)
+            function openWithdrawalConfirmationModal() {
+                const amount = document.getElementById('withdrawal-amount').value || '0';
+                if (parseInt(amount) <= 0) {
+                    alert('請輸入有效的提領金額');
+                    return;
+                }
+
+                const netAmount = parseInt(amount) - 15;
+
+                const modalHTML = `
+                    <div id="withdrawal-confirm-modal" class="modal-overlay">
+                        <div class="modal-content">
+                            <h3 class="text-lg font-bold text-center mb-4">確認提領資訊</h3>
+                            <div class="space-y-3 bg-gray-50 p-4 rounded-lg">
+                                <div class="flex justify-between text-sm"><span class="text-gray-500">提領金額</span><span class="font-medium">NT$ ${parseInt(amount).toLocaleString()}</span></div>
+                                <div class="flex justify-between text-sm"><span class="text-gray-500">銀行手續費</span><span>- NT$ 15</span></div>
+                                <hr>
+                                <div class="flex justify-between text-base font-bold"><span class="text-gray-800">實際入帳金額</span><span class="text-blue-600">NT$ ${netAmount.toLocaleString()}</span></div>
+                            </div>
+                            <div class="mt-4">
+                                <label class="text-sm font-medium text-gray-500">請輸入登入密碼以授權</label>
+                                <input type="password" class="form-input-styled mt-1" placeholder="********">
+                            </div>
+                            <div class="flex gap-2 mt-6">
+                                <button id="cancel-withdrawal-btn" class="flex-1 py-2 px-4 bg-gray-200 text-gray-700 rounded-full font-bold">取消</button>
+                                <button id="confirm-withdrawal-btn" class="flex-1 py-2 px-4 bg-[#181111] text-white rounded-full font-bold">確認送出</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+                const modal = document.getElementById('withdrawal-confirm-modal');
+                modal.querySelector('#cancel-withdrawal-btn').addEventListener('click', () => modal.remove());
+                modal.querySelector('#confirm-withdrawal-btn').addEventListener('click', () => {
+                    alert('提領申請已送出！預計 3-5 工作天到帳。');
+                    modal.remove();
+                    showPage('payoutHistory'); // 提領後跳到歷史紀錄頁
+                });
+            }
+
+            // == END: 新增金流相關的渲染函式 ==
+
             function renderMerchantDashboard() {
                 const container = pages.merchantDashboard;
                 container.innerHTML = `
@@ -6860,6 +7137,16 @@
                             <span class="text-[#886364]">></span>
                         </div>
                     </div>
+
+                    <!-- == START: 新增金流管理入口 == -->
+                    <div id="finance-dashboard-link" class="p-4 rounded-xl border border-gray-100 bg-white cursor-pointer hover:bg-gray-50">
+                        <h2 class="text-lg font-bold text-[#181111] mb-2">💰 金流管理</h2>
+                        <div class="flex justify-between items-center">
+                            <p class="text-sm text-[#886364]">管理您的收入、提領款項與收款帳戶</p>
+                            <span class="text-[#886364]">></span>
+                        </div>
+                    </div>
+                    <!-- == END: 新增金流管理入口 == -->
 
                     <!-- 房型與方案管理 -->
                     <div id="manage-rooms-link" class="p-4 rounded-xl border border-gray-100 bg-white cursor-pointer hover:bg-gray-50">
@@ -10212,6 +10499,11 @@
                     renderAnalyticsDashboard();
                     showPage('analyticsDashboard');
                 }
+                // == START: 新增金流儀表板點擊事件 ==
+                if (e.target.closest('#finance-dashboard-link')) {
+                    showPage('financeDashboard');
+                }
+                // == END: 新增金流儀表板點擊事件 ==
                 if (e.target.closest('#back-to-merchant-dashboard-btn')) showPage('merchantDashboard');
                 if (e.target.closest('#manage-rooms-link')) showPage('roomManagement');
                 if (e.target.closest('#manage-calendar-btn')) showPage('calendarManagement');
