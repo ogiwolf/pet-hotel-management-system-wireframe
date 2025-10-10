@@ -667,6 +667,41 @@
         .time-sliders.hidden {
             display: none;
         }
+        
+        /* == START: 新增寵物檔案相關樣式 == */
+        .pet-tag-btn {
+            background-color: #f3f4f6;
+            color: #374151;
+            padding: 6px 12px;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .pet-tag-btn:hover {
+            background-color: #e5e7eb;
+        }
+        
+        .pet-tag-btn.active {
+            background-color: #181111;
+            color: white;
+        }
+        
+        .pet-selection-card {
+            transition: all 0.2s;
+        }
+        
+        .pet-selection-card:hover {
+            border-color: #d1d5db;
+        }
+        
+        .pet-selection-card.selected {
+            border-color: #181111;
+            background-color: #f9fafb;
+        }
+        /* == END: 新增寵物檔案相關樣式 == */
     </style>
 </head>
 <body>
@@ -694,6 +729,11 @@
                 <!-- 付款成功頁面內容將由 JavaScript 動態生成 -->
             </div>
             <div id="settings-page" class="page-content hidden"></div>
+            
+            <!-- == START: 新增寵物檔案相關頁面 == -->
+            <div id="my-pets-page" class="page-content hidden"></div>
+            <div id="pet-profile-page" class="page-content hidden"></div>
+            <!-- == END: 新增寵物檔案相關頁面 == -->
             
             <!-- == START: 新增的金流頁面容器 == -->
             <div id="finance-dashboard-page" class="page-content hidden"></div>
@@ -750,6 +790,46 @@
             let currentManagementRoomId = 1;
             let managementViewMode = 'monthly'; // 'monthly' or 'daily'
 
+
+            // == START: 新增寵物檔案假資料 ==
+            window.mockPets = [
+                {
+                    id: 1,
+                    name: '小黃',
+                    photoUrl: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=150&h=150&fit=crop&crop=center',
+                    breed: '黃金獵犬',
+                    age: 3,
+                    weight: 25,
+                    gender: 'male', // male, female
+                    isNeutered: true,
+                    personalityTags: ['親人', '活潑', '親狗', '已定點大小便'],
+                    vaccines: [
+                        { name: '狂犬病疫苗', date: '2025-03-15', proofUrl: '' },
+                        { name: '八合一疫苗', date: '2025-03-15', proofUrl: '' }
+                    ],
+                    allergies: '海鮮、花生',
+                    medications: '每日早晚飯後需服用關節保健藥 1 顆。',
+                    specialNeeds: '關節較敏感，不適合劇烈跳躍。'
+                },
+                {
+                    id: 2,
+                    name: '咪咪',
+                    photoUrl: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=150&h=150&fit=crop&crop=center',
+                    breed: '英國短毛貓',
+                    age: 5,
+                    weight: 5,
+                    gender: 'female',
+                    isNeutered: true,
+                    personalityTags: ['內向', '親人', '有點膽小'],
+                    vaccines: [
+                        { name: '三合一疫苗', date: '2025-01-20', proofUrl: '' }
+                    ],
+                    allergies: '無',
+                    medications: '無',
+                    specialNeeds: '喜歡有躲藏空間的地方。'
+                }
+            ];
+            // == END: 新增寵物檔案假資料 ==
 
             window.mockOrders = [
                 { id: 1, name: '快樂爪子旅館', date: '2025/07/10 - 2025/07/12', pet: '1 犬', total: 1600, status: 'pending' },
@@ -1007,6 +1087,11 @@
                 paymentSuccess: document.getElementById('payment-success-page'),
                 settings: document.getElementById('settings-page'),
                 
+                // == START: 新增的寵物檔案頁面參照 ==
+                myPets: document.getElementById('my-pets-page'),
+                petProfile: document.getElementById('pet-profile-page'),
+                // == END: 新增的寵物檔案頁面參照 ==
+                
                 // == START: 新增的頁面參照 ==
                 financeDashboard: document.getElementById('finance-dashboard-page'),
                 payoutSettings: document.getElementById('payout-settings-page'),
@@ -1017,7 +1102,7 @@
             const formModal = document.getElementById('form-modal');
 
             // --- 核心功能：頁面切換 ---
-            function showPage(pageKey, state = {}) {
+            window.showPage = function(pageKey, state = {}) {
                 Object.values(pages).forEach(page => page && page.classList.add('hidden'));
                 
                 const targetPage = pages[pageKey];
@@ -1046,6 +1131,11 @@
                     if (pageKey === 'bookingFlow') renderBookingFlowPage();
                     if (pageKey === 'paymentSuccess') renderPaymentSuccessPage();
                     if (pageKey === 'settings') renderSettingsPage();
+                    
+                    // == START: 新增的寵物檔案頁面渲染呼叫 ==
+                    if (pageKey === 'myPets') renderMyPetsPage(state.fromPage);
+                    if (pageKey === 'petProfile') renderPetProfilePage(state.petId, state.fromPage); // 我們會傳入 petId 和 fromPage
+                    // == END: 新增的寵物檔案頁面渲染呼叫 ==
                 }
                 updateNavActiveState(pageKey);
             }
@@ -2290,6 +2380,19 @@
                             </button>
                         </div>
                         
+                        <!-- == START: 新增的選擇寵物步驟 == -->
+                        <div id="step-pet-selection" class="booking-step hidden">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-medium text-[#181111]">選擇入住的寵物</h3>
+                                <button id="back-to-time-selection-from-pet" class="text-sm text-blue-600 hover:text-blue-800">← 返回</button>
+                            </div>
+                            <div id="pet-selection-list" class="space-y-3 mb-4">
+                                <!-- 寵物列表將由 JS 動態生成 -->
+                            </div>
+                            <button id="continue-to-confirmation-btn" class="btn-main w-full opacity-50 cursor-not-allowed" disabled>下一步：確認訂單</button>
+                        </div>
+                        <!-- == END: 新增的選擇寵物步驟 == -->
+                        
                         <!-- 步驟 4: 完整明細確認 -->
                         <div id="step-4-order-confirmation" class="booking-step hidden">
                             <div class="flex items-center justify-between mb-4">
@@ -3495,6 +3598,18 @@
                     }
                 }
                 
+                // 更新寵物資訊
+                const petNameEl = document.getElementById('confirmation-pet-name');
+                const petDetailsEl = document.getElementById('confirmation-pet-details');
+
+                if (bookingData.petId && petNameEl && petDetailsEl) {
+                    const selectedPet = window.mockPets.find(p => p.id === bookingData.petId);
+                    if (selectedPet) {
+                        petNameEl.textContent = selectedPet.name;
+                        petDetailsEl.textContent = `${selectedPet.breed} • ${selectedPet.age}歲 • ${selectedPet.gender === 'male' ? '公' : '母'}`;
+                    }
+                }
+                
                 console.log('訂單確認頁面明細更新完成');
             }
             
@@ -4349,34 +4464,72 @@
                     continueBtn.replaceWith(continueBtn.cloneNode(true));
                     const newBtn = document.getElementById('continue-booking-btn');
                     newBtn.addEventListener('click', function() {
-                        console.log('繼續預訂按鈕被點擊，當前預訂資料:', bookingData);
+                        console.log('繼續預訂，前往選擇寵物');
                         
-                        // 進入步驟4：完整明細確認
+                        // 隱藏步驟3，顯示寵物選擇步驟
                         const step3 = document.getElementById('step-3-time-selection');
-                        const step4 = document.getElementById('step-4-order-confirmation');
+                        const petSelectionStep = document.getElementById('step-pet-selection');
                         
-                        if (step3 && step4) {
-                            // 隱藏步驟3
+                        if (step3 && petSelectionStep) {
                             step3.style.display = 'none';
-                            console.log('步驟3已隱藏');
+                            petSelectionStep.style.display = 'block';
                             
-                            // 顯示步驟4
-                            step4.style.display = 'block';
-                            console.log('步驟4已顯示');
-                            
-                            // 更新步驟指示器到步驟4
-                            updateStepIndicator(4);
-                            
-                            // 更新確認頁面的明細
-                            updateOrderConfirmation();
-                        } else {
-                            console.error('找不到步驟3或步驟4元素');
+                            // 渲染寵物選擇列表
+                            renderPetSelectionList();
                         }
                     });
                 } else {
                     continueSection.classList.add('hidden');
                 }
             }
+            
+            // == START: 新增 renderPetSelectionList 函式 ==
+            function renderPetSelectionList() {
+                const listContainer = document.getElementById('pet-selection-list');
+                listContainer.innerHTML = window.mockPets.map(pet => `
+                    <div class="pet-selection-card p-3 border-2 border-gray-200 rounded-xl flex items-center gap-4 cursor-pointer" data-pet-id="${pet.id}">
+                        <img src="${pet.photoUrl}" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <p class="font-bold text-base">${pet.name}</p>
+                            <p class="text-sm text-gray-500">${pet.breed}</p>
+                        </div>
+                    </div>
+                `).join('');
+
+                // 綁定寵物卡片點擊事件
+                document.querySelectorAll('.pet-selection-card').forEach(card => {
+                    card.addEventListener('click', function() {
+                        // 移除其他卡片的選中樣式
+                        document.querySelectorAll('.pet-selection-card').forEach(c => c.classList.remove('selected'));
+                        // 新增選中樣式
+                        this.classList.add('selected');
+                        
+                        // 儲存選擇的寵物ID
+                        bookingData.petId = parseInt(this.dataset.petId);
+                        
+                        // 啟用下一步按鈕
+                        const nextBtn = document.getElementById('continue-to-confirmation-btn');
+                        nextBtn.disabled = false;
+                        nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    });
+                });
+
+                // 綁定 "下一步：確認訂單" 按鈕的點擊事件
+                document.getElementById('continue-to-confirmation-btn').addEventListener('click', function() {
+                     if (bookingData.petId) {
+                        document.getElementById('step-pet-selection').style.display = 'none';
+                        document.getElementById('step-4-order-confirmation').style.display = 'block';
+                        updateOrderConfirmation(); // 更新最終確認頁的資訊
+                     }
+                });
+
+                // 綁定返回按鈕
+                document.getElementById('back-to-time-selection-from-pet')?.addEventListener('click', function() {
+                    document.getElementById('step-pet-selection').style.display = 'none';
+                    document.getElementById('step-3-time-selection').style.display = 'block';
+                });
+            }
+            // == END: 新增 renderPetSelectionList 函式 ==
             
             // 檢查當前步驟是否可以繼續（輕量級檢查）
             function checkCurrentStepCanContinue() {
@@ -4711,6 +4864,12 @@
 
                 <div class="px-4 py-2 space-y-2">
                     <div id="account-profile" class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center cursor-pointer"><span>個人資料</span><span class="text-[#886364]">›</span></div>
+                    <!-- == START: 新增我的寵物入口 == -->
+                    <div id="my-pets-link" class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center cursor-pointer">
+                        <span>🐾 我的寵物</span>
+                        <span class="text-[#886364]">›</span>
+                    </div>
+                    <!-- == END: 新增我的寵物入口 == -->
                     <div id="account-support" class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center cursor-pointer"><span>聯繫客服</span><span class="text-[#886364]">›</span></div>
                     <div id="account-privacy" class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center cursor-pointer"><span>隱私</span><span class="text-[#886364]">›</span></div>
                     <div id="account-referral" class="bg-white p-4 rounded-xl border border-gray-100 flex justify_between items-center cursor-pointer"><span>我的推薦代碼</span><span class="text-[#886364]">›</span></div>
@@ -4750,6 +4909,11 @@
             function attachAccountListeners() {
                 document.getElementById('account-edit-icon')?.addEventListener('click', openProfileEditModal);
                 document.getElementById('account-profile')?.addEventListener('click', openProfileEditModal);
+                
+                // == START: 新增我的寵物點擊事件 ==
+                document.getElementById('my-pets-link')?.addEventListener('click', () => showPage('myPets', { fromPage: 'account' }));
+                // == END: 新增我的寵物點擊事件 ==
+                
                 document.getElementById('become-merchant-card')?.addEventListener('click', () => { renderMerchantApplicationFlow(); });
                 document.getElementById('merchant-entry')?.addEventListener('click', () => showPage('merchantDashboard'));
                 document.getElementById('merchant-backend-btn')?.addEventListener('click', () => showPage('merchantDashboard'));
@@ -6678,6 +6842,493 @@
                 attachSettingsListeners();
             }
 
+            // == START: 新增 renderMyPetsPage 函式 ==
+            function renderMyPetsPage(fromPage = 'account') {
+                const container = pages.myPets;
+                container.innerHTML = `
+                    <div class="min-h-full bg-gray-50">
+                        <!-- 頁首 -->
+                        <div class="bg-white border-b border-gray-100 sticky top-0 z-10">
+                            <div class="px-4 py-3 flex items-center justify-between">
+                                <button id="back-to-account-btn" class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100">
+                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                </button>
+                                <h1 class="text-lg font-bold text-[#181111]">我的寵物</h1>
+                                <div class="w-8"></div>
+                            </div>
+                        </div>
+
+                        <!-- 寵物列表 -->
+                        <div class="p-4 space-y-3">
+                            ${window.mockPets.map(pet => `
+                                <div class="pet-card bg-white p-3 rounded-xl border border-gray-200 flex items-center gap-4 cursor-pointer" data-pet-id="${pet.id}">
+                                    <img src="${pet.photoUrl}" class="w-16 h-16 rounded-full object-cover border-2 border-gray-100">
+                                    <div class="flex-1">
+                                        <p class="font-bold text-lg text-[#181111]">${pet.name}</p>
+                                        <p class="text-sm text-gray-500">${pet.breed}</p>
+                                    </div>
+                                    <span class="text-[#886364]">›</span>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- 新增按鈕 -->
+                        <div class="p-4">
+                            <button id="add-new-pet-btn" class="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:bg-gray-100">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                                <span>新增寵物檔案</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                // == START: 使用 addEventListener 綁定事件 ==
+                // 返回按鈕
+                document.getElementById('back-to-account-btn')?.addEventListener('click', () => {
+                    showPage(fromPage);
+                });
+
+                // 寵物卡片點擊事件
+                container.querySelectorAll('.pet-card').forEach(card => {
+                    card.addEventListener('click', function() {
+                        const petId = parseInt(this.dataset.petId);
+                        showPage('petProfile', { petId: petId, fromPage: 'myPets' });
+                    });
+                });
+
+                // 新增寵物按鈕
+                document.getElementById('add-new-pet-btn')?.addEventListener('click', () => {
+                    showPage('petProfile', { petId: null, fromPage: 'myPets' });
+                });
+                // == END: 使用 addEventListener 綁定事件 ==
+            }
+            // == END: 新增 renderMyPetsPage 函式 ==
+
+            // == START: 新增 renderPetProfilePage 函式 ==
+            function renderPetProfilePage(petId, fromPage = 'myPets') {
+                const container = pages.petProfile;
+                const isEditing = petId !== null;
+                const pet = isEditing ? window.mockPets.find(p => p.id === petId) : {};
+
+                // 為了方便，我們先定義好所有可選的個性標籤
+                const allPersonalityTags = ['親人', '親狗', '親貓', '內向', '活潑', '容易焦慮', '會護食', '已定點大小便', '破壞力強', '愛叫', '安靜', '黏人', '獨立', '愛玩', '不愛運動', '社交性強', '怕生'];
+
+                container.innerHTML = `
+                    <div class="min-h-full bg-gray-50 pb-20">
+                        <!-- 頁首 -->
+                        <div class="bg-white border-b border-gray-100 sticky top-0 z-10">
+                            <div class="px-4 py-3 flex items-center justify-between">
+                                <button id="back-to-pets-btn" class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100">
+                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                </button>
+                                <h1 class="text-lg font-bold text-[#181111]">${isEditing ? `編輯 ${pet.name} 的檔案` : '新增寵物檔案'}</h1>
+                                <div class="w-8"></div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 space-y-4">
+                            <!-- 基本資料 -->
+                            <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-4">
+                                <div class="text-center">
+                                    <img id="pet-photo-preview" src="${isEditing ? pet.photoUrl : 'https://via.placeholder.com/100'}" class="w-24 h-24 rounded-full object-cover border-4 border-gray-100 mx-auto">
+                                    <input type="file" id="pet-photo-input" accept="image/*" class="hidden">
+                                    <button id="change-photo-btn" class="text-sm text-blue-600 mt-2">更換照片</button>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-500">寵物姓名 *</label>
+                                    <input type="text" id="pet-name-input" class="form-input-styled mt-1" value="${pet.name || ''}" placeholder="請輸入寵物姓名" required>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-500">品種 *</label>
+                                    <input type="text" id="pet-breed-input" class="form-input-styled mt-1" value="${pet.breed || ''}" placeholder="例如：黃金獵犬、英國短毛貓" required>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-500">年齡 *</label>
+                                        <input type="number" id="pet-age-input" class="form-input-styled mt-1" value="${pet.age || ''}" placeholder="歲" min="0" max="30" required>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-500">體重 (kg) *</label>
+                                        <input type="number" id="pet-weight-input" step="0.1" class="form-input-styled mt-1" value="${pet.weight || ''}" placeholder="kg" min="0" max="100" required>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-500">性別 *</label>
+                                        <div class="flex gap-4 mt-2">
+                                            <label class="flex items-center"><input type="radio" name="gender" value="male" ${pet.gender === 'male' ? 'checked' : ''}> <span class="ml-1">公</span></label>
+                                            <label class="flex items-center"><input type="radio" name="gender" value="female" ${pet.gender === 'female' ? 'checked' : ''}> <span class="ml-1">母</span></label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-500">是否結紮 *</label>
+                                        <div class="flex gap-4 mt-2">
+                                            <label class="flex items-center"><input type="radio" name="neutered" value="true" ${pet.isNeutered ? 'checked' : ''}> <span class="ml-1">是</span></label>
+                                            <label class="flex items-center"><input type="radio" name="neutered" value="false" ${!pet.isNeutered ? 'checked' : ''}> <span class="ml-1">否</span></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 個性與習慣 (結構化標籤) -->
+                            <div class="bg-white p-4 rounded-xl border border-gray-200">
+                                <h3 class="font-bold text-[#181111] mb-3">個性與習慣</h3>
+                                <div class="flex flex-wrap gap-2">
+                                    ${allPersonalityTags.map(tag => `
+                                        <button class="pet-tag-btn ${pet.personalityTags?.includes(tag) ? 'active' : ''}">${tag}</button>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <!-- 健康狀況 -->
+                            <div class="bg-white p-4 rounded-xl border border-gray-200 space-y-4">
+                                 <h3 class="font-bold text-[#181111] mb-3">健康狀況</h3>
+                                 <div>
+                                    <label class="text-sm font-medium text-gray-500">疫苗接種紀錄</label>
+                                    <div id="vaccine-list" class="space-y-2 mt-1">
+                                        ${pet.vaccines?.map((v, index) => `
+                                            <div class="bg-gray-50 p-3 rounded-lg flex justify-between items-center text-sm vaccine-item" data-index="${index}">
+                                                <div class="flex-1">
+                                                    <span class="font-medium">${v.name}</span>
+                                                    <span class="text-gray-500 ml-2">${v.date}</span>
+                                                </div>
+                                                <button class="text-red-500 text-xs px-2 py-1 hover:bg-red-50 rounded" onclick="removeVaccine(${index})">刪除</button>
+                                            </div>
+                                        `).join('') || '<p class="text-xs text-gray-400">尚未新增疫苗紀錄</p>'}
+                                    </div>
+                                    <button id="add-vaccine-btn" class="w-full text-sm py-2 mt-2 bg-gray-100 rounded-lg hover:bg-gray-200">＋ 新增疫苗紀錄</button>
+                                    <button id="upload-vaccine-proof-btn" class="w-full text-sm py-2 mt-2 bg-gray-100 rounded-lg hover:bg-gray-200">上傳/查看證明</button>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-500">過敏原</label>
+                                    <input type="text" id="pet-allergies-input" class="form-input-styled mt-1" placeholder="例如：穀物、雞肉、海鮮" value="${pet.allergies || ''}">
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-500">用藥提醒</label>
+                                    <textarea id="pet-medications-input" class="form-input-styled mt-1" rows="2" placeholder="例如：每日早晚飯後需服用關節保健藥 1 顆">${pet.medications || ''}</textarea>
+                                </div>
+                                 <div>
+                                    <label class="text-sm font-medium text-gray-500">特殊需求</label>
+                                    <textarea id="pet-special-needs-input" class="form-input-styled mt-1" rows="2" placeholder="例如：怕打雷、不喜歡被摸尾巴、需要安靜環境">${pet.specialNeeds || ''}</textarea>
+                                </div>
+                            </div>
+                            
+                            <!-- 未儲存變更提示 -->
+                            <div id="unsaved-changes-notice" class="hidden bg-amber-50 border border-amber-200 rounded-lg p-3">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 text-amber-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                    </svg>
+                                    <span class="text-amber-700 font-medium">您有未儲存的變更</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 按鈕 -->
+                            <div class="flex gap-3">
+                                 ${isEditing ? `<button id="delete-pet-btn" class="w-1/3 py-3 bg-red-100 text-red-600 rounded-full font-bold hover:bg-red-200">刪除</button>` : ''}
+                                 <button id="save-pet-btn" class="btn-main flex-1">儲存檔案</button>
+                            </div>
+                            
+                            <!-- 錯誤訊息顯示區域 -->
+                            <div id="pet-form-errors" class="hidden bg-red-50 border border-red-200 rounded-lg p-3">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <span class="text-red-700 font-medium">請修正以下錯誤：</span>
+                                </div>
+                                <ul id="error-list" class="mt-2 text-sm text-red-600 list-disc list-inside"></ul>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // == START: 使用 addEventListener 綁定事件 ==
+                // 返回按鈕
+                document.getElementById('back-to-pets-btn')?.addEventListener('click', () => {
+                    showPage(fromPage);
+                });
+
+                // 綁定標籤點擊事件
+                container.querySelectorAll('.pet-tag-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        btn.classList.toggle('active');
+                    });
+                });
+
+                // 綁定照片上傳事件
+                document.getElementById('change-photo-btn')?.addEventListener('click', () => {
+                    document.getElementById('pet-photo-input').click();
+                });
+
+                document.getElementById('pet-photo-input')?.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            document.getElementById('pet-photo-preview').src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                // 綁定疫苗管理事件
+                document.getElementById('add-vaccine-btn')?.addEventListener('click', () => {
+                    showVaccineModal();
+                });
+
+                document.getElementById('upload-vaccine-proof-btn')?.addEventListener('click', () => {
+                    alert('疫苗證明上傳功能開發中...');
+                });
+
+                // == START: 監聽表單變更，顯示未儲存變更提示 ==
+                const formInputs = container.querySelectorAll('input, textarea, select');
+                formInputs.forEach(input => {
+                    input.addEventListener('input', showUnsavedChangesNotice);
+                    input.addEventListener('change', showUnsavedChangesNotice);
+                });
+
+                // 監聽個性標籤變更
+                container.querySelectorAll('.pet-tag-btn').forEach(btn => {
+                    btn.addEventListener('click', showUnsavedChangesNotice);
+                });
+                // == END: 監聽表單變更，顯示未儲存變更提示 ==
+
+                // 綁定儲存和刪除事件
+                document.getElementById('save-pet-btn')?.addEventListener('click', () => {
+                    savePetProfile(petId);
+                });
+
+                document.getElementById('delete-pet-btn')?.addEventListener('click', () => {
+                    deletePetProfile(petId);
+                });
+                // == END: 使用 addEventListener 綁定事件 ==
+            }
+            // == END: 新增 renderPetProfilePage 函式 ==
+
+            // == START: 新增寵物檔案管理輔助函式 ==
+            function showVaccineModal() {
+                const modalHTML = `
+                    <div id="vaccine-modal" class="modal-overlay">
+                        <div class="modal-content">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-bold text-[#181111]">新增疫苗紀錄</h3>
+                                <button id="close-vaccine-modal" class="text-gray-500 hover:text-gray-700">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="text-sm font-medium text-gray-500">疫苗名稱</label>
+                                    <input type="text" id="vaccine-name-input" class="form-input-styled mt-1" placeholder="例如：狂犬病疫苗、八合一疫苗">
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-500">接種日期</label>
+                                    <input type="date" id="vaccine-date-input" class="form-input-styled mt-1">
+                                </div>
+                                <div class="flex gap-3 pt-4">
+                                    <button id="cancel-vaccine-btn" class="btn-secondary flex-1">取消</button>
+                                    <button id="save-vaccine-btn" class="btn-main flex-1">儲存</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+                
+                // 綁定事件
+                document.getElementById('close-vaccine-modal')?.addEventListener('click', closeVaccineModal);
+                document.getElementById('cancel-vaccine-btn')?.addEventListener('click', closeVaccineModal);
+                document.getElementById('save-vaccine-btn')?.addEventListener('click', saveVaccine);
+                
+                // 設定預設日期為今天
+                document.getElementById('vaccine-date-input').value = new Date().toISOString().split('T')[0];
+            }
+
+            function closeVaccineModal() {
+                document.getElementById('vaccine-modal')?.remove();
+            }
+
+            function saveVaccine() {
+                const name = document.getElementById('vaccine-name-input').value.trim();
+                const date = document.getElementById('vaccine-date-input').value;
+                
+                if (!name || !date) {
+                    alert('請填寫完整的疫苗資訊');
+                    return;
+                }
+                
+                // 新增疫苗到列表
+                const vaccineList = document.getElementById('vaccine-list');
+                const vaccineHTML = `
+                    <div class="bg-gray-50 p-3 rounded-lg flex justify-between items-center text-sm vaccine-item">
+                        <div class="flex-1">
+                            <span class="font-medium">${name}</span>
+                            <span class="text-gray-500 ml-2">${date}</span>
+                        </div>
+                        <button class="text-red-500 text-xs px-2 py-1 hover:bg-red-50 rounded" onclick="removeVaccineFromList(this)">刪除</button>
+                    </div>
+                `;
+                
+                if (vaccineList.innerHTML.includes('尚未新增疫苗紀錄')) {
+                    vaccineList.innerHTML = vaccineHTML;
+                } else {
+                    vaccineList.insertAdjacentHTML('beforeend', vaccineHTML);
+                }
+                
+                closeVaccineModal();
+                
+                // 顯示未儲存變更提示
+                showUnsavedChangesNotice();
+            }
+
+            function removeVaccineFromList(button) {
+                button.closest('.vaccine-item').remove();
+                
+                // 如果沒有疫苗了，顯示預設訊息
+                const vaccineList = document.getElementById('vaccine-list');
+                if (vaccineList.children.length === 0) {
+                    vaccineList.innerHTML = '<p class="text-xs text-gray-400">尚未新增疫苗紀錄</p>';
+                }
+                
+                // 顯示未儲存變更提示
+                showUnsavedChangesNotice();
+            }
+
+            function savePetProfile(petId) {
+                // 收集表單資料
+                const formData = {
+                    name: document.getElementById('pet-name-input').value.trim(),
+                    breed: document.getElementById('pet-breed-input').value.trim(),
+                    age: parseInt(document.getElementById('pet-age-input').value),
+                    weight: parseFloat(document.getElementById('pet-weight-input').value),
+                    gender: document.querySelector('input[name="gender"]:checked')?.value,
+                    isNeutered: document.querySelector('input[name="neutered"]:checked')?.value === 'true',
+                    allergies: document.getElementById('pet-allergies-input').value.trim(),
+                    medications: document.getElementById('pet-medications-input').value.trim(),
+                    specialNeeds: document.getElementById('pet-special-needs-input').value.trim(),
+                    personalityTags: Array.from(document.querySelectorAll('.pet-tag-btn.active')).map(btn => btn.textContent),
+                    vaccines: Array.from(document.querySelectorAll('.vaccine-item')).map(item => ({
+                        name: item.querySelector('.font-medium').textContent,
+                        date: item.querySelector('.text-gray-500').textContent.trim(),
+                        proofUrl: ''
+                    }))
+                };
+
+                // == START: 優化錯誤反饋 ==
+                // 先清除所有欄位的錯誤樣式
+                document.querySelectorAll('.form-input-styled').forEach(el => {
+                    el.classList.remove('border-red-500', 'border-2');
+                });
+
+                // 驗證表單
+                const errors = validatePetForm(formData);
+                if (errors.length > 0) {
+                    showPetFormErrors(errors);
+
+                    // 將有問題的欄位加上紅色框線
+                    if (!formData.name) document.getElementById('pet-name-input').classList.add('border-red-500', 'border-2');
+                    if (!formData.breed) document.getElementById('pet-breed-input').classList.add('border-red-500', 'border-2');
+                    if (!formData.age || formData.age < 0 || formData.age > 30) document.getElementById('pet-age-input').classList.add('border-red-500', 'border-2');
+                    if (!formData.weight || formData.weight < 0 || formData.weight > 100) document.getElementById('pet-weight-input').classList.add('border-red-500', 'border-2');
+                    if (!formData.gender) {
+                        document.querySelectorAll('input[name="gender"]').forEach(radio => {
+                            radio.closest('label').classList.add('text-red-500');
+                        });
+                    }
+                    if (formData.isNeutered === undefined) {
+                        document.querySelectorAll('input[name="neutered"]').forEach(radio => {
+                            radio.closest('label').classList.add('text-red-500');
+                        });
+                    }
+                    return;
+                }
+
+                // 隱藏錯誤訊息
+                hidePetFormErrors();
+                
+                // 隱藏未儲存變更提示
+                hideUnsavedChangesNotice();
+                // == END: 優化錯誤反饋 ==
+
+                // 儲存寵物資料
+                if (petId) {
+                    // 更新現有寵物
+                    const petIndex = window.mockPets.findIndex(p => p.id === petId);
+                    if (petIndex !== -1) {
+                        window.mockPets[petIndex] = { ...window.mockPets[petIndex], ...formData };
+                    }
+                } else {
+                    // 新增寵物
+                    const newPet = {
+                        id: Date.now(), // 簡單的ID生成
+                        photoUrl: document.getElementById('pet-photo-preview').src,
+                        ...formData
+                    };
+                    window.mockPets.push(newPet);
+                }
+
+                alert('寵物檔案儲存成功！');
+                showPage('myPets');
+            }
+
+            function deletePetProfile(petId) {
+                if (confirm('確定要刪除這個寵物檔案嗎？此操作無法復原。')) {
+                    const petIndex = window.mockPets.findIndex(p => p.id === petId);
+                    if (petIndex !== -1) {
+                        window.mockPets.splice(petIndex, 1);
+                        alert('寵物檔案已刪除');
+                        showPage('myPets');
+                    }
+                }
+            }
+
+            function validatePetForm(data) {
+                const errors = [];
+                
+                if (!data.name) errors.push('請輸入寵物姓名');
+                if (!data.breed) errors.push('請輸入寵物品種');
+                if (!data.age || data.age < 0 || data.age > 30) errors.push('請輸入有效的年齡（0-30歲）');
+                if (!data.weight || data.weight < 0 || data.weight > 100) errors.push('請輸入有效的體重（0-100kg）');
+                if (!data.gender) errors.push('請選擇性別');
+                if (data.isNeutered === undefined) errors.push('請選擇是否結紮');
+                
+                return errors;
+            }
+
+            function showPetFormErrors(errors) {
+                const errorContainer = document.getElementById('pet-form-errors');
+                const errorList = document.getElementById('error-list');
+                
+                errorList.innerHTML = errors.map(error => `<li>${error}</li>`).join('');
+                errorContainer.classList.remove('hidden');
+                
+                // 滾動到錯誤訊息
+                errorContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            function hidePetFormErrors() {
+                document.getElementById('pet-form-errors')?.classList.add('hidden');
+            }
+
+            function showUnsavedChangesNotice() {
+                const notice = document.getElementById('unsaved-changes-notice');
+                if (notice) {
+                    notice.classList.remove('hidden');
+                }
+            }
+
+            function hideUnsavedChangesNotice() {
+                const notice = document.getElementById('unsaved-changes-notice');
+                if (notice) {
+                    notice.classList.add('hidden');
+                }
+            }
+            // == END: 新增寵物檔案管理輔助函式 ==
+
             function attachSettingsListeners() {
                 // 返回按鈕
                 document.getElementById('settings-back-btn')?.addEventListener('click', () => showPage('account'));
@@ -6752,7 +7403,7 @@
             }
 
             function changePetPhoto() {
-                // 創建隱藏的文件輸入元素
+                // 創建隱藏的文件輸入元素   
                 const fileInput = document.createElement('input');
                 fileInput.type = 'file';
                 fileInput.accept = 'image/*';
@@ -7094,7 +7745,7 @@
                                 </div>
                                 
                                 <!-- 客戶滿意度 -->
-                                <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-3">
+                                <div class="bg-gradient-to-br    from-purple-50 to-purple-100 rounded-lg p-3">
                                     <div class="flex items-center justify-between mb-2">
                                         <span class="text-xs font-medium text-purple-700">😊 客戶滿意度</span>
                                         <span class="text-xs text-green-600">📈 穩定</span>
