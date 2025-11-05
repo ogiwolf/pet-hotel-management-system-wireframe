@@ -7,7 +7,8 @@
     <!-- 引入新設計的字體 -->
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
     <link rel="stylesheet" as="style" onload="this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?display=swap&family=Noto+Sans:wght@400;500;700;900&family=Plus+Jakarta+Sans:wght@400;500;700;800" />
-    <!-- 引入 Tailwind CSS -->
+    <!-- 引入 Tailwind CSS (Play CDN - 僅用於開發/原型階段) -->
+    <!-- 注意：生產環境應使用 Tailwind CLI 或 PostCSS 插件構建 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 Leaflet 地圖 (免費替代方案) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -970,46 +971,46 @@
             ];
             
             window.mockRoomTypes = [
-                { id: 1, name: '標準犬房', description: '舒適的標準房，適合中小型犬。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 5, status: 'active' },
-                { id: 2, name: '豪華貓別墅', description: '寬敞的豪華別墅，附有貓跳台與獨立通風。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 3, status: 'active' },
-                { id: 3, name: '小型寵物寄宿籠', description: '安全舒適的寄宿籠，適合兔子、倉鼠等。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 10, status: 'disabled' },
-                { id: 4, name: '陽光豪華雙人房', description: '附有陽台的雙寵物豪華房。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 2, status: 'active' }
-            ];
-            
-            let mockPackages = [
-                { id: 101, roomId: 1, name: '標準日租方案', description: '提供標準舒適過夜寄宿服務。', type: 'overnight', basePrice: 800, min: 1, max: 30, quota: 3, status: 'active', startDate: '', endDate: '', color: 'bg-blue-400' },
-                { id: 102, roomId: 1, name: '安親方案A', description: '日間安親，四小時方案。', type: 'daycare', basePrice: 150, daycareLengths: '4', startTime: '09:00', endTime: '18:00', overtimeRate: 180, quota: 2, status: 'active', startDate: '', endDate: '', color: 'bg-green-400' },
-                { id: 103, roomId: 1, name: '安親方案B', description: '日間安親，八小時方案。', type: 'daycare', basePrice: 120, daycareLengths: '8', startTime: '09:00', endTime: '18:00', overtimeRate: 150, quota: 1, status: 'disabled', startDate: '', endDate: '', color: 'bg-yellow-400' },
-                { id: 201, roomId: 2, name: '豪華貓別墅日租', description: '專屬豪華空間，貓咪最愛。', type: 'overnight', basePrice: 1500, min: 1, max: 15, quota: 3, status: 'active', startDate: '', endDate: '', color: 'bg-pink-400' },
+                // 日租房型：標準犬房
+                { id: 1, name: '標準犬房', description: '舒適的標準房，適合中小型犬。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 5, status: 'active', serviceType: 'overnight', basePrice: 800, minNights: 1, maxNights: 30 },
+                // 日租房型：豪華貓別墅
+                { id: 2, name: '豪華貓別墅', description: '寬敞的豪華別墅，附有貓跳台與獨立通風。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 3, status: 'active', serviceType: 'overnight', basePrice: 1500, minNights: 1, maxNights: 15 },
+                // 時租房型：小型寵物寄宿籠（最小時數4小時，之後每小時計費）
+                { id: 3, name: '小型寵物寄宿籠', description: '安全舒適的寄宿籠，適合兔子、倉鼠等。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 10, status: 'disabled', serviceType: 'daycare', minHours: 4, hourlyRate: 30, startTime: '09:00', endTime: '18:00' },
+                // 日租房型：陽光豪華雙人房
+                { id: 4, name: '陽光豪華雙人房', description: '附有陽台的雙寵物豪華房。', imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=600', stock: 2, status: 'active', serviceType: 'overnight', basePrice: 1200, minNights: 1, maxNights: 30 }
             ];
             
             window.mockBookings = [
-                { id: 1, roomId: 1, packageId: 101, customer: '陳先生', startDate: '2025-07-10', endDate: '2025-07-12' },
-                { id: 2, roomId: 2, packageId: 201, customer: '林小姐', startDate: '2025-07-15', endDate: '2025-07-18' },
-                { id: 3, roomId: 1, packageId: 101, customer: '王小姐', startDate: '2025-07-20', endDate: '2025-07-25' },
-                { id: 4, roomId: 1, packageId: 102, customer: '李先生', startDate: '2025-07-05', endDate: '2025-07-05' },
-                { id: 5, roomId: 2, packageId: 201, customer: '張太太', startDate: '2025-07-01', endDate: '2025-07-03' },
-                { id: 6, roomId: 1, packageId: 102, customer: '吳先生', startDate: '2025-07-14', endDate: '2025-07-14' },
-                { id: 7, roomId: 4, customer: '蔡小姐', startDate: '2025-07-22', endDate: '2025-07-23' },
-                { id: 8, roomId: 4, customer: '鄭先生', startDate: '2025-07-08', endDate: '2025-07-11' },
-                { id: 9, roomId: 1, packageId: 101, customer: '趙小姐', startDate: '2025-07-10', endDate: '2025-07-11' },
+                // 日租預訂
+                { id: 1, roomId: 1, serviceType: 'overnight', customer: '陳先生', startDate: '2025-07-10', endDate: '2025-07-12' },
+                { id: 2, roomId: 2, serviceType: 'overnight', customer: '林小姐', startDate: '2025-07-15', endDate: '2025-07-18' },
+                { id: 3, roomId: 1, serviceType: 'overnight', customer: '王小姐', startDate: '2025-07-20', endDate: '2025-07-25' },
+                { id: 5, roomId: 2, serviceType: 'overnight', customer: '張太太', startDate: '2025-07-01', endDate: '2025-07-03' },
+                { id: 7, roomId: 4, serviceType: 'overnight', customer: '蔡小姐', startDate: '2025-07-22', endDate: '2025-07-23' },
+                { id: 8, roomId: 4, serviceType: 'overnight', customer: '鄭先生', startDate: '2025-07-08', endDate: '2025-07-11' },
+                { id: 9, roomId: 1, serviceType: 'overnight', customer: '趙小姐', startDate: '2025-07-10', endDate: '2025-07-11' },
                 // 新增更多預訂來模擬滿房情況
-                { id: 10, roomId: 1, packageId: 101, customer: '劉先生', startDate: '2025-01-15', endDate: '2025-01-17' },
-                { id: 11, roomId: 1, packageId: 101, customer: '黃小姐', startDate: '2025-01-15', endDate: '2025-01-16' },
-                { id: 12, roomId: 1, packageId: 101, customer: '周先生', startDate: '2025-01-15', endDate: '2025-01-18' },
-                { id: 13, roomId: 1, packageId: 101, customer: '吳太太', startDate: '2025-01-15', endDate: '2025-01-16' },
-                { id: 14, roomId: 1, packageId: 101, customer: '林先生', startDate: '2025-01-15', endDate: '2025-01-17' },
-                { id: 15, roomId: 3, packageId: 103, customer: '陳太太', startDate: '2025-01-15', endDate: '2025-01-20' },
-                { id: 16, roomId: 3, packageId: 103, customer: '張先生', startDate: '2025-01-15', endDate: '2025-01-18' },
-                { id: 17, roomId: 3, packageId: 103, customer: '李小姐', startDate: '2025-01-15', endDate: '2025-01-16' },
-                { id: 18, roomId: 3, packageId: 103, customer: '王先生', startDate: '2025-01-15', endDate: '2025-01-19' },
-                { id: 19, roomId: 3, packageId: 103, customer: '劉太太', startDate: '2025-01-15', endDate: '2025-01-17' },
-                { id: 20, roomId: 3, packageId: 103, customer: '黃先生', startDate: '2025-01-15', endDate: '2025-01-16' },
-                { id: 21, roomId: 3, packageId: 103, customer: '周太太', startDate: '2025-01-15', endDate: '2025-01-18' },
-                { id: 22, roomId: 3, packageId: 103, customer: '吳先生', startDate: '2025-01-15', endDate: '2025-01-20' },
-                { id: 23, roomId: 3, packageId: 103, customer: '林太太', startDate: '2025-01-15', endDate: '2025-01-16' },
-                { id: 24, roomId: 3, packageId: 103, customer: '陳先生', startDate: '2025-01-15', endDate: '2025-01-17' },
-                { id: 25, roomId: 3, packageId: 103, customer: '張太太', startDate: '2025-01-15', endDate: '2025-01-19' },
+                { id: 10, roomId: 1, serviceType: 'overnight', customer: '劉先生', startDate: '2025-01-15', endDate: '2025-01-17' },
+                { id: 11, roomId: 1, serviceType: 'overnight', customer: '黃小姐', startDate: '2025-01-15', endDate: '2025-01-16' },
+                { id: 12, roomId: 1, serviceType: 'overnight', customer: '周先生', startDate: '2025-01-15', endDate: '2025-01-18' },
+                { id: 13, roomId: 1, serviceType: 'overnight', customer: '吳太太', startDate: '2025-01-15', endDate: '2025-01-16' },
+                { id: 14, roomId: 1, serviceType: 'overnight', customer: '林先生', startDate: '2025-01-15', endDate: '2025-01-17' },
+                // 時租預訂（原來的 packageId 102/103 都是時租，統一轉換）
+                { id: 4, roomId: 1, serviceType: 'daycare', customer: '李先生', startDate: '2025-07-05', endDate: '2025-07-05', startTime: '09:00', endTime: '13:00', duration: 4 },
+                { id: 6, roomId: 1, serviceType: 'daycare', customer: '吳先生', startDate: '2025-07-14', endDate: '2025-07-14', startTime: '14:00', endTime: '18:00', duration: 4 },
+                // 時租預訂（roomId 3 原本是時租方案）
+                { id: 15, roomId: 3, serviceType: 'daycare', customer: '陳太太', startDate: '2025-01-15', endDate: '2025-01-15', startTime: '09:00', endTime: '17:00', duration: 8 },
+                { id: 16, roomId: 3, serviceType: 'daycare', customer: '張先生', startDate: '2025-01-15', endDate: '2025-01-15', startTime: '10:00', endTime: '18:00', duration: 8 },
+                { id: 17, roomId: 3, serviceType: 'daycare', customer: '李小姐', startDate: '2025-01-15', endDate: '2025-01-15', startTime: '09:00', endTime: '13:00', duration: 4 },
+                { id: 18, roomId: 3, serviceType: 'daycare', customer: '王先生', startDate: '2025-01-15', endDate: '2025-01-15', startTime: '10:00', endTime: '18:00', duration: 8 },
+                { id: 19, roomId: 3, serviceType: 'daycare', customer: '劉太太', startDate: '2025-01-15', endDate: '2025-01-15', startTime: '09:00', endTime: '17:00', duration: 8 },
+                { id: 20, roomId: 3, serviceType: 'daycare', customer: '黃先生', startDate: '2025-01-15', endDate: '2025-01-15', startTime: '14:00', endTime: '18:00', duration: 4 },
+                { id: 21, roomId: 3, serviceType: 'daycare', customer: '周太太', startDate: '2025-01-15', endDate: '2025-01-15', startTime: '09:00', endTime: '17:00', duration: 8 },
+                { id: 22, roomId: 3, serviceType: 'daycare', customer: '吳先生', startDate: '2025-01-15', endDate: '2025-01-15', startTime: '10:00', endTime: '18:00', duration: 8 },
+                { id: 23, roomId: 3, serviceType: 'daycare', customer: '林太太', startDate: '2025-01-15', endDate: '2025-01-15', startTime: '09:00', endTime: '13:00', duration: 4 },
+                { id: 24, roomId: 3, serviceType: 'daycare', customer: '陳先生', startDate: '2025-01-15', endDate: '2025-01-15', startTime: '10:00', endTime: '17:00', duration: 7 },
+                { id: 25, roomId: 3, serviceType: 'daycare', customer: '張太太', startDate: '2025-01-15', endDate: '2025-01-15', startTime: '09:00', endTime: '17:00', duration: 8 },
             ];
             
             window.mockComments = [
@@ -1121,7 +1122,7 @@
                     // == END: 新增的頁面渲染呼叫 ==
                     
                     if (pageKey === 'roomManagement') renderRoomListPage();
-                    if (pageKey === 'packageManagement') renderPackageListPage(state.roomId);
+                    // packageManagement page removed - packages are now integrated into room types
                     if (pageKey === 'chat') renderChatPage(state);
                     if (pageKey === 'home') renderHomePage();
                     if (pageKey === 'searchResult') renderSearchResultPage();
@@ -1766,6 +1767,10 @@
             
             function renderHomePage() {
                 const container = pages.home;
+                if (!container) {
+                    console.error('Home page container not found');
+                    return;
+                }
                 container.innerHTML = `
                 <!-- 頁首 -->
                 <div class="flex items-center bg-white p-4 pb-2 justify-between sticky top-0 z-10 border-b border-gray-100">
@@ -2066,7 +2071,7 @@
                                 <div class="w-6 h-1 bg-gray-300"></div>
                                 <div class="flex items-center">
                                     <div class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-bold">2</div>
-                                    <span class="ml-2 text-sm font-medium text-gray-500">選擇方案</span>
+                                    <span class="ml-2 text-sm font-medium text-gray-500">選擇房型</span>
                                 </div>
                                 <div class="w-6 h-1 bg-gray-300"></div>
                                 <div class="flex items-center">
@@ -2199,11 +2204,25 @@
                             </div>
                         </div>
                         
+                        <!-- 步驟 2: 房型選擇 -->
+                        <div id="step-2-room-selection" class="booking-step hidden">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-medium text-[#181111]">選擇房型</h3>
+                                <button id="back-to-service-type-from-room" class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
+                                    <span class="mr-1">←</span> 返回
+                                </button>
+                            </div>
+                            
+                            <div id="room-selection-list" class="space-y-3">
+                                <!-- 房型列表將由 JavaScript 動態生成 -->
+                            </div>
+                        </div>
+                        
                         <!-- 步驟 3: 時段選擇 -->
                         <div id="step-3-time-selection" class="booking-step hidden">
                             <div class="flex items-center justify-between mb-4">
                                 <h3 class="font-medium text-[#181111]">選擇時段</h3>
-                                <button id="back-to-plan-selection" class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
+                                <button id="back-to-service-type" class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
                                     <span class="mr-1">←</span> 返回
                                 </button>
                             </div>
@@ -2778,9 +2797,9 @@
                         duration: bookingData.stayDuration 
                     });
                     
-                    // 如果有選擇方案，自動更新價格顯示
-                    if (bookingData.selectedPlan && bookingData.planPrice) {
-                        console.log('檢測到已選擇方案，自動更新價格顯示');
+                    // 如果有選擇房型，自動更新價格顯示
+                    if (bookingData.roomId) {
+                        console.log('檢測到已選擇房型，自動更新價格顯示');
                         updatePriceTransparency();
                     }
                     
@@ -2851,7 +2870,7 @@
                 initializeBookingFunctions();
             }
 
-            // 綁定服務類型選擇事件 - 新的三步驟流程
+            // 綁定服務類型選擇事件 - 修正為：服務類型 -> 房型選擇 -> 時段選擇
             function attachServiceTypeListeners() {
                 const overnightBtn = document.getElementById('select-overnight');
                 const daycareBtn = document.getElementById('select-daycare');
@@ -2859,79 +2878,189 @@
                 overnightBtn?.addEventListener('click', function() {
                     console.log('寄宿過夜按鈕被點擊');
                     
-                    // 簡單測試：直接切換步驟
                     const step1 = document.getElementById('step-1-service-type');
-                    const step2 = document.getElementById('step-2-plan-selection');
-                    
-                    console.log('找到的元素:', { step1, step2 });
+                    const step2 = document.getElementById('step-2-room-selection');
                     
                     if (step1 && step2) {
-                        // 隱藏步驟1
                         step1.style.display = 'none';
-                        console.log('步驟1已隱藏');
-                        
-                        // 顯示步驟2
                         step2.style.display = 'block';
-                        console.log('步驟2已顯示');
-                        
-                        // 顯示寄宿過夜方案
-                        const overnightPlans = document.getElementById('overnight-plans');
-                        const daycarePlans = document.getElementById('daycare-plans');
-                        
-                        if (overnightPlans && daycarePlans) {
-                            overnightPlans.style.display = 'block';
-                            daycarePlans.style.display = 'none';
-                            console.log('方案顯示切換完成');
-                        }
                         
                         // 更新預訂資料
                         bookingData.serviceType = 'overnight';
                         console.log('預訂資料已更新:', bookingData);
                         
+                        // 渲染房型選擇列表
+                        renderRoomSelectionInDetail();
+                        
                         // 更新步驟指示器到步驟2
                         updateStepIndicator(2);
-                    } else {
-                        console.error('找不到步驟元素');
                     }
                 });
                 
                 daycareBtn?.addEventListener('click', function() {
                     console.log('日間安親按鈕被點擊');
                     
-                    // 簡單測試：直接切換步驟
                     const step1 = document.getElementById('step-1-service-type');
-                    const step2 = document.getElementById('step-2-plan-selection');
-                    
-                    console.log('找到的元素:', { step1, step2 });
+                    const step2 = document.getElementById('step-2-room-selection');
                     
                     if (step1 && step2) {
-                        // 隱藏步驟1
                         step1.style.display = 'none';
-                        console.log('步驟1已隱藏');
-                        
-                        // 顯示步驟2
                         step2.style.display = 'block';
-                        console.log('步驟2已顯示');
-                        
-                        // 顯示日間安親方案
-                        const daycarePlans = document.getElementById('daycare-plans');
-                        const overnightPlans = document.getElementById('overnight-plans');
-                        
-                        if (daycarePlans && overnightPlans) {
-                            daycarePlans.style.display = 'block';
-                            overnightPlans.style.display = 'none';
-                            console.log('方案顯示切換完成');
-                        }
                         
                         // 更新預訂資料
                         bookingData.serviceType = 'daycare';
                         console.log('預訂資料已更新:', bookingData);
                         
+                        // 渲染房型選擇列表
+                        renderRoomSelectionInDetail();
+                        
                         // 更新步驟指示器到步驟2
                         updateStepIndicator(2);
-                    } else {
-                        console.error('找不到步驟元素');
                     }
+                });
+                
+                // 綁定返回按鈕（從房型選擇返回服務類型選擇）
+                document.getElementById('back-to-service-type-from-room')?.addEventListener('click', function() {
+                    const step1 = document.getElementById('step-1-service-type');
+                    const step2 = document.getElementById('step-2-room-selection');
+                    
+                    if (step1 && step2) {
+                        step1.style.display = 'block';
+                        step2.style.display = 'none';
+                        updateStepIndicator(1);
+                        
+                        // 重置預訂資料
+                        bookingData.serviceType = null;
+                        bookingData.roomId = null;
+                    }
+                });
+                
+                // 綁定返回按鈕（從時段選擇返回房型選擇）
+                document.getElementById('back-to-service-type')?.addEventListener('click', function() {
+                    const step2 = document.getElementById('step-2-room-selection');
+                    const step3 = document.getElementById('step-3-time-selection');
+                    
+                    if (step2 && step3) {
+                        step2.style.display = 'block';
+                        step3.style.display = 'none';
+                        updateStepIndicator(2);
+                    }
+                });
+            }
+            
+            // 在詳情頁預訂流程中渲染房型選擇
+            function renderRoomSelectionInDetail() {
+                const container = document.getElementById('room-selection-list');
+                if (!container) return;
+                
+                // 過濾符合服務類型的房型
+                const availableRooms = mockRoomTypes.filter(room => 
+                    room.status === 'active' && room.serviceType === bookingData.serviceType
+                );
+                
+                if (availableRooms.length === 0) {
+                    container.innerHTML = '<p class="text-center text-gray-500 p-4">暫無可用的房型</p>';
+                    return;
+                }
+                
+                let html = '';
+                availableRooms.forEach(room => {
+                    // 根據服務類型顯示價格
+                    let priceDisplay = '';
+                    if (room.serviceType === 'overnight' && room.basePrice) {
+                        priceDisplay = `NT$ ${room.basePrice.toLocaleString()} / 晚`;
+                    } else if (room.serviceType === 'daycare' && room.hourlyRate) {
+                        const minPrice = room.hourlyRate * (room.minHours || 4);
+                        priceDisplay = `NT$ ${minPrice.toLocaleString()}起 (${room.hourlyRate.toLocaleString()}/小時，最小${room.minHours || 4}小時)`;
+                    }
+                    
+                    html += `
+                        <div class="room-option-card p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#181111] transition-all" data-room-id="${room.id}">
+                            <div class="flex items-start">
+                                <img src="${room.imageUrl}" alt="${room.name}" class="w-20 h-20 rounded-lg object-cover mr-4 flex-shrink-0">
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-[#181111] mb-1">${room.name}</h4>
+                                    <p class="text-sm text-gray-600 mb-2">${room.description}</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-gray-500">${room.serviceType === 'overnight' ? '日租' : '時租'}</span>
+                                        <span class="font-bold text-[#181111]">${priceDisplay}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                
+                // 綁定房型選擇事件
+                document.querySelectorAll('.room-option-card').forEach(card => {
+                    card.addEventListener('click', function() {
+                        // 移除其他卡片的選中狀態
+                        document.querySelectorAll('.room-option-card').forEach(c => {
+                            c.classList.remove('border-[#181111]', 'bg-gray-50');
+                            c.classList.add('border-gray-200');
+                        });
+                        
+                        // 選中當前卡片
+                        this.classList.remove('border-gray-200');
+                        this.classList.add('border-[#181111]', 'bg-gray-50');
+                        
+                        // 更新預訂資料
+                        bookingData.roomId = parseInt(this.dataset.roomId);
+                        
+                        // 自動跳轉到時段選擇
+                        setTimeout(() => {
+                            const step2 = document.getElementById('step-2-room-selection');
+                            const step3 = document.getElementById('step-3-time-selection');
+                            
+                            if (step2 && step3) {
+                                step2.style.display = 'none';
+                                step3.style.display = 'block';
+                                
+                                // 顯示對應的日期/時段選擇
+                                const overnightDateSelection = document.getElementById('overnight-date-selection');
+                                const daycareDateSelection = document.getElementById('daycare-date-selection');
+                                if (overnightDateSelection && daycareDateSelection) {
+                                    if (bookingData.serviceType === 'overnight') {
+                                        overnightDateSelection.style.display = 'block';
+                                        daycareDateSelection.style.display = 'none';
+                                    } else {
+                                        overnightDateSelection.style.display = 'none';
+                                        daycareDateSelection.style.display = 'block';
+                                    }
+                                }
+                                
+                                // 重新綁定時段選擇事件監聽器
+                                attachTimeSelectionListeners();
+                                
+                                // 初始化日期（如果是日租）
+                                if (bookingData.serviceType === 'overnight') {
+                                    const checkinInput = document.getElementById('detail-checkin-date');
+                                    const checkoutInput = document.getElementById('detail-checkout-date');
+                                    if (checkinInput && checkoutInput) {
+                                        const today = new Date();
+                                        const tomorrow = new Date(today.getTime() + (24 * 60 * 60 * 1000));
+                                        checkinInput.value = today.toISOString().split('T')[0];
+                                        checkoutInput.value = tomorrow.toISOString().split('T')[0];
+                                        
+                                        // 更新預訂資料
+                                        bookingData.dates.checkin = checkinInput.value;
+                                        bookingData.dates.checkout = checkoutInput.value;
+                                        
+                                        // 觸發更新
+                                        updateStayDuration();
+                                    }
+                                }
+                                
+                                // 更新步驟指示器到步驟3
+                                updateStepIndicator(3);
+                                
+                                // 檢查是否可以繼續
+                                checkCurrentStepCanContinue();
+                            }
+                        }, 300); // 短暫延遲以顯示選中效果
+                    });
                 });
             }
             
@@ -2987,199 +3116,175 @@
                 console.log('步驟指示器更新完成');
             }
             
-            // 綁定方案選擇事件 - 新的三步驟流程
-            function attachPlanSelectionListeners() {
-                // 綁定返回按鈕
-                document.getElementById('back-to-service-type')?.addEventListener('click', function() {
-                    console.log('返回按鈕被點擊');
-                    
-                    // 返回步驟1
-                    const step1 = document.getElementById('step-1-service-type');
-                    const step2 = document.getElementById('step-2-plan-selection');
-                    
-                    if (step1 && step2) {
-                        // 隱藏步驟2
-                        step2.style.display = 'none';
-                        console.log('步驟2已隱藏');
-                        
-                        // 顯示步驟1
-                        step1.style.display = 'block';
-                        console.log('步驟1已顯示');
-                        
-                        // 更新步驟指示器回到步驟1
-                        updateStepIndicator(1);
-                        
-                        // 重置方案選擇狀態
-                        document.querySelectorAll('.plan-option').forEach(option => {
-                            option.classList.remove('border-[#181111]', 'bg-blue-50');
-                            option.classList.add('border-gray-200');
-                        });
-                        
-                        console.log('方案選擇狀態已重置');
-                    } else {
-                        console.error('找不到步驟元素');
-                    }
-                });
-                
-                // 綁定方案選項點擊事件
-                document.querySelectorAll('.plan-option').forEach(option => {
-                    option.addEventListener('click', function() {
-                        console.log('方案被選擇:', this.dataset.plan);
-                        
-                        // 移除其他方案的選中狀態
-                        document.querySelectorAll('.plan-option').forEach(opt => {
-                            opt.classList.remove('border-[#181111]', 'bg-blue-50');
-                            opt.classList.add('border-gray-200');
-                        });
-                        
-                        // 選中當前方案
-                        this.classList.remove('border-gray-200');
-                        this.classList.add('border-[#181111]', 'bg-blue-50');
-                        
-                        // 更新預訂資料
-                        const plan = this.dataset.plan;
-                        const price = parseInt(this.dataset.price);
-                        bookingData.selectedPlan = plan;
-                        bookingData.planPrice = price;
-                        
-                        console.log('預訂資料已更新:', { plan, price });
-                        
-                        // 如果是日間安親，更新時段選擇
-                        if (bookingData.serviceType === 'daycare') {
-                            // 更新方案時長提示
-                            if (window.updateDaycarePlanDuration) {
-                                window.updateDaycarePlanDuration();
-                            }
-                            // 更新結束時間選項
-                            const startTimeSelect = document.getElementById('start-time-select');
-                            if (startTimeSelect) {
-                                startTimeSelect.dispatchEvent(new Event('change'));
-                            }
-                        }
-                        
-                        // 立即更新價格顯示（如果有預設日期）
-                        if (bookingData.checkinDate && bookingData.checkoutDate) {
-                            console.log('檢測到預設日期，立即更新價格顯示');
-                            updatePriceTransparency();
-                        }
-                        
-                        // 檢查是否可以繼續預訂
-                        checkCanContinueBooking();
-                        
-                        // 延遲一下再進入下一步，讓使用者看到選中效果
-                        setTimeout(() => {
-                            // 進入步驟3
-                            const step2 = document.getElementById('step-2-plan-selection');
-                            const step3 = document.getElementById('step-3-time-selection');
-                            
-                            if (step2 && step3) {
-                                // 隱藏步驟2
-                                step2.style.display = 'none';
-                                console.log('步驟2已隱藏');
-                                
-                                // 顯示步驟3
-                                step3.style.display = 'block';
-                                console.log('步驟3已顯示');
-                                
-                                // 更新步驟指示器到步驟3
-                                updateStepIndicator(3);
-                                
-                                // 根據服務類型顯示對應的時段選擇
-                                if (bookingData.serviceType === 'overnight') {
-                                    const overnightDateSelection = document.getElementById('overnight-date-selection');
-                                    const daycareDateSelection = document.getElementById('daycare-date-selection');
-                                    
-                                    if (overnightDateSelection && daycareDateSelection) {
-                                        overnightDateSelection.style.display = 'block';
-                                        daycareDateSelection.style.display = 'none';
-                                        console.log('寄宿過夜日期選擇已顯示');
-                                        
-                                        // 初始化寄宿過夜的預設日期和入住天數顯示
-                                        initializeOvernightDates();
-                                    }
-                                } else {
-                                    const daycareDateSelection = document.getElementById('daycare-date-selection');
-                                    const overnightDateSelection = document.getElementById('overnight-date-selection');
-                                    
-                                    if (daycareDateSelection && overnightDateSelection) {
-                                        daycareDateSelection.style.display = 'block';
-                                        overnightDateSelection.style.display = 'none';
-                                        console.log('日間安親日期選擇已顯示');
-                                    }
-                                }
-                            } else {
-                                console.error('找不到步驟3元素');
-                            }
-                        }, 300);
-                    });
-                });
-            }
+            // 方案選擇步驟已移除 - attachPlanSelectionListeners 函數已不再需要
             
-            // 綁定時段選擇事件 - 新的三步驟流程
+            // 綁定時段選擇事件 - 簡化為兩步驟流程
             function attachTimeSelectionListeners() {
-                // 綁定返回按鈕
-                document.getElementById('back-to-plan-selection')?.addEventListener('click', function() {
-                    console.log('返回方案選擇按鈕被點擊');
-                    
-                    // 返回步驟2
-                    const step2 = document.getElementById('step-2-plan-selection');
-                    const step3 = document.getElementById('step-3-time-selection');
-                    
-                    if (step2 && step3) {
-                        // 隱藏步驟3
-                        step3.style.display = 'none';
-                        console.log('步驟3已隱藏');
-                        
-                        // 顯示步驟2
-                        step2.style.display = 'block';
-                        console.log('步驟2已顯示');
-                        
-                        // 更新步驟指示器回到步驟2
-                        updateStepIndicator(2);
-                        
-                        // 重置時段選擇狀態
-                        if (bookingData.serviceType === 'overnight') {
-                            const checkinDate = document.getElementById('detail-checkin-date');
-                            const checkoutDate = document.getElementById('detail-checkout-date');
-                            const stayDuration = document.getElementById('stay-duration');
-                            
-                            if (checkinDate && checkoutDate && stayDuration) {
-                                checkinDate.value = '';
-                                checkoutDate.value = '';
-                                stayDuration.textContent = '請選擇日期';
-                                console.log('寄宿過夜日期選擇已重置');
-                            }
-                        } else {
-                            const serviceDate = document.getElementById('detail-service-date');
-                            if (serviceDate) {
-                                serviceDate.value = '';
-                                console.log('日間安親日期已重置');
-                            }
-                            
-                            document.querySelectorAll('.preset-time-slot').forEach(slot => {
-                                slot.classList.remove('border-[#181111]', 'bg-blue-50');
-                                slot.classList.add('border-gray-200');
-                            });
-                            console.log('時段選擇狀態已重置');
-                        }
-                    } else {
-                        console.error('找不到步驟元素');
-                    }
-                });
+                // 返回按鈕現在已在 attachServiceTypeListeners 中處理
                 
-                // 綁定寄宿過夜的日期選擇
+                // 綁定寄宿過夜的日期選擇（使用命名函數避免重複綁定）
                 const checkinDate = document.getElementById('detail-checkin-date');
                 const checkoutDate = document.getElementById('detail-checkout-date');
                 
                 if (checkinDate && checkoutDate) {
-                    checkinDate.addEventListener('change', updateStayDuration);
-                    checkoutDate.addEventListener('change', updateStayDuration);
+                    // 移除舊的監聽器（如果存在）
+                    checkinDate.removeEventListener('change', handleCheckinChange);
+                    checkoutDate.removeEventListener('change', handleCheckoutChange);
+                    
+                    // 添加新的監聽器
+                    checkinDate.addEventListener('change', handleCheckinChange);
+                    checkoutDate.addEventListener('change', handleCheckoutChange);
                 }
                 
                 // 綁定日間安親的時段選擇
                 bindFlexibleTimeSelection();
+            }
+            
+            // 命名函數用於處理日期變更（避免重複綁定）
+            function handleCheckinChange() {
+                const checkinDate = document.getElementById('detail-checkin-date').value;
+                const checkoutDate = document.getElementById('detail-checkout-date').value;
                 
-
+                if (checkinDate) {
+                    bookingData.dates.checkin = checkinDate;
+                    bookingData.checkinDate = checkinDate;
+                    
+                    // 如果退房日期早於或等於入住日期，自動調整為次日
+                    if (checkoutDate && checkoutDate <= checkinDate) {
+                        const nextDay = new Date(checkinDate);
+                        nextDay.setDate(nextDay.getDate() + 1);
+                        const checkoutInput = document.getElementById('detail-checkout-date');
+                        if (checkoutInput) {
+                            checkoutInput.value = nextDay.toISOString().split('T')[0];
+                            bookingData.dates.checkout = checkoutInput.value;
+                            bookingData.checkoutDate = checkoutInput.value;
+                        }
+                    }
+                }
+                
+                updateStayDuration();
+            }
+            
+            function handleCheckoutChange() {
+                const checkoutDate = document.getElementById('detail-checkout-date').value;
+                if (checkoutDate) {
+                    bookingData.dates.checkout = checkoutDate;
+                    bookingData.checkoutDate = checkoutDate;
+                }
+                updateStayDuration();
+            }
+            
+            // 命名函數用於處理時段選擇變更（避免重複綁定）
+            function handleStartTimeChange() {
+                const startTimeSelect = document.getElementById('start-time-select');
+                const endTimeSelect = document.getElementById('end-time-select');
+                if (startTimeSelect && endTimeSelect) {
+                    updateEndTimeOptions();
+                    updateFlexibleTimeInfo();
+                }
+            }
+            
+            function handleEndTimeChange() {
+                updateFlexibleTimeInfo();
+            }
+            
+            function handleServiceDateChange() {
+                const serviceDateInput = document.getElementById('detail-service-date');
+                if (serviceDateInput) {
+                    bookingData.serviceDate = serviceDateInput.value;
+                    bookingData.dates.checkin = serviceDateInput.value;
+                    console.log('服務日期已更新:', serviceDateInput.value);
+                    // 觸發時段可用性檢查
+                    checkTimeSlotAvailability();
+                }
+            }
+            
+            // 更新結束時間選項的輔助函數（需要在外部可訪問）
+            function updateEndTimeOptions() {
+                const startTimeSelect = document.getElementById('start-time-select');
+                const endTimeSelect = document.getElementById('end-time-select');
+                if (!startTimeSelect || !endTimeSelect) return;
+                
+                const startHour = parseInt(startTimeSelect.value);
+                const minHours = getMinHours();
+                
+                // 清空現有選項
+                endTimeSelect.innerHTML = '';
+                
+                // 根據最小時數添加選項（最小時數後，之後以每小時為單位）
+                // 先添加最小時數的選項
+                if (startHour + minHours <= 19) {
+                    const option = document.createElement('option');
+                    option.value = startHour + minHours;
+                    option.textContent = `${(startHour + minHours).toString().padStart(2, '0')}:00`;
+                    endTimeSelect.appendChild(option);
+                }
+                // 之後以每小時為單位添加選項
+                for (let hour = startHour + minHours + 1; hour <= 19; hour++) {
+                    const option = document.createElement('option');
+                    option.value = hour;
+                    option.textContent = `${hour.toString().padStart(2, '0')}:00`;
+                    endTimeSelect.appendChild(option);
+                }
+                
+                // 設定預設結束時間
+                if (endTimeSelect.options.length > 0) {
+                    endTimeSelect.value = endTimeSelect.options[0].value;
+                }
+            }
+            
+            // 更新時段資訊顯示的輔助函數（需要在外部可訪問）
+            function updateFlexibleTimeInfo() {
+                const startTimeSelect = document.getElementById('start-time-select');
+                const endTimeSelect = document.getElementById('end-time-select');
+                const durationDisplay = document.getElementById('flexible-duration-display');
+                const priceDisplay = document.getElementById('flexible-price-display');
+                
+                if (!startTimeSelect || !endTimeSelect) return;
+                
+                const startHour = parseInt(startTimeSelect.value);
+                const endHour = parseInt(endTimeSelect.value);
+                const duration = endHour - startHour;
+                
+                console.log('更新時段資訊:', { startHour, endHour, duration });
+                
+                if (duration > 0 && durationDisplay && priceDisplay) {
+                    // 更新顯示
+                    durationDisplay.textContent = `${duration} 小時`;
+                    
+                    // 計算價格（基於房型的每小時價格）
+                    let price = 0;
+                    if (bookingData.roomId) {
+                        const selectedRoom = mockRoomTypes.find(room => room.id === bookingData.roomId);
+                        if (selectedRoom && selectedRoom.serviceType === 'daycare') {
+                            const hourlyRate = selectedRoom.hourlyRate || 0;
+                            const minHours = selectedRoom.minHours || 4;
+                            
+                            // 確保時長不小於最小時數
+                            const actualDuration = Math.max(duration, minHours);
+                            price = hourlyRate * actualDuration;
+                        }
+                    }
+                    
+                    priceDisplay.textContent = `NT$ ${price.toLocaleString()}`;
+                    
+                    // 更新預訂資料
+                    bookingData.duration = duration;
+                    bookingData.timeSlot = `${startHour.toString().padStart(2, '0')}:00-${endHour.toString().padStart(2, '0')}:00`;
+                    bookingData.timeSlotName = `${duration}小時 (${startHour.toString().padStart(2, '0')}:00-${endHour.toString().padStart(2, '0')}:00)`;
+                    bookingData.customPrice = price;
+                    
+                    console.log('靈活時段選擇已更新:', { duration, timeSlot: bookingData.timeSlot, price });
+                    
+                    // 檢查當前步驟是否可以繼續
+                    checkCurrentStepCanContinue();
+                    
+                    // 自動檢查時段可用性
+                    checkTimeSlotAvailability();
+                    
+                    // 更新時段概覽的高亮顯示
+                    updateTimeSlotHighlight();
+                }
             }
             
             // 綁定靈活時段選擇
@@ -3196,28 +3301,36 @@
                 console.log('找到的元素:', { startTimeSelect, endTimeSelect, durationDisplay, priceDisplay, serviceDateInput, planDurationHint });
                 
                 if (startTimeSelect && endTimeSelect) {
+                    // 移除舊的監聽器（如果存在）
+                    startTimeSelect.removeEventListener('change', handleStartTimeChange);
+                    endTimeSelect.removeEventListener('change', handleEndTimeChange);
+                    if (serviceDateInput) {
+                        serviceDateInput.removeEventListener('change', handleServiceDateChange);
+                    }
+                    
                     // 設定預設值
+                    const minHours = getMinHours();
                     startTimeSelect.value = '8';
-                    endTimeSelect.value = '9';
+                    // 設定結束時間為開始時間 + 最小時數
+                    const defaultEndHour = Math.min(8 + minHours, 19);
+                    endTimeSelect.value = defaultEndHour.toString();
                     
                     // 設定預設服務日期為今天
                     if (serviceDateInput) {
                         const today = new Date();
                         serviceDateInput.value = today.toISOString().split('T')[0];
                         bookingData.serviceDate = today.toISOString().split('T')[0];
+                        bookingData.dates.checkin = serviceDateInput.value;
                         console.log('服務日期已設定為:', serviceDateInput.value);
                     }
+                    
+                    // 更新結束時間選項
+                    updateEndTimeOptions();
                     
                     // 更新方案時長提示
                     updatePlanDurationHint();
                     
                     // 立即更新顯示
-                    if (durationDisplay && priceDisplay) {
-                        durationDisplay.textContent = '1 小時';
-                        priceDisplay.textContent = 'NT$ 150';
-                        console.log('預設顯示已更新');
-                    }
-                    
                     updateFlexibleTimeInfo();
                     
                     // 初始化時檢查可用性
@@ -3226,25 +3339,17 @@
                     }, 100);
                     
                     // 綁定開始時間變更
-                    startTimeSelect.addEventListener('change', function() {
-                        updateEndTimeOptions();
-                        updateFlexibleTimeInfo();
-                    });
+                    startTimeSelect.addEventListener('change', handleStartTimeChange);
                     
                     // 綁定結束時間變更
-                    endTimeSelect.addEventListener('change', function() {
-                        updateFlexibleTimeInfo();
-                    });
+                    endTimeSelect.addEventListener('change', handleEndTimeChange);
                     
                     // 綁定時段概覽點擊事件
                     bindTimeSlotOverviewClick();
                     
                     // 綁定服務日期變更
                     if (serviceDateInput) {
-                        serviceDateInput.addEventListener('change', function() {
-                            bookingData.serviceDate = this.value;
-                            console.log('服務日期已更新:', this.value);
-                        });
+                        serviceDateInput.addEventListener('change', handleServiceDateChange);
                     }
                     
                     console.log('靈活時段選擇綁定完成');
@@ -3252,94 +3357,35 @@
                     console.error('找不到時段選擇元素');
                 }
                 
-                // 更新方案時長提示
+                // 更新時長提示（基於房型的最小時數）
                 function updatePlanDurationHint() {
                     if (planDurationHint) {
-                        if (bookingData.selectedPlan) {
-                            const planHours = getPlanHours(bookingData.selectedPlan);
-                            planDurationHint.textContent = `${planHours}小時 (${planHours}小時為單位選擇)`;
-                            planDurationHint.className = 'text-blue-800 font-medium';
+                        if (bookingData.roomId) {
+                            const selectedRoom = mockRoomTypes.find(room => room.id === bookingData.roomId);
+                            if (selectedRoom && selectedRoom.serviceType === 'daycare') {
+                                const minHours = selectedRoom.minHours || 4;
+                                planDurationHint.textContent = `最小 ${minHours} 小時，之後以每小時為單位選擇`;
+                                planDurationHint.className = 'text-blue-800 font-medium';
+                            } else {
+                                planDurationHint.textContent = '請先選擇時租房型';
+                                planDurationHint.className = 'text-gray-600';
+                            }
                         } else {
-                            planDurationHint.textContent = '請先選擇方案';
+                            planDurationHint.textContent = '請先選擇房型';
                             planDurationHint.className = 'text-gray-600';
                         }
                     }
                 }
                 
-                // 根據方案小時數獲取時長
-                function getPlanHours(planName) {
-                    const planMap = {
-                        '1小時方案': 1,
-                        '2小時方案': 2,
-                        '4小時方案': 4,
-                        '6小時方案': 6,
-                        '8小時方案': 8
-                    };
-                    return planMap[planName] || 1; // 預設1小時
-                }
-                
-                // 更新結束時間選項
-                function updateEndTimeOptions() {
-                    const startHour = parseInt(startTimeSelect.value);
-                    const planHours = getPlanHours(bookingData.selectedPlan || '2小時方案');
-                    
-                    // 清空現有選項
-                    endTimeSelect.innerHTML = '';
-                    
-                    // 根據方案小時數添加選項
-                    for (let hour = startHour + planHours; hour <= 19; hour += planHours) {
-                        const option = document.createElement('option');
-                        option.value = hour;
-                        option.textContent = `${hour.toString().padStart(2, '0')}:00`;
-                        endTimeSelect.appendChild(option);
-                    }
-                    
-                    // 設定預設結束時間
-                    if (endTimeSelect.options.length > 0) {
-                        endTimeSelect.value = endTimeSelect.options[0].value;
-                    }
-                }
-                
-                // 更新時段資訊顯示
-                function updateFlexibleTimeInfo() {
-                    const startHour = parseInt(startTimeSelect.value);
-                    const endHour = parseInt(endTimeSelect.value);
-                    const duration = endHour - startHour;
-                    
-                    console.log('更新時段資訊:', { startHour, endHour, duration });
-                    
-                    if (duration > 0 && durationDisplay && priceDisplay) {
-                        // 更新顯示
-                        durationDisplay.textContent = `${duration} 小時`;
-                        
-                        // 計算價格（每小時150元，4小時以上有優惠）
-                        let price = duration * 150;
-                        if (duration >= 4) {
-                            price = Math.floor(price * 0.9); // 9折優惠
+                // 根據房型的最小時數獲取時長（內部函數，在 bindFlexibleTimeSelection 作用域內使用）
+                function getMinHours() {
+                    if (bookingData.roomId) {
+                        const selectedRoom = mockRoomTypes.find(room => room.id === bookingData.roomId);
+                        if (selectedRoom && selectedRoom.serviceType === 'daycare') {
+                            return selectedRoom.minHours || 4;
                         }
-                        if (duration >= 8) {
-                            price = Math.floor(price * 0.85); // 85折優惠
-                        }
-                        
-                        priceDisplay.textContent = `NT$ ${price.toLocaleString()}`;
-                        
-                        // 更新預訂資料
-                        bookingData.duration = duration;
-                        bookingData.timeSlot = `${startHour.toString().padStart(2, '0')}:00-${endHour.toString().padStart(2, '0')}:00`;
-                        bookingData.timeSlotName = `${duration}小時 (${startHour.toString().padStart(2, '0')}:00-${endHour.toString().padStart(2, '0')}:00)`;
-                        bookingData.customPrice = price;
-                        
-                        console.log('靈活時段選擇已更新:', { duration, timeSlot: bookingData.timeSlot, price });
-                        
-                        // 檢查當前步驟是否可以繼續
-                        checkCurrentStepCanContinue();
-                        
-                        // 自動檢查時段可用性
-                        checkTimeSlotAvailability();
-                        
-                        // 更新時段概覽的高亮顯示
-                        updateTimeSlotHighlight();
                     }
+                    return 4; // 預設4小時
                 }
                 
                 // 公開更新方案時長提示的方法
@@ -3347,6 +3393,13 @@
                 
                 // 綁定時段概覽點擊事件
                 function bindTimeSlotOverviewClick() {
+                    // 先移除舊的監聽器（通過重新綁定所有元素）
+                    document.querySelectorAll('.timeline-segment').forEach(segment => {
+                        // 創建一個新的元素來替換舊的，這樣可以移除所有監聽器
+                        const newSegment = segment.cloneNode(true);
+                        segment.parentNode.replaceChild(newSegment, segment);
+                    });
+                    
                     // 綁定時段片段點擊
                     document.querySelectorAll('.timeline-segment').forEach(segment => {
                         segment.addEventListener('click', function() {
@@ -3355,23 +3408,38 @@
                             
                             // 只有可用的時段才能點擊
                             if (status) {
-                                // 設定開始時間
-                                startTimeSelect.value = startHour;
-                                
-                                // 根據方案小時數設定結束時間
-                                const planHours = getPlanHours(bookingData.selectedPlan || '1小時方案');
-                                const endHour = startHour + planHours;
-                                
-                                if (endHour <= 19) {
-                                    endTimeSelect.value = endHour;
+                                const startTimeSelect = document.getElementById('start-time-select');
+                                const endTimeSelect = document.getElementById('end-time-select');
+                                if (startTimeSelect && endTimeSelect) {
+                                    // 設定開始時間
+                                    startTimeSelect.value = startHour;
                                     
-                                    // 觸發更新
-                                    startTimeSelect.dispatchEvent(new Event('change'));
+                                    // 根據房型最小時數設定結束時間
+                                    const minHours = getMinHours();
+                                    const endHour = startHour + minHours;
+                                    
+                                    if (endHour <= 19) {
+                                        endTimeSelect.value = endHour;
+                                        
+                                        // 觸發更新
+                                        startTimeSelect.dispatchEvent(new Event('change'));
+                                    }
                                 }
                             }
                         });
                     });
                 }
+            }
+            
+            // 根據房型的最小時數獲取時長（外部函數，供其他地方使用）
+            function getMinHours() {
+                if (bookingData.roomId) {
+                    const selectedRoom = mockRoomTypes.find(room => room.id === bookingData.roomId);
+                    if (selectedRoom && selectedRoom.serviceType === 'daycare') {
+                        return selectedRoom.minHours || 4;
+                    }
+                }
+                return 4; // 預設4小時
             }
             
 
@@ -3568,18 +3636,13 @@
                     serviceTypeElement.textContent = bookingData.serviceType === 'overnight' ? '寄宿過夜' : '日間安親';
                 }
                 
-                // 更新方案選擇
-                const planElement = document.getElementById('confirmation-plan');
-                const planPriceElement = document.getElementById('confirmation-plan-price');
-                if (planElement && planPriceElement) {
-                    const planNames = {
-                        'standard': '標準套房',
-                        'deluxe': '豪華套房',
-                        'premium': '頂級套房',
-                        'basic': '基礎套房'
-                    };
-                    planElement.textContent = planNames[bookingData.selectedPlan] || bookingData.selectedPlan;
-                    planPriceElement.textContent = `NT$ ${bookingData.planPrice?.toLocaleString() || '0'}`;
+                // 更新房型資訊（移除方案相關）
+                const roomElement = document.getElementById('confirmation-room');
+                if (roomElement && bookingData.roomId) {
+                    const selectedRoom = mockRoomTypes.find(room => room.id === bookingData.roomId);
+                    if (selectedRoom) {
+                        roomElement.textContent = selectedRoom.name;
+                    }
                 }
                 
                 // 更新日期時間
@@ -3671,9 +3734,11 @@
             
             // 更新入住天數顯示
             function updateStayDuration() {
-                const checkinDate = document.getElementById('detail-checkin-date').value;
-                const checkoutDate = document.getElementById('detail-checkout-date').value;
+                const checkinDate = document.getElementById('detail-checkin-date')?.value;
+                const checkoutDate = document.getElementById('detail-checkout-date')?.value;
                 const durationDisplay = document.getElementById('stay-duration');
+                
+                if (!durationDisplay) return;
                 
                 if (checkinDate && checkoutDate) {
                     const checkin = new Date(checkinDate);
@@ -3685,6 +3750,8 @@
                         durationDisplay.textContent = `${diffDays} 晚`;
                         bookingData.checkinDate = checkinDate;
                         bookingData.checkoutDate = checkoutDate;
+                        bookingData.dates.checkin = checkinDate;
+                        bookingData.dates.checkout = checkoutDate;
                         bookingData.stayDuration = diffDays;
                         
                         console.log('入住天數已更新:', { checkinDate, checkoutDate, diffDays });
@@ -3694,6 +3761,8 @@
                     } else {
                         durationDisplay.textContent = '請選擇有效的退房日期';
                     }
+                } else {
+                    durationDisplay.textContent = '請選擇日期';
                 }
             }
             
@@ -3855,7 +3924,7 @@
             
             // 在函數定義完成後，調用必要的初始化函數
             function initializeBookingFunctions() {
-                attachPlanSelectionListeners();
+                // attachPlanSelectionListeners removed - packages are now integrated into room types
                 attachTimeSelectionListeners();
                 attachOrderConfirmationListeners();
                 attachPaymentListeners();
@@ -4095,39 +4164,30 @@
                  // 整理房型和對應的服務
                  const roomTypeMap = new Map();
                  
-                 // 從 mockRoomTypes 和 mockPackages 整理數據
+                 // 從 mockRoomTypes 直接獲取數據（移除對 mockPackages 的依賴）
                  mockRoomTypes.forEach(room => {
-                     if (room.status === 'active') {
-                         const packages = mockPackages.filter(pkg => 
-                             pkg.roomId === room.id && 
-                             pkg.status === 'active' && 
-                             pkg.type === serviceType
-                         );
-                         
-                         if (packages.length > 0) {
-                             roomTypeMap.set(room.id, {
-                                 name: room.name,
-                                 description: room.description || '',
-                                 packages: packages
-                             });
-                         }
+                     if (room.status === 'active' && room.serviceType === serviceType) {
+                         roomTypeMap.set(room.id, {
+                             name: room.name,
+                             description: room.description || '',
+                             serviceType: room.serviceType,
+                             basePrice: room.serviceType === 'overnight' ? room.basePrice : null,
+                             hourlyRate: room.serviceType === 'daycare' ? room.hourlyRate : null,
+                             minHours: room.serviceType === 'daycare' ? room.minHours : null
+                         });
                      }
                  });
 
                  let html = '';
                  roomTypeMap.forEach((roomData, roomId) => {
-                     const minPrice = Math.min(...roomData.packages.map(pkg => pkg.basePrice));
+                     const price = serviceType === 'overnight' ? roomData.basePrice : (roomData.hourlyRate * (roomData.minHours || 4));
                      const serviceIcon = serviceType === 'overnight' ? '🏠' : '⏰';
-                     const priceUnit = serviceType === 'overnight' ? '/ 晚' : '/ 次';
-                     
-                     // 顯示可用的方案
-                     const packageNames = roomData.packages.map(pkg => pkg.name).join('、');
+                     const priceUnit = serviceType === 'overnight' ? '/ 晚' : `/ ${roomData.minHours || 4}hr起`;
                      
                      html += `
                          <div class="border border-gray-200 rounded-lg p-4">
                              <h3 class="font-bold text-[#181111] mb-2">${roomData.name}</h3>
                              <p class="text-sm text-gray-500 mb-2">${roomData.description}</p>
-                             <p class="text-xs text-blue-600 mb-3">可選方案：${packageNames}</p>
                              <button class="room-service-option-btn w-full text-left p-3 rounded-lg border-2 border-gray-200 hover:border-[#181111] transition-all" 
                                      data-service-type="${serviceType}" data-room-id="${roomId}">
                                  <div class="flex justify-between items-center">
@@ -4139,7 +4199,7 @@
                                          </div>
                                      </div>
                                      <div class="text-right">
-                                         <span class="font-bold text-sm">NT$ ${minPrice.toLocaleString()}起</span>
+                                         <span class="font-bold text-sm">NT$ ${price.toLocaleString()}${serviceType === 'daycare' ? '起' : ''}</span>
                                          <p class="text-xs text-gray-500">${priceUnit}</p>
                                      </div>
                                  </div>
@@ -4156,66 +4216,10 @@
              }
              
              // 顯示日間安親方案選擇
-             function showDaycarePackageSelection() {
-                 const roomServiceList = document.getElementById('room-service-list');
-                 if (!roomServiceList) return;
-                 
-                 // 獲取所有日間安親方案
-                 const daycarePackages = mockPackages.filter(pkg => 
-                     pkg.type === 'daycare' && pkg.status === 'active'
-                 );
-                 
-                 let html = '<h4 class="font-medium text-[#181111] mb-3">選擇日間安親方案</h4>';
-                 
-                 daycarePackages.forEach(pkg => {
-                     const roomData = mockRoomTypes.find(room => room.id === pkg.roomId);
-                     if (!roomData) return;
-                     
-                     html += `
-                         <div class="border border-gray-200 rounded-lg p-4 mb-3">
-                             <div class="flex justify-between items-start mb-2">
-                                 <div>
-                                     <h5 class="font-medium text-[#181111]">${pkg.name}</h5>
-                                     <p class="text-sm text-gray-600">${roomData.name}</p>
-                                     <p class="text-xs text-gray-500 mt-1">${pkg.description}</p>
-                                 </div>
-                                 <div class="text-right">
-                                     <div class="font-bold text-lg">NT$ ${pkg.basePrice}</div>
-                                     <div class="text-xs text-gray-500">/ ${pkg.daycareLengths}小時</div>
-                                 </div>
-                             </div>
-                             <button class="daycare-package-btn w-full p-3 border-2 border-gray-200 rounded-lg hover:border-blue-300 transition-all" 
-                                     data-package-id="${pkg.id}">
-                                 選擇此方案
-                             </button>
-                         </div>
-                     `;
-                 });
-                 
-                 roomServiceList.innerHTML = html;
-                 roomServiceList.classList.remove('hidden');
-                 
-                 // 綁定方案選擇事件
-                 document.querySelectorAll('.daycare-package-btn').forEach(btn => {
-                     btn.addEventListener('click', function() {
-                         // 選中當前方案
-                         document.querySelectorAll('.daycare-package-btn').forEach(b => {
-                             b.classList.remove('border-blue-300', 'bg-blue-50');
-                             b.classList.add('border-gray-200');
-                         });
-                         this.classList.remove('border-gray-200');
-                         this.classList.add('border-blue-300', 'bg-blue-50');
-                         
-                         // 選擇方案後顯示時間滑桿
-                         const daycareDateSection = document.getElementById('daycare-date-selection');
-                         if (daycareDateSection) {
-                             daycareDateSection.classList.remove('hidden');
-                         }
-                         
-                         checkCanContinueBooking();
-                     });
-                 });
-             }
+            function showDaycarePackageSelection() {
+                // 改為直接顯示時租房型選擇
+                showRoomServiceSelection('daycare');
+            }
              
              // 綁定房型服務選擇事件
              function attachRoomServiceListeners() {
@@ -4260,48 +4264,54 @@
                 let total = 0;
                 let hasValidData = false;
                 
-                // 方案費用 (新的邏輯)
-                if (bookingData.selectedPlan && bookingData.planPrice) {
-                    // 根據服務類型顯示不同的標籤
-                    if (bookingData.serviceType === 'overnight') {
-                        roomPriceDetail.textContent = `${getPlanDisplayName(bookingData.selectedPlan)}套房`;
-                    } else {
-                        roomPriceDetail.textContent = `${getPlanDisplayName(bookingData.selectedPlan)}照護`;
+                // 房型費用 (基於房型價格設定)
+                if (bookingData.roomId) {
+                    const selectedRoom = mockRoomTypes.find(room => room.id === bookingData.roomId);
+                    if (selectedRoom) {
+                        roomPriceDetail.textContent = selectedRoom.name;
+                        
+                        // 根據服務類型計算價格
+                        if (bookingData.serviceType === 'overnight' && selectedRoom.serviceType === 'overnight') {
+                            const basePrice = selectedRoom.basePrice || 0;
+                            if (bookingData.stayDuration) {
+                                const durationCost = basePrice * bookingData.stayDuration;
+                                roomPrice.textContent = `NT$ ${durationCost.toLocaleString()}`;
+                                total += durationCost;
+                                hasValidData = true;
+                            }
+                        } else if (bookingData.serviceType === 'daycare' && selectedRoom.serviceType === 'daycare') {
+                            const hourlyRate = selectedRoom.hourlyRate || 0;
+                            const duration = bookingData.duration || selectedRoom.minHours || 4;
+                            const durationCost = hourlyRate * duration;
+                            roomPrice.textContent = `NT$ ${durationCost.toLocaleString()}`;
+                            total += durationCost;
+                            hasValidData = true;
+                        }
                     }
-                    
-                    roomPrice.textContent = `NT$ ${bookingData.planPrice.toLocaleString()}`;
-                    total += bookingData.planPrice;
-                    hasValidData = true;
-                    
-                    console.log('方案費用已計算:', { plan: bookingData.selectedPlan, price: bookingData.planPrice });
                 } else {
-                    roomPriceDetail.textContent = '請選擇方案';
+                    roomPriceDetail.textContent = '請選擇房型';
                     roomPrice.textContent = 'NT$ 0';
                 }
                 
-                // 服務時長和費用計算
+                // 服務時長和費用計算（已整合到上面）
                 if (bookingData.serviceType === 'overnight' && bookingData.stayDuration) {
-                    // 寄宿過夜：按天數計算
                     durationItem.style.display = 'flex';
                     durationDetail.textContent = `${bookingData.stayDuration} 晚`;
                     
-                    const durationCost = bookingData.planPrice * bookingData.stayDuration;
-                    durationPrice.textContent = `NT$ ${durationCost.toLocaleString()}`;
-                    total = durationCost; // 總價就是天數 × 每晚價格
-                    hasValidData = true;
-                    
-                    console.log('寄宿過夜費用已計算:', { days: bookingData.stayDuration, totalCost: durationCost });
+                    const selectedRoom = mockRoomTypes.find(room => room.id === bookingData.roomId);
+                    if (selectedRoom && selectedRoom.serviceType === 'overnight') {
+                        const durationCost = (selectedRoom.basePrice || 0) * bookingData.stayDuration;
+                        durationPrice.textContent = `NT$ ${durationCost.toLocaleString()}`;
+                    }
                 } else if (bookingData.serviceType === 'daycare' && bookingData.duration) {
-                    // 日間安親：按時數計算
                     durationItem.style.display = 'flex';
                     durationDetail.textContent = `${bookingData.duration}小時`;
                     
-                    const durationCost = bookingData.customPrice || (bookingData.duration * 150);
-                    durationPrice.textContent = `NT$ ${durationCost.toLocaleString()}`;
-                    total = durationCost; // 總價就是時段費用
-                    hasValidData = true;
-                    
-                    console.log('日間安親費用已計算:', { hours: bookingData.duration, totalCost: durationCost });
+                    const selectedRoom = mockRoomTypes.find(room => room.id === bookingData.roomId);
+                    if (selectedRoom && selectedRoom.serviceType === 'daycare') {
+                        const durationCost = (selectedRoom.hourlyRate || 0) * bookingData.duration;
+                        durationPrice.textContent = `NT$ ${durationCost.toLocaleString()}`;
+                    }
                 } else {
                     durationItem.style.display = 'none';
                 }
@@ -4368,9 +4378,9 @@
                     errors.push('請選擇服務類型');
                 }
                 
-                // 檢查方案選擇
-                if (!bookingData.selectedPlan) {
-                    errors.push('請選擇方案');
+                // 檢查房型選擇
+                if (!bookingData.roomId) {
+                    errors.push('請選擇房型');
                 }
                 
                 // 根據服務類型檢查時段選擇
@@ -4400,13 +4410,13 @@
             function validateCurrentStep() {
                 const errors = [];
                 
-                // 如果已經選擇了服務類型，檢查方案
-                if (bookingData.serviceType && !bookingData.selectedPlan) {
-                    errors.push('請選擇方案');
+                // 如果已經選擇了服務類型，檢查房型
+                if (bookingData.serviceType && !bookingData.roomId) {
+                    errors.push('請選擇房型');
                 }
                 
-                // 如果已經選擇了方案，檢查時段
-                if (bookingData.selectedPlan) {
+                // 如果已經選擇了房型，檢查時段
+                if (bookingData.roomId) {
                     if (bookingData.serviceType === 'overnight') {
                         if (!bookingData.checkinDate || !bookingData.checkoutDate) {
                             errors.push('請選擇入住和退房日期');
@@ -4557,32 +4567,24 @@
                 const container = document.getElementById('room-service-list');
                 if (!container) return;
 
-                // 整理房型和對應的服務
+                // 整理房型和對應的服務（移除對 mockPackages 的依賴）
                 const roomTypeMap = new Map();
                 
-                // 從 mockRoomTypes 和 mockPackages 整理數據
                 mockRoomTypes.forEach(room => {
                     if (room.status === 'active') {
-                        const packages = mockPackages.filter(pkg => 
-                            pkg.roomId === room.id && pkg.status === 'active'
-                        );
-                        
-                        if (packages.length > 0) {
-                            roomTypeMap.set(room.id, {
-                                name: room.name,
-                                description: room.description || '',
-                                packages: packages
-                            });
-                        }
+                        roomTypeMap.set(room.id, {
+                            name: room.name,
+                            description: room.description || '',
+                            serviceType: room.serviceType,
+                            basePrice: room.serviceType === 'overnight' ? room.basePrice : null,
+                            hourlyRate: room.serviceType === 'daycare' ? room.hourlyRate : null,
+                            minHours: room.serviceType === 'daycare' ? room.minHours : null
+                        });
                     }
                 });
 
                 let html = '';
                 roomTypeMap.forEach((roomData, roomId) => {
-                    // 分類服務類型
-                    const overnightPackages = roomData.packages.filter(pkg => pkg.type === 'overnight');
-                    const daycarePackages = roomData.packages.filter(pkg => pkg.type === 'daycare');
-                    
                     html += `
                         <div class="border border-gray-200 rounded-lg p-4">
                             <h3 class="font-bold text-[#181111] mb-2">${roomData.name}</h3>
@@ -4590,9 +4592,9 @@
                             <div class="space-y-2">
                     `;
                     
-                    // 過夜服務
-                    if (overnightPackages.length > 0) {
-                        const minPrice = Math.min(...overnightPackages.map(pkg => pkg.basePrice));
+                    // 根據房型的服務類型顯示對應的服務選項
+                    if (roomData.serviceType === 'overnight') {
+                        const price = roomData.basePrice || 0;
                         html += `
                             <button class="service-option-btn w-full text-left p-3 rounded-lg border-2 border-gray-200 hover:border-[#181111] transition-all" 
                                     data-service-type="overnight" data-room-id="${roomId}">
@@ -4605,18 +4607,16 @@
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <span class="font-bold text-sm price-display">NT$ ${minPrice.toLocaleString()}起</span>
+                                        <span class="font-bold text-sm price-display">NT$ ${price.toLocaleString()}起</span>
                                         <p class="text-xs text-gray-500">每晚</p>
                                     </div>
                                 </div>
                             </button>
                         `;
-                    }
-                    
-                    // 日間安親服務
-                    if (daycarePackages.length > 0) {
-                        const minPrice = Math.min(...daycarePackages.map(pkg => pkg.basePrice));
-                        const minDuration = Math.min(...daycarePackages.map(pkg => parseInt(pkg.daycareLengths) || 4));
+                    } else if (roomData.serviceType === 'daycare') {
+                        const hourlyRate = roomData.hourlyRate || 0;
+                        const minHours = roomData.minHours || 4;
+                        const minPrice = hourlyRate * minHours;
                         html += `
                             <button class="service-option-btn w-full text-left p-3 rounded-lg border-2 border-gray-200 hover:border-[#181111] transition-all" 
                                     data-service-type="daycare" data-room-id="${roomId}">
@@ -4630,7 +4630,7 @@
                                     </div>
                                     <div class="text-right">
                                         <span class="font-bold text-sm">NT$ ${minPrice.toLocaleString()}起</span>
-                                        <p class="text-xs text-gray-500">/${minDuration}hr</p>
+                                        <p class="text-xs text-gray-500">/${minHours}hr</p>
                                     </div>
                                 </div>
                             </button>
@@ -6178,7 +6178,26 @@
             function renderPaymentSuccessPage() {
                 const container = pages.paymentSuccess;
                 const orderNumber = bookingData.orderNumber || 'PAW' + Date.now();
-                const amount = bookingData.planPrice || 0;
+                
+                // 計算總價（基於房型價格設定）
+                let amount = 0;
+                if (bookingData.roomId) {
+                    const selectedRoom = mockRoomTypes.find(room => room.id === bookingData.roomId);
+                    if (selectedRoom) {
+                        if (bookingData.serviceType === 'overnight' && selectedRoom.serviceType === 'overnight') {
+                            const basePrice = selectedRoom.basePrice || 0;
+                            if (bookingData.stayDuration) {
+                                amount = basePrice * bookingData.stayDuration;
+                            }
+                        } else if (bookingData.serviceType === 'daycare' && selectedRoom.serviceType === 'daycare') {
+                            const hourlyRate = selectedRoom.hourlyRate || 0;
+                            const duration = bookingData.duration || selectedRoom.minHours || 4;
+                            amount = hourlyRate * duration;
+                        }
+                    }
+                }
+                amount *= bookingData.petCount || 1;
+                
                 const serviceType = bookingData.serviceType === 'overnight' ? '寄宿服務' : '安親服務';
                 const checkinDate = bookingData.dates?.checkin || '';
                 const checkoutDate = bookingData.dates?.checkout || '';
@@ -8847,7 +8866,6 @@
                                     <div class="flex justify-end gap-2 mt-3">
                                         <button class="py-1 px-3 bg-red-100 text-red-600 rounded-full text-xs font-medium">刪除</button>
                                         <button class="edit-room-btn py-1 px-3 bg-gray-200 text-gray-800 rounded-full text-xs font-medium" data-room-id="${room.id}">編輯</button>
-                                        <button class="manage-packages-btn py-1 px-3 bg-[#181111] text-white rounded-full text-xs font-medium" data-room-id="${room.id}">管理方案</button>
                                     </div>
                                 </div>
                             `).join('')}
@@ -8857,203 +8875,6 @@
                         </div>
                     </div>
                 `;
-            }
-            
-            function renderPackageListPage(roomId) {
-                const container = pages.packageManagement;
-                const room = mockRoomTypes.find(r => r.id === roomId);
-                if (!room) {
-                    container.innerHTML = '<div class="p-4 text-center text-red-500">找不到該房型資訊。</div>';
-                    return;
-                }
-
-                const roomPackages = mockPackages.filter(p => p.roomId === roomId);
-
-                container.innerHTML = `
-                    <div class="p-4">
-                        <div class="flex justify-between items-center mb-4">
-                            <h1 class="text-xl font-bold text-[#181111]">管理 ${room.name} 的方案</h1>
-                            <button id="add-new-package-btn" class="btn-main h-10 px-5 text-sm w-auto" data-room-id="${roomId}">＋ 新增方案</button>
-                        </div>
-                        <div class="space-y-4 mt-4">
-                            ${roomPackages.length > 0 ? roomPackages.map(pkg => `
-                                <div class="bg-white p-4 rounded-xl border border-gray-100">
-                                    <div class="flex gap-4 items-center">
-                                        <div class="flex-1">
-                                            <div class="flex justify-between items-start">
-                                                <h3 class="font-bold text-[#181111]">${pkg.name}</h3>
-                                                <span class="text-xs font-semibold ${pkg.status === 'active' ? 'text-green-600 bg-green-100' : 'text-gray-600 bg-gray-100'} px-2 py-0.5 rounded-full">${pkg.status === 'active' ? '啟用中' : '已禁用'}</span>
-                                            </div>
-                                            <p class="text-sm text-[#886364] mt-1">計價: ${pkg.type === 'overnight' ? '天' : '小時'}</p>
-                                            <p class="text-sm font-bold text-[#181111] mt-2">
-                                                ${pkg.type === 'overnight' ? `NT$ ${pkg.basePrice} / 晚` : `NT$ ${pkg.basePrice} / 小時`}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="flex justify-end gap-2 mt-3">
-                                        <button class="py-1 px-3 bg-red-100 text-red-600 rounded-full text-xs font-medium">刪除</button>
-                                        <button class="edit-package-btn py-1 px-3 bg-gray-200 text-gray-800 rounded-full text-xs font-medium" data-package-id="${pkg.id}" data-room-id="${roomId}">編輯</button>
-                                    </div>
-                                </div>
-                            `).join('') : `
-                                <div class="p-4 text-center text-[#886364] border border-dashed rounded-xl">此房型目前沒有任何方案。點擊「新增方案」建立第一個吧！</div>
-                            `}
-                        </div>
-                        <div class="pt-4 mt-2">
-                            <button id="back-to-room-list-btn" class="flex cursor-pointer items-center justify-center w-full h-12 rounded-full bg-gray-200 text-[#181111] font-bold">返回房型列表</button>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            function renderPackageForm(roomId, packageId) {
-                const room = mockRoomTypes.find(r => r.id === roomId);
-                const packageData = packageId ? mockPackages.find(p => p.id === packageId) : null;
-                const isEditing = !!packageData;
-
-                formModal.innerHTML = `
-                    <div class="p-4 overflow-y-auto max-h-full">
-                        <div class="flex justify-between items-center mb-4 sticky top-0 bg-gray-50 py-2 z-10">
-                            <button id="cancel-form-btn" class="text-lg font-bold p-2">&lt; 返回</button>
-                            <h1 class="text-xl font-bold text-[#181111] flex-1 text-center">${isEditing ? '編輯方案' : '新增方案'}</h1>
-                            <div class="w-20"></div>
-                        </div>
-                        <div class="space-y-4 px-2">
-                            <div class="bg-gray-100 p-3 rounded-lg text-sm text-gray-700">
-                                為房型 <strong>"${room.name}"</strong> 設定方案
-                            </div>
-
-                            <div>
-                                <label class="text-sm font-medium text-[#886364]">方案名稱</label>
-                                <input type="text" class="form-input-styled mt-1" id="package-name" value="${isEditing ? packageData.name : ''}" placeholder="例如：標準日租方案">
-                            </div>
-
-                            <div>
-                                <label class="text-sm font-medium text-[#886364]">方案描述</label>
-                                <textarea class="form-input-styled mt-1 h-24" id="package-description" placeholder="詳細說明方案內容...">${isEditing ? packageData.description || '' : ''}</textarea>
-                            </div>
-
-                            <div>
-                                <label class="text-sm font-medium text-[#886364]">計價單位</label>
-                                <div class="flex space-x-4 mt-1">
-                                    <label class="flex items-center">
-                                        <input type="radio" name="pricing-unit" value="overnight" class="h-4 w-4 text-[#181111] focus:ring-[#181111]" ${isEditing && packageData.type === 'overnight' ? 'checked' : !isEditing ? 'checked' : ''} ${isEditing ? 'disabled' : ''}>
-                                        <span class="ml-2 text-sm">天 (過夜寄宿)</span>
-                                    </label>
-                                    <label class="flex items-center">
-                                        <input type="radio" name="pricing-unit" value="daycare" class="h-4 w-4 text-[#181111] focus:ring-[#181111]" ${isEditing && packageData.type === 'daycare' ? 'checked' : ''} ${isEditing ? 'disabled' : ''}>
-                                        <span class="ml-2 text-sm">小時 (日間安親)</span>
-                                    </label>
-                                </div>
-                                ${isEditing ? '<p class="text-xs text-red-500 mt-1">計價單位儲存後不可修改。</p>' : ''}
-                            </div>
-
-                            <div>
-                                <label class="text-sm font-medium text-[#886364]">基礎價格</label>
-                                <input type="number" class="form-input-styled mt-1" id="base-price" value="${isEditing ? packageData.basePrice : ''}" min="0" placeholder="例如：800">
-                            </div>
-
-                            <div id="overnight-specific-fields" class="${!isEditing || packageData.type === 'overnight' ? '' : 'hidden'}">
-                                <label class="text-sm font-medium text-[#886364]">最短預訂天數</label>
-                                <input type="number" class="form-input-styled mt-1" id="min-days" value="${isEditing && packageData.type === 'overnight' ? packageData.min : 1}" min="1">
-                                <label class="text-sm font-medium text-[#886364] mt-2">最長預訂天數 (選填)</label>
-                                <input type="number" class="form-input-styled mt-1" id="max-days" value="${isEditing && packageData.type === 'overnight' && packageData.max ? packageData.max : ''}" min="1">
-                            </div>
-
-                            <div id="daycare-specific-fields" class="${isEditing && packageData.type === 'daycare' ? '' : 'hidden'}">
-                                <label class="text-sm font-medium text-[#886364]">可選安親時長 (小時)</label>
-                                <p class="text-xs text-gray-500 mb-1">輸入逗號分隔的時長選項，例如 "2,4,8"</p>
-                                <input type="text" class="form-input-styled mt-1" id="daycare-lengths" value="${isEditing && packageData.type === 'daycare' && packageData.daycareLengths ? packageData.daycareLengths : ''}" placeholder="例如：2,4,8">
-                                
-                                <label class="text-sm font-medium text-[#886364] mt-4">每日可預訂時段</label>
-                                <p class="text-xs text-gray-500 mb-1">設定此方案每天可接受預訂的起始與結束時間</p>
-                                <div class="flex gap-2 mt-1">
-                                    <input type="time" class="form-input-styled" id="start-time" value="${isEditing && packageData.startTime ? packageData.startTime : '09:00'}">
-                                    <span>-</span>
-                                    <input type="time" class="form-input-styled" id="end-time" value="${isEditing && packageData.endTime ? packageData.endTime : '18:00'}">
-                                </div>
-                                
-                                <label class="text-sm font-medium text-[#886364] mt-4">超時費率 (每小時)</label>
-                                <input type="number" class="form-input-styled mt-1" id="overtime-rate" value="${isEditing && packageData.overtimeRate ? packageData.overtimeRate : ''}" min="0" placeholder="例如：100">
-                            </div>
-                            
-                            <div class="border-t pt-4">
-                                <h3 class="text-sm font-bold text-[#181111] mb-2">上架與排程設定</h3>
-                                <div class="space-y-2">
-                                     <label class="flex items-center"><input type="radio" name="schedule-mode" value="permanent" class="h-4 w-4 text-black focus:ring-black" checked> <span class="ml-2 text-sm">永久有效</span></label>
-                                     <label class="flex items-center"><input type="radio" name="schedule-mode" value="date-range" class="h-4 w-4 text-black focus:ring-black"> <span class="ml-2 text-sm">指定日期</span></label>
-                                     <label class="flex items-center"><input type="radio" name="schedule-mode" value="recurring" class="h-4 w-4 text-black focus:ring-black"> <span class="ml-2 text-sm">循環顯示</span></label>
-                                </div>
-                            </div>
-                            
-                            <div id="date-range-fields" class="hidden pl-6 space-y-2 border-l-2 ml-2">
-                                <label class="text-sm font-medium text-[#886364]">方案有效日期範圍</label>
-                                <div class="flex items-center gap-2 mt-1">
-                                    <input type="date" id="package-start-date" class="form-input-styled text-center p-2" value="${isEditing ? packageData.startDate : ''}">
-                                    <span>-</span>
-                                    <input type="date" id="package-end-date" class="form-input-styled text-center p-2" value="${isEditing ? packageData.endDate : ''}">
-                                </div>
-                            </div>
-                            
-                            <div id="recurring-fields" class="hidden pl-6 space-y-4 border-l-2 ml-2">
-                                <div>
-                                    <label class="text-sm font-medium text-[#886364]">選擇循環星期</label>
-                                    <div class="grid grid-cols-4 gap-2 mt-1">
-                                        ${['日', '一', '二', '三', '四', '五', '六'].map(day => `<label class="flex items-center text-sm"><input type="checkbox" class="h-4 w-4 rounded border-gray-300"> <span class="ml-1">${day}</span></label>`).join('')}
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="text-sm font-medium text-[#886364]">展示時長</label>
-                                    <select class="form-input-styled mt-1"><option>一個月</option><option>三個月</option><option>半年</option><option>一年</option></select>
-                                </div>
-                                <div>
-                                    <label class="text-sm font-medium text-[#886364]">排除日期區間 (選填)</label>
-                                    <div class="flex items-center gap-2 mt-1">
-                                        <input type="date" class="form-input-styled text-center p-2">
-                                        <span>-</span>
-                                        <input type="date" class="form-input-styled text-center p-2">
-                                    </div>
-                                    <button class="text-xs text-blue-600 mt-1">+ 新增排除區間</button>
-                                </div>
-                            </div>
-
-                            <div class="flex justify-between items-center border-t pt-4">
-                                <label class="text-sm font-medium text-[#886364]">啟用狀態</label>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="package-status-toggle" ${!isEditing || packageData.status === 'active' ? 'checked' : ''}>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="mt-6">
-                            <button class="btn-main" id="save-package-btn" data-room-id="${roomId}" data-package-id="${packageId || ''}">儲存方案</button>
-                        </div>
-                    </div>
-                `;
-                formModal.classList.remove('hidden');
-                attachPackageFormListeners();
-            }
-            
-            function attachPackageFormListeners() {
-                const pricingUnitRadios = formModal.querySelectorAll('input[name="pricing-unit"]');
-                pricingUnitRadios.forEach(radio => {
-                    radio.addEventListener('change', function() {
-                        const overnightFields = formModal.querySelector('#overnight-specific-fields');
-                        const daycareFields = formModal.querySelector('#daycare-specific-fields');
-                        overnightFields.classList.toggle('hidden', this.value !== 'overnight');
-                        daycareFields.classList.toggle('hidden', this.value !== 'daycare');
-                    });
-                });
-                
-                const scheduleModeRadios = formModal.querySelectorAll('input[name="schedule-mode"]');
-                scheduleModeRadios.forEach(radio => {
-                    radio.addEventListener('change', function() {
-                        const dateRangeFields = formModal.querySelector('#date-range-fields');
-                        const recurringFields = formModal.querySelector('#recurring-fields');
-                        dateRangeFields.classList.toggle('hidden', this.value !== 'date-range');
-                        recurringFields.classList.toggle('hidden', this.value !== 'recurring');
-                    });
-                });
             }
 
             function renderRoomForm(roomId) {
@@ -9106,6 +8927,66 @@
                                     <input type="number" class="form-input-styled mt-1" value="${isEditing ? roomData.stock : 1}">
                                 </div>
                             </div>
+                            
+                            <div class="border-t pt-4">
+                                <h3 class="text-sm font-bold text-[#181111] mb-2">服務類型與價格設定</h3>
+                                <div>
+                                    <label class="text-sm font-medium text-[#886364]">服務類型</label>
+                                    <div class="flex space-x-4 mt-1">
+                                        <label class="flex items-center">
+                                            <input type="radio" name="service-type" value="overnight" class="h-4 w-4 text-[#181111] focus:ring-[#181111]" ${isEditing && roomData.serviceType === 'overnight' ? 'checked' : !isEditing ? 'checked' : ''} ${isEditing ? 'disabled' : ''}>
+                                            <span class="ml-2 text-sm">日租 (過夜寄宿)</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="radio" name="service-type" value="daycare" class="h-4 w-4 text-[#181111] focus:ring-[#181111]" ${isEditing && roomData.serviceType === 'daycare' ? 'checked' : ''} ${isEditing ? 'disabled' : ''}>
+                                            <span class="ml-2 text-sm">時租 (日間安親)</span>
+                                        </label>
+                                    </div>
+                                    ${isEditing ? '<p class="text-xs text-red-500 mt-1">服務類型儲存後不可修改。</p>' : ''}
+                                </div>
+                                
+                                <!-- 日租價格設定 -->
+                                <div id="overnight-pricing-fields" class="${!isEditing || roomData.serviceType === 'overnight' ? '' : 'hidden'} mt-4 space-y-3">
+                                    <div>
+                                        <label class="text-sm font-medium text-[#886364]">每晚價格 (NT$)</label>
+                                        <input type="number" class="form-input-styled mt-1" id="base-price-overnight" value="${isEditing && roomData.serviceType === 'overnight' ? roomData.basePrice : ''}" min="0" placeholder="例如：800">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="text-sm font-medium text-[#886364]">最短預訂天數</label>
+                                            <input type="number" class="form-input-styled mt-1" id="min-nights" value="${isEditing && roomData.serviceType === 'overnight' ? roomData.minNights : 1}" min="1">
+                                        </div>
+                                        <div>
+                                            <label class="text-sm font-medium text-[#886364]">最長預訂天數 (選填)</label>
+                                            <input type="number" class="form-input-styled mt-1" id="max-nights" value="${isEditing && roomData.serviceType === 'overnight' ? roomData.maxNights || '' : ''}" min="1" placeholder="無限制">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 時租價格設定 -->
+                                <div id="daycare-pricing-fields" class="${isEditing && roomData.serviceType === 'daycare' ? '' : 'hidden'} mt-4 space-y-3">
+                                    <div>
+                                        <label class="text-sm font-medium text-[#886364]">每小時價格 (NT$)</label>
+                                        <input type="number" class="form-input-styled mt-1" id="hourly-rate" value="${isEditing && roomData.serviceType === 'daycare' ? roomData.hourlyRate : ''}" min="0" placeholder="例如：150">
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-[#886364]">最小預訂時數</label>
+                                        <input type="number" class="form-input-styled mt-1" id="min-hours" value="${isEditing && roomData.serviceType === 'daycare' ? roomData.minHours : 4}" min="1" placeholder="例如：4">
+                                        <p class="text-xs text-gray-500 mt-1">最小時數後，之後以每小時為單位計費</p>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="text-sm font-medium text-[#886364]">可預訂開始時間</label>
+                                            <input type="time" class="form-input-styled mt-1" id="start-time" value="${isEditing && roomData.serviceType === 'daycare' ? roomData.startTime : '09:00'}">
+                                        </div>
+                                        <div>
+                                            <label class="text-sm font-medium text-[#886364]">可預訂結束時間</label>
+                                            <input type="time" class="form-input-styled mt-1" id="end-time" value="${isEditing && roomData.serviceType === 'daycare' ? roomData.endTime : '18:00'}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
                              <div class="flex justify-between items-center">
                                 <label class="text-sm font-medium text-[#886364]">啟用狀態</label>
                                 <label class="toggle-switch"><input type="checkbox" ${isEditing && roomData.status === 'active' ? 'checked' : !isEditing ? 'checked' : ''}><span class="toggle-slider"></span></label>
@@ -9117,6 +8998,17 @@
                     </div>
                 `;
                 formModal.classList.remove('hidden');
+                
+                // 綁定服務類型切換事件
+                const serviceTypeRadios = formModal.querySelectorAll('input[name="service-type"]');
+                serviceTypeRadios.forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        const overnightFields = formModal.querySelector('#overnight-pricing-fields');
+                        const daycareFields = formModal.querySelector('#daycare-pricing-fields');
+                        overnightFields.classList.toggle('hidden', this.value !== 'overnight');
+                        daycareFields.classList.toggle('hidden', this.value !== 'daycare');
+                    });
+                });
             }
 
 
@@ -9184,35 +9076,43 @@
 
                 const selectedPackage = document.querySelector('.package-item.selected');
                 if (!selectedPackage) {
-                    priceDisplay.textContent = '請選擇方案';
+                    priceDisplay.textContent = '請選擇房型';
                     return;
                 }
 
                 let total = 0;
-                const packageType = selectedPackage.dataset.packageType;
-                const basePrice = parseInt(selectedPackage.dataset.price);
+                const roomId = parseInt(selectedPackage.dataset.roomId);
+                const serviceType = selectedPackage.dataset.serviceType;
+                const room = mockRoomTypes.find(r => r.id === roomId);
                 
-                if (packageType === 'overnight') {
+                if (!room) {
+                    priceDisplay.textContent = '請選擇房型';
+                    return;
+                }
+                
+                if (serviceType === 'overnight' && room.serviceType === 'overnight') {
                     // 寄宿方案：根據住宿天數計算
                     if (selectedCheckinDate && selectedCheckoutDate && selectedCheckoutDate > selectedCheckinDate) {
                         const nights = Math.ceil((selectedCheckoutDate - selectedCheckinDate) / (1000 * 60 * 60 * 24));
-                        total = basePrice * nights;
+                        total = (room.basePrice || 0) * nights;
                     } else {
                         priceDisplay.textContent = '請選擇有效日期';
                         return;
                     }
-                } else if (packageType === 'daycare') {
+                } else if (serviceType === 'daycare' && room.serviceType === 'daycare') {
                     // 日間安親方案：檢查是否已選擇時段
                     const selectedTimeSlot = document.querySelector('.time-slot-btn.selected');
                     if (!selectedTimeSlot) {
                         priceDisplay.textContent = '請選擇時段';
                         return;
                     }
-                    // 日間安親方案：單次計費
-                    total = basePrice;
+                    // 日間安親方案：基於時長計算
+                    const minHours = room.minHours || 4;
+                    const hourlyRate = room.hourlyRate || 0;
+                    total = hourlyRate * minHours; // 預設最小時數
                 }
                 
-                const petCount = parseInt(document.getElementById('pet-count').value);
+                const petCount = parseInt(document.getElementById('pet-count')?.value || 1);
                 total *= petCount;
 
                 document.querySelectorAll('.addon-service:checked').forEach(cb => {
@@ -9256,127 +9156,47 @@
                 
                 let roomOptionsHTML = '';
                 
-                // 根據假資料渲染房型與方案
-                const roomConfigs = [
-                    { 
-                        name: '標準房 (小型犬)', 
-                        roomId: 1, 
-                        description: '舒適的標準房，適合中小型犬',
-                        packages: [
-                            { name: '日租方案', price: 800, type: 'overnight' },
-                            { 
-                                name: '安親方案A', 
-                                price: 150, 
-                                type: 'daycare', 
-                                duration: 4,
-                                timeSlots: [
-                                    { time: '09:00-13:00', available: true },
-                                    { time: '14:00-18:00', available: true }
-                                ]
-                            },
-                            { 
-                                name: '安親方案B', 
-                                price: 120, 
-                                type: 'daycare', 
-                                duration: 8,
-                                timeSlots: [
-                                    { time: '09:00-17:00', available: true },
-                                    { time: '10:00-18:00', available: false }
-                                ]
-                            }
-                        ]
-                    },
-                    { 
-                        name: '豪華套房 (中大型犬)', 
-                        roomId: 2, 
-                        description: '寬敞的豪華套房，適合中大型犬',
-                        packages: [
-                            { name: '日租方案', price: 1500, type: 'overnight' }
-                        ]
-                    },
-                    { 
-                        name: '貓咪專屬空間', 
-                        roomId: 3, 
-                        description: '專為貓咪設計的舒適空間',
-                        packages: [
-                            { name: '日租方案', price: 700, type: 'overnight' }
-                        ]
-                    },
-                    { 
-                        name: '陽光豪華雙人房', 
-                        roomId: 4, 
-                        description: '附有陽台的雙寵物豪華房',
-                        packages: [
-                            { name: '日租方案', price: 1200, type: 'overnight' }
-                        ]
-                    }
-                ];
-                
-                roomConfigs.forEach((config, roomIndex) => {
-                    const availableStock = checkRoomAvailability(config.roomId, startDate, endDate);
+                // 根據假資料渲染房型（直接使用 mockRoomTypes）
+                mockRoomTypes.filter(room => room.status === 'active').forEach((room, roomIndex) => {
+                    const availableStock = checkRoomAvailability(room.id, startDate, endDate);
                     const isAvailable = availableStock > 0;
                     const isFirstRoom = roomIndex === 0;
+                    
+                    // 根據服務類型顯示價格
+                    let priceDisplay = '';
+                    let priceUnit = '';
+                    if (room.serviceType === 'overnight' && room.basePrice) {
+                        priceDisplay = room.basePrice.toLocaleString();
+                        priceUnit = '/ 晚';
+                    } else if (room.serviceType === 'daycare' && room.hourlyRate) {
+                        const minPrice = room.hourlyRate * (room.minHours || 4);
+                        priceDisplay = minPrice.toLocaleString();
+                        priceUnit = `/ ${room.minHours || 4}hr起`;
+                    }
+                    
+                    if (!priceDisplay) return; // 跳過沒有價格設定的房型
                     
                     roomOptionsHTML += `
                         <div class="p-3 rounded-lg border-2 border-transparent ${!isAvailable ? 'unavailable' : ''}">
                             <div class="flex justify-between items-start">
                                 <div class="flex-1">
-                                    <p class="font-bold text-sm ${!isAvailable ? 'text-gray-400' : 'text-[#181111]'}">${config.name}</p>
-                                    <p class="text-xs text-gray-500 mt-1">${config.description}</p>
+                                    <p class="font-bold text-sm ${!isAvailable ? 'text-gray-400' : 'text-[#181111]'}">${room.name}</p>
+                                    <p class="text-xs text-gray-500 mt-1">${room.description}</p>
                                     ${!isAvailable ? '<p class="text-xs text-red-500 mt-1">❌ 已滿房</p>' : `<p class="text-xs text-green-600 mt-1">✅ 可訂房 (剩餘 ${availableStock} 間)</p>`}
                                 </div>
                             </div>
                             <div class="space-y-2 mt-2">
-                                ${config.packages.map((pkg, pkgIndex) => {
-                                    const isFirstPackage = isFirstRoom && pkgIndex === 0;
-                                    const packageId = `package-${config.roomId}-${pkgIndex}`;
-                                    let priceUnit = '';
-                                    if (pkg.type === 'overnight') {
-                                        priceUnit = '/ 晚';
-                                    } else if (pkg.type === 'daycare' && pkg.duration) {
-                                        priceUnit = `/ ${pkg.duration}hr`;
-                                    } else {
-                                        priceUnit = '/ 次';
-                                    }
-                                    
-                                    let packageHTML = `
-                                        <div class="package-wrapper">
-                                            <div class="package-item p-3 rounded-lg ${isAvailable ? 'cursor-pointer' : ''} ${isFirstPackage && isAvailable ? 'selected' : ''}" 
-                                                 data-price="${pkg.price}" 
-                                                 data-room-id="${config.roomId}"
-                                                 data-package-type="${pkg.type}"
-                                                 data-package-id="${packageId}"
-                                                 ${!isAvailable ? 'style="opacity: 0.5; pointer-events: none;"' : ''}>
-                                                <div class="flex justify-between items-center">
-                                                    <span class="text-sm">${pkg.name}</span>
-                                                    <span class="font-bold text-sm">NT$ ${pkg.price.toLocaleString()} ${priceUnit}</span>
-                                                </div>
-                                            </div>
-                                    `;
-                                    
-                                    // 如果是安親方案且有時段選擇，添加時段選擇區域
-                                    if (pkg.type === 'daycare' && pkg.timeSlots && isAvailable) {
-                                        packageHTML += `
-                                            <div class="time-slots-container mt-2 ml-4 hidden" id="timeslots-${packageId}">
-                                                <p class="text-xs text-gray-600 mb-2">選擇時段：</p>
-                                                <div class="flex flex-wrap gap-2">
-                                                    ${pkg.timeSlots.map((slot, slotIndex) => `
-                                                        <button class="time-slot-btn px-3 py-1 text-sm rounded-full border transition-all ${slot.available ? 'border-gray-300 hover:border-gray-400 hover:bg-gray-50' : 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'}" 
-                                                                data-package-id="${packageId}"
-                                                                data-slot-time="${slot.time}"
-                                                                ${!slot.available ? 'disabled' : ''}>
-                                                            ${slot.time}
-                                                            ${!slot.available ? ' (已滿)' : ''}
-                                                        </button>
-                                                    `).join('')}
-                                                </div>
-                                            </div>
-                                        `;
-                                    }
-                                    
-                                    packageHTML += `</div>`;
-                                    return packageHTML;
-                                }).join('')}
+                                <div class="package-wrapper">
+                                    <div class="package-item p-3 rounded-lg ${isAvailable ? 'cursor-pointer' : ''} ${isFirstRoom && isAvailable ? 'selected' : ''}" 
+                                         data-room-id="${room.id}"
+                                         data-service-type="${room.serviceType}"
+                                         ${!isAvailable ? 'style="opacity: 0.5; pointer-events: none;"' : ''}>
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-sm">${room.serviceType === 'overnight' ? '日租' : '時租'}</span>
+                                            <span class="font-bold text-sm">NT$ ${priceDisplay} ${priceUnit}</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -9395,17 +9215,16 @@
                 dates: { checkin: null, checkout: null },
                 timeSlot: '',
                 roomId: null,
-                packageId: null,
                 preferredRoomId: null, // 用戶偏好的房型
                 petCount: 1,
                 addons: [],
                 serviceDate: null, // 日間安親的服務日期
-                selectedPlan: null, // 選擇的方案
-                planPrice: null, // 方案價格
                 checkinDate: null, // 入住日期
                 checkoutDate: null, // 退房日期
                 stayDuration: null, // 入住天數
-                duration: null, // 日間安親時長
+                duration: null, // 日間安親時長（小時）
+                startTime: null, // 時租開始時間
+                endTime: null, // 時租結束時間
                 customPrice: null, // 自訂價格
                 timeSlotName: null // 時段名稱
             };
@@ -9650,21 +9469,23 @@
                             
                             <div class="space-y-3">
                                 ${availableRooms.map(room => {
+                                    // 只顯示符合服務類型的房型
+                                    if (room.serviceType !== bookingData.serviceType) return '';
+                                    
                                     const startDate = bookingData.dates.checkin;
                                     const endDate = bookingData.dates.checkout || startDate;
                                     const availableStock = checkRoomAvailability(room.id, startDate, endDate);
                                     const isAvailable = availableStock > 0;
                                     
-                                    // 根據服務類型過濾方案
-                                    const packages = mockPackages.filter(pkg => 
-                                        pkg.roomId === room.id && 
-                                        pkg.status === 'active' && 
-                                        pkg.type === bookingData.serviceType
-                                    );
-                                    
-                                    if (packages.length === 0) return ''; // 沒有對應方案就不顯示
-                                    
                                     const isPreferred = room.id === bookingData.preferredRoomId;
+                                    
+                                    // 根據服務類型顯示價格
+                                    let priceDisplay = '';
+                                    if (room.serviceType === 'overnight' && room.basePrice) {
+                                        priceDisplay = `NT$ ${room.basePrice.toLocaleString()} / 晚`;
+                                    } else if (room.serviceType === 'daycare' && room.hourlyRate) {
+                                        priceDisplay = `NT$ ${room.hourlyRate.toLocaleString()} / 小時 (最小 ${room.minHours || 4} 小時)`;
+                                    }
                                     
                                     return `
                                         <div class="room-selection-card p-4 rounded-xl border-2 ${isPreferred ? 'border-blue-400 bg-blue-50' : 'border-gray-200'} ${isAvailable ? 'cursor-pointer hover:border-[#181111]' : 'opacity-60'} transition-all" 
@@ -9683,14 +9504,10 @@
                                                         `<p class="text-xs text-red-500">❌ 已滿房</p>`
                                                     }
                                                     <div class="mt-2">
-                                                        ${packages.map(pkg => `
-                                                            <div class="text-sm">
-                                                                <span class="font-medium">${pkg.name}</span>
-                                                                <span class="text-[#181111] font-bold ml-2">
-                                                                    NT$ ${pkg.basePrice.toLocaleString()} ${pkg.type === 'overnight' ? '/ 晚' : `/ ${pkg.daycareLengths || '4'}hr`}
-                                                                </span>
-                                                            </div>
-                                                        `).join('')}
+                                                        <div class="text-sm">
+                                                            <span class="font-medium">${room.serviceType === 'overnight' ? '日租' : '時租'}</span>
+                                                            <span class="text-[#181111] font-bold ml-2">${priceDisplay}</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -9731,16 +9548,6 @@
                         // 更新資料
                         bookingData.roomId = parseInt(this.dataset.roomId);
                         
-                        // 找到對應的方案
-                        const selectedPackage = mockPackages.find(pkg => 
-                            pkg.roomId === bookingData.roomId && 
-                            pkg.type === bookingData.serviceType && 
-                            pkg.status === 'active'
-                        );
-                        if (selectedPackage) {
-                            bookingData.packageId = selectedPackage.id;
-                        }
-                        
                         // 啟用繼續按鈕
                         const nextBtn = document.getElementById('next-step-btn');
                         nextBtn.disabled = false;
@@ -9768,19 +9575,28 @@
                 const container = pages.bookingFlow;
                 const isOvernight = bookingData.serviceType === 'overnight';
                 
-                // 取得選中的房型和方案資訊
+                // 取得選中的房型資訊
                 const selectedRoom = mockRoomTypes.find(room => room.id === bookingData.roomId);
-                const selectedPackage = mockPackages.find(pkg => pkg.id === bookingData.packageId);
                 
                 // 計算價格
-                let basePrice = selectedPackage ? selectedPackage.basePrice : 0;
-                let totalPrice = basePrice;
+                let basePrice = 0;
+                let totalPrice = 0;
                 
-                if (isOvernight && bookingData.dates.checkin && bookingData.dates.checkout) {
-                    const checkinDate = new Date(bookingData.dates.checkin);
-                    const checkoutDate = new Date(bookingData.dates.checkout);
-                    const nights = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24));
-                    totalPrice = basePrice * nights;
+                if (selectedRoom) {
+                    if (isOvernight && selectedRoom.serviceType === 'overnight') {
+                        basePrice = selectedRoom.basePrice || 0;
+                        if (bookingData.dates.checkin && bookingData.dates.checkout) {
+                            const checkinDate = new Date(bookingData.dates.checkin);
+                            const checkoutDate = new Date(bookingData.dates.checkout);
+                            const nights = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24));
+                            totalPrice = basePrice * nights;
+                        }
+                    } else if (!isOvernight && selectedRoom.serviceType === 'daycare') {
+                        basePrice = selectedRoom.hourlyRate || 0;
+                        const minHours = selectedRoom.minHours || 4;
+                        const duration = bookingData.duration || minHours;
+                        totalPrice = basePrice * duration;
+                    }
                 }
                 
                 totalPrice *= bookingData.petCount;
@@ -9820,8 +9636,8 @@
                                         <span class="font-medium">${selectedRoom ? selectedRoom.name : ''}</span>
                                     </div>
                                     <div class="flex justify-between">
-                                        <span class="text-gray-600">方案</span>
-                                        <span class="font-medium">${selectedPackage ? selectedPackage.name : ''}</span>
+                                        <span class="text-gray-600">服務類型</span>
+                                        <span class="font-medium">${selectedRoom && selectedRoom.serviceType === 'overnight' ? '日租' : '時租'}</span>
                                     </div>
                                     ${isOvernight && bookingData.dates.checkin && bookingData.dates.checkout ? `
                                         <div class="flex justify-between">
@@ -9960,7 +9776,7 @@
             
             // 更新確認頁面的顯示
             function updateConfirmationDisplay() {
-                const selectedPackage = mockPackages.find(pkg => pkg.id === bookingData.packageId);
+                const selectedRoom = mockRoomTypes.find(room => room.id === bookingData.roomId);
                 const isOvernight = bookingData.serviceType === 'overnight';
                 
                 // 更新寵物數量顯示
@@ -9969,15 +9785,25 @@
                     petCountInput.value = bookingData.petCount;
                 }
                 
-                // 計算新的總價格
-                let basePrice = selectedPackage ? selectedPackage.basePrice : 0;
-                let totalPrice = basePrice;
+                // 計算新的總價格（基於房型價格設定）
+                let basePrice = 0;
+                let totalPrice = 0;
                 
-                if (isOvernight && bookingData.dates.checkin && bookingData.dates.checkout) {
-                    const checkinDate = new Date(bookingData.dates.checkin);
-                    const checkoutDate = new Date(bookingData.dates.checkout);
-                    const nights = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24));
-                    totalPrice = basePrice * nights;
+                if (selectedRoom) {
+                    if (isOvernight && selectedRoom.serviceType === 'overnight') {
+                        basePrice = selectedRoom.basePrice || 0;
+                        if (bookingData.dates.checkin && bookingData.dates.checkout) {
+                            const checkinDate = new Date(bookingData.dates.checkin);
+                            const checkoutDate = new Date(bookingData.dates.checkout);
+                            const nights = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24));
+                            totalPrice = basePrice * nights;
+                        }
+                    } else if (!isOvernight && selectedRoom.serviceType === 'daycare') {
+                        basePrice = selectedRoom.hourlyRate || 0;
+                        const minHours = selectedRoom.minHours || 4;
+                        const duration = bookingData.duration || minHours;
+                        totalPrice = basePrice * duration;
+                    }
                 }
                 
                 totalPrice *= bookingData.petCount;
@@ -10074,14 +9900,17 @@
                 if (managementViewMode === 'monthly') {
                     return renderMonthlyCalendar(currentDate, selectedRoom);
                 } else {
-                    // 時程模式：尋找一個日間安親方案作為時間設定參考，如果沒有就使用預設值
-                    const roomPackages = mockPackages.filter(p => p.roomId === selectedRoom.id && p.status === 'active');
-                    const daycarePackage = roomPackages.find(p => p.type === 'daycare') || {
+                    // 時程模式：直接從房型獲取時間設定
+                    const daycareConfig = selectedRoom && selectedRoom.serviceType === 'daycare' ? {
+                        startTime: selectedRoom.startTime || '09:00',
+                        endTime: selectedRoom.endTime || '18:00',
+                        name: '日間安親'
+                    } : {
                         startTime: '09:00',
                         endTime: '18:00',
                         name: '日間安親'
                     };
-                    return renderWeeklyCalendar(currentDate, daycarePackage, selectedRoom);
+                    return renderWeeklyCalendar(currentDate, daycareConfig, selectedRoom);
                 }
             }
 
@@ -10629,29 +10458,11 @@
             function updateCalendarView(isRoomChange = false) {
                 const roomId = currentManagementRoomId;
                 const selectedRoom = mockRoomTypes.find(r => r.id === roomId);
-                const roomPackages = mockPackages.filter(p => p.roomId === roomId && p.status === 'active');
                 
-                const packageSelect = document.getElementById('package-select');
-                let packageId;
-                
-                if (isRoomChange) {
-                    // 房型改變時，更新方案選擇列表並選擇第一個
-                    if (packageSelect) {
-                        packageSelect.innerHTML = roomPackages.map(pkg => `
-                            <option value="${pkg.id}">${pkg.name}</option>
-                        `).join('');
-                    }
-                    packageId = roomPackages[0]?.id || 0;
-                } else {
-                    // 方案選擇改變時，直接使用當前選中的方案
-                    packageId = parseInt(packageSelect?.value || roomPackages[0]?.id || 0);
-                }
-                
-                const selectedPackage = mockPackages.find(p => p.id === packageId);
-                
+                // 移除方案選擇邏輯，直接使用房型設定
                 const calendarContainer = document.getElementById('calendar-container');
                 if (calendarContainer) {
-                    calendarContainer.innerHTML = renderCalendarView(selectedPackage, selectedRoom);
+                    calendarContainer.innerHTML = renderCalendarView(null, selectedRoom);
                 }
             }
 
@@ -10821,50 +10632,23 @@
                         // 檢查是否為不可用的房型
                         if(this.style.opacity === '0.5' || this.style.pointerEvents === 'none') return;
                         
-                        // 移除所有選中的方案
+                        // 移除所有選中的房型
                         document.querySelectorAll('.package-item.selected').forEach(p => p.classList.remove('selected'));
-                        // 隱藏所有時段選擇區域
-                        document.querySelectorAll('.time-slots-container').forEach(container => container.classList.add('hidden'));
-                        // 重置所有時段按鈕狀態
-                        document.querySelectorAll('.time-slot-btn.selected').forEach(btn => btn.classList.remove('selected'));
                         
-                        // 選中當前方案
+                        // 選中當前房型
                         this.classList.add('selected');
                         
-                        // 如果是安親方案，顯示對應的時段選擇
-                        const packageType = this.dataset.packageType;
-                        const packageId = this.dataset.packageId;
-                        if (packageType === 'daycare' && packageId) {
-                            const timeSlotsContainer = document.getElementById(`timeslots-${packageId}`);
-                            if (timeSlotsContainer) {
-                                timeSlotsContainer.classList.remove('hidden');
-                            }
+                        // 更新預訂資料
+                        const roomId = parseInt(this.dataset.roomId);
+                        if (roomId) {
+                            bookingData.roomId = roomId;
                         }
                         
                         updatePrice();
                     });
                 });
                 
-                // 綁定時段按鈕事件監聽器
-                document.querySelectorAll('.time-slot-btn').forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        e.stopPropagation(); // 防止觸發父級的package-item點擊事件
-                        
-                        if (this.disabled) return;
-                        
-                        const packageId = this.dataset.packageId;
-                        
-                        // 移除同一方案下其他時段的選中狀態
-                        document.querySelectorAll(`.time-slot-btn[data-package-id="${packageId}"].selected`).forEach(otherBtn => {
-                            otherBtn.classList.remove('selected');
-                        });
-                        
-                        // 選中當前時段
-                        this.classList.add('selected');
-                        
-                        updatePrice();
-                    });
-                });
+                // 時段按鈕事件已移除（時段選擇現在在預訂流程中處理）
             }
 
             // 更新數據分析圖表
@@ -11208,12 +10992,7 @@
                 }
                 if (e.target.closest('#cancel-form-btn')) {
                      formModal.classList.add('hidden');
-                     if(document.getElementById('package-name')) { // 判斷是方案表單
-                        const roomId = parseInt(document.getElementById('save-package-btn').dataset.roomId);
-                        showPage('packageManagement', { roomId: roomId });
-                     } else {
-                        showPage('roomManagement');
-                     }
+                     showPage('roomManagement');
                 }
 
                 // 訂單篩選
@@ -11236,27 +11015,7 @@
                 if (e.target.matches('input[name="pet-type"][value="dog"]')) {
                     document.getElementById('dog-size-options').classList.toggle('hidden', !e.target.checked);
                 }
-                // 方案管理
-                if (e.target.closest('.manage-packages-btn')) {
-                    const roomId = parseInt(e.target.closest('.manage-packages-btn').dataset.roomId);
-                    showPage('packageManagement', { roomId: roomId });
-                }
-                if (e.target.closest('#add-new-package-btn')) {
-                    const roomId = parseInt(e.target.dataset.roomId);
-                    renderPackageForm(roomId, null);
-                }
-                if (e.target.closest('.edit-package-btn')) {
-                    const packageId = parseInt(e.target.dataset.packageId);
-                    const roomId = parseInt(e.target.dataset.roomId);
-                    renderPackageForm(roomId, packageId);
-                }
-                if (e.target.closest('#back-to-room-list-btn')) showPage('roomManagement');
-                if (e.target.id === 'save-package-btn') {
-                    alert('方案已儲存 (模擬)。');
-                    formModal.classList.add('hidden');
-                    const roomId = parseInt(e.target.dataset.roomId);
-                    showPage('packageManagement', { roomId: roomId });
-                }
+                // Package management removed - packages are now integrated into room types
             });
 
             // --- 公告功能相關函數已移至全局作用域 ---
@@ -12257,7 +12016,7 @@
         
         window.viewRoomDetails = function(roomId) {
             document.getElementById('room-status-modal')?.remove();
-            showPage('packageManagement', { roomId: roomId });
+            // Package management removed - packages are now integrated into room types
         };
         
         window.manageRoomCalendar = function(roomId) {
