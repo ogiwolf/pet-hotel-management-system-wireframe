@@ -2081,11 +2081,16 @@
                                 <div class="w-6 h-1 bg-gray-300"></div>
                                 <div class="flex items-center">
                                     <div class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-bold">4</div>
-                                    <span class="ml-2 text-sm font-medium text-gray-500">確認明細</span>
+                                    <span class="ml-2 text-sm font-medium text-gray-500">選擇寵物</span>
                                 </div>
                                 <div class="w-6 h-1 bg-gray-300"></div>
                                 <div class="flex items-center">
                                     <div class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-bold">5</div>
+                                    <span class="ml-2 text-sm font-medium text-gray-500">確認明細</span>
+                                </div>
+                                <div class="w-6 h-1 bg-gray-300"></div>
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-bold">6</div>
                                     <span class="ml-2 text-sm font-medium text-gray-500">付款</span>
                                 </div>
                             </div>
@@ -2408,6 +2413,59 @@
                             <div id="pet-selection-list" class="space-y-3 mb-4">
                                 <!-- 寵物列表將由 JS 動態生成 -->
                             </div>
+                            
+                            <!-- 新增寵物表單（隱藏狀態） -->
+                            <div id="add-pet-form-container" class="hidden mb-4">
+                                <div class="bg-white rounded-xl border-2 border-gray-200 p-4">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h4 class="font-medium text-[#181111]">新增寵物</h4>
+                                        <button id="close-add-pet-form" class="text-gray-500 hover:text-gray-700">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <form id="add-pet-form" class="space-y-3">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">寵物名稱 *</label>
+                                            <input type="text" id="new-pet-name" class="form-input-styled w-full" required placeholder="請輸入寵物名稱">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">品種 *</label>
+                                            <input type="text" id="new-pet-breed" class="form-input-styled w-full" required placeholder="請輸入品種">
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-1">年齡</label>
+                                                <input type="number" id="new-pet-age" class="form-input-styled w-full" placeholder="歲" min="0">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-1">性別</label>
+                                                <select id="new-pet-gender" class="form-input-styled w-full">
+                                                    <option value="">請選擇</option>
+                                                    <option value="male">公</option>
+                                                    <option value="female">母</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">照片</label>
+                                            <div class="flex flex-col items-center">
+                                                <img id="new-pet-photo-preview" src="https://images.unsplash.com/photo-1552053831-71594a27632d?w=150&h=150&fit=crop&crop=center" class="w-20 h-20 rounded-full object-cover border-2 border-gray-200 mb-2">
+                                                <input type="file" id="new-pet-photo-input" accept="image/*" class="hidden">
+                                                <button type="button" id="select-pet-photo-btn" class="text-sm text-blue-600 hover:text-blue-800 px-4 py-2 border border-blue-300 rounded-lg hover:bg-blue-50">
+                                                    從相簿選擇照片
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="flex gap-2 pt-2">
+                                            <button type="submit" class="btn-main flex-1">確認新增</button>
+                                            <button type="button" id="cancel-add-pet" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">取消</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            
                             <button id="continue-to-confirmation-btn" class="btn-main w-full opacity-50 cursor-not-allowed" disabled>下一步：確認訂單</button>
                         </div>
                         <!-- == END: 新增的選擇寵物步驟 == -->
@@ -3100,7 +3158,7 @@
                 });
                 
                 // 更新連接線
-                const connectors = document.querySelectorAll('.mb-6 .flex.items-center.justify-center.space-x-2 > .w-8.h-1');
+                const connectors = document.querySelectorAll('.mb-6 .flex.items-center.justify-center.space-x-1 > .w-6.h-1');
                 console.log('找到連接線:', connectors.length);
                 
                 connectors.forEach((connector, index) => {
@@ -3603,6 +3661,8 @@
                 }
                     
                 // 隱藏步驟1-3和繼續按鈕
+                const step4Pet = document.getElementById('step-pet-selection');
+                
                 if (step1) {
                     step1.style.display = 'none';
                     console.log('步驟1已隱藏');
@@ -3616,6 +3676,11 @@
                 if (step3) {
                     step3.style.display = 'none';
                     console.log('步驟3已隱藏');
+                }
+                
+                if (step4Pet) {
+                    step4Pet.style.display = 'none';
+                    console.log('步驟4（選擇寵物）已隱藏');
                 }
                 
                 if (continueSection) {
@@ -3666,10 +3731,20 @@
                 const petDetailsEl = document.getElementById('confirmation-pet-details');
 
                 if (bookingData.petId && petNameEl && petDetailsEl) {
-                    const selectedPet = window.mockPets.find(p => p.id === bookingData.petId);
+                    // 檢查是否為臨時寵物
+                    let selectedPet;
+                    if (bookingData.tempPet && bookingData.petId === bookingData.tempPet.id) {
+                        selectedPet = bookingData.tempPet;
+                    } else {
+                        selectedPet = window.mockPets.find(p => p.id === bookingData.petId);
+                    }
+                    
                     if (selectedPet) {
                         petNameEl.textContent = selectedPet.name;
-                        petDetailsEl.textContent = `${selectedPet.breed} • ${selectedPet.age}歲 • ${selectedPet.gender === 'male' ? '公' : '母'}`;
+                        const ageText = selectedPet.age ? `${selectedPet.age}歲` : '';
+                        const genderText = selectedPet.gender === 'male' ? '公' : selectedPet.gender === 'female' ? '母' : '';
+                        const details = [selectedPet.breed, ageText, genderText].filter(Boolean).join(' • ');
+                        petDetailsEl.textContent = details || selectedPet.breed;
                     }
                 }
                 
@@ -3792,28 +3867,31 @@
                         console.log('位置資訊區塊已顯示');
                     }
                     
-                    // 重新顯示價格透明度區塊
+                    // 返回步驟4（選擇寵物）
+                    const step4Pet = document.getElementById('step-pet-selection');
+                    const step5Confirmation = document.getElementById('step-4-order-confirmation');
                     const priceTransparency = document.getElementById('price-transparency');
-                    if (priceTransparency) {
-                        priceTransparency.style.display = 'block';
-                        console.log('價格透明度區塊已顯示');
-                    }
+                    const continueSection = document.getElementById('continue-booking-section');
                     
-                    // 返回步驟3
-                    const step3 = document.getElementById('step-3-time-selection');
-                    const step4 = document.getElementById('step-4-order-confirmation');
-                    
-                    if (step3 && step4) {
-                        // 隱藏步驟4
-                        step4.style.display = 'none';
-                        console.log('步驟4已隱藏');
+                    if (step4Pet && step5Confirmation) {
+                        // 隱藏步驟5（確認明細）
+                        step5Confirmation.style.display = 'none';
+                        console.log('步驟5已隱藏');
                         
-                        // 顯示步驟3
-                        step3.style.display = 'block';
-                        console.log('步驟3已顯示');
+                        // 顯示步驟4（選擇寵物）
+                        step4Pet.style.display = 'block';
+                        console.log('步驟4已顯示');
                         
-                        // 更新步驟指示器回到步驟3
-                        updateStepIndicator(3);
+                        // 隱藏價格明細和繼續預訂按鈕（選擇寵物時不應該顯示）
+                        if (priceTransparency) {
+                            priceTransparency.style.display = 'none';
+                        }
+                        if (continueSection) {
+                            continueSection.style.display = 'none';
+                        }
+                        
+                        // 更新步驟指示器回到步驟4
+                        updateStepIndicator(4);
                     }
                 });
                 
@@ -3827,51 +3905,51 @@
                         bookingData.specialRequirements = specialRequirements.value;
                     }
                     
-                    // 進入步驟5：藍星支付
-                    const step4 = document.getElementById('step-4-order-confirmation');
-                    const step5 = document.getElementById('step-5-payment');
+                    // 進入步驟6：藍星支付
+                    const step5Confirmation = document.getElementById('step-4-order-confirmation');
+                    const step6Payment = document.getElementById('step-5-payment');
                     
-                    if (step4 && step5) {
-                        // 隱藏步驟4
-                        step4.style.display = 'none';
-                        console.log('步驟4已隱藏');
+                    if (step5Confirmation && step6Payment) {
+                        // 隱藏步驟5（確認明細）
+                        step5Confirmation.style.display = 'none';
+                        console.log('步驟5已隱藏');
                         
-                        // 顯示步驟5
-                        step5.style.display = 'block';
-                        console.log('步驟5已顯示');
+                        // 顯示步驟6（付款）
+                        step6Payment.style.display = 'block';
+                        console.log('步驟6已顯示');
                         
-                        // 更新步驟指示器到步驟5
-                        updateStepIndicator(5);
+                        // 更新步驟指示器到步驟6
+                        updateStepIndicator(6);
                         
                         // 更新付款頁面的資訊
                         updatePaymentPage();
                     } else {
-                        console.error('找不到步驟4或步驟5元素');
+                        console.error('找不到步驟5或步驟6元素');
                     }
                 });
             }
             
-            // 綁定付款頁面事件 - 步驟5
+            // 綁定付款頁面事件 - 步驟6
             function attachPaymentListeners() {
                 // 綁定返回按鈕
                 document.getElementById('back-to-confirmation')?.addEventListener('click', function() {
                     console.log('返回確認明細按鈕被點擊');
                     
-                    // 返回步驟4
-                    const step4 = document.getElementById('step-4-order-confirmation');
-                    const step5 = document.getElementById('step-5-payment');
+                    // 返回步驟5（確認明細）
+                    const step5Confirmation = document.getElementById('step-4-order-confirmation');
+                    const step6Payment = document.getElementById('step-5-payment');
                     
-                    if (step4 && step5) {
-                        // 隱藏步驟5
-                        step5.style.display = 'none';
-                        console.log('步驟5已隱藏');
+                    if (step5Confirmation && step6Payment) {
+                        // 隱藏步驟6（付款）
+                        step6Payment.style.display = 'none';
+                        console.log('步驟6已隱藏');
                         
-                        // 顯示步驟4
-                        step4.style.display = 'block';
-                        console.log('步驟4已顯示');
+                        // 顯示步驟5（確認明細）
+                        step5Confirmation.style.display = 'block';
+                        console.log('步驟5已顯示');
                         
-                        // 更新步驟指示器回到步驟4
-                        updateStepIndicator(4);
+                        // 更新步驟指示器回到步驟5
+                        updateStepIndicator(5);
                     }
                 });
                 
@@ -4479,10 +4557,23 @@
                         // 隱藏步驟3，顯示寵物選擇步驟
                         const step3 = document.getElementById('step-3-time-selection');
                         const petSelectionStep = document.getElementById('step-pet-selection');
+                        const priceTransparency = document.getElementById('price-transparency');
+                        const continueSection = document.getElementById('continue-booking-section');
                         
                         if (step3 && petSelectionStep) {
                             step3.style.display = 'none';
                             petSelectionStep.style.display = 'block';
+                            
+                            // 隱藏價格明細和繼續預訂按鈕
+                            if (priceTransparency) {
+                                priceTransparency.style.display = 'none';
+                            }
+                            if (continueSection) {
+                                continueSection.style.display = 'none';
+                            }
+                            
+                            // 更新步驟指示器到步驟4
+                            updateStepIndicator(4);
                             
                             // 渲染寵物選擇列表
                             renderPetSelectionList();
@@ -4496,48 +4587,280 @@
             // == START: 新增 renderPetSelectionList 函式 ==
             function renderPetSelectionList() {
                 const listContainer = document.getElementById('pet-selection-list');
-                listContainer.innerHTML = window.mockPets.map(pet => `
-                    <div class="pet-selection-card p-3 border-2 border-gray-200 rounded-xl flex items-center gap-4 cursor-pointer" data-pet-id="${pet.id}">
+                
+                // 準備所有寵物列表（包括臨時寵物）
+                const allPets = [...window.mockPets];
+                if (bookingData.tempPet) {
+                    allPets.push(bookingData.tempPet);
+                }
+                
+                // 渲染現有寵物列表 + 「+」卡片
+                listContainer.innerHTML = allPets.map(pet => {
+                    const isSelected = bookingData.petId === pet.id;
+                    return `
+                    <div class="pet-selection-card p-3 border-2 rounded-xl flex items-center gap-4 cursor-pointer ${isSelected ? 'border-[#181111] bg-gray-50 selected' : 'border-gray-200'}" data-pet-id="${pet.id}">
                         <img src="${pet.photoUrl}" class="w-12 h-12 rounded-full object-cover">
-                        <div>
+                        <div class="flex-1">
                             <p class="font-bold text-base">${pet.name}</p>
-                            <p class="text-sm text-gray-500">${pet.breed}</p>
+                            <p class="text-sm text-gray-500">${pet.breed}${pet.id && pet.id.toString().startsWith('temp_') ? ' <span class="text-xs text-gray-400">(臨時)</span>' : ''}</p>
                         </div>
                     </div>
-                `).join('');
+                `;
+                }).join('') + `
+                    <!-- 新增寵物卡片 -->
+                    <div id="add-pet-card" class="p-3 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center gap-2 cursor-pointer hover:border-[#181111] hover:bg-gray-50 transition-colors">
+                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        <span class="text-gray-500 font-medium">新增寵物</span>
+                    </div>
+                `;
 
                 // 綁定寵物卡片點擊事件
                 document.querySelectorAll('.pet-selection-card').forEach(card => {
                     card.addEventListener('click', function() {
                         // 移除其他卡片的選中樣式
-                        document.querySelectorAll('.pet-selection-card').forEach(c => c.classList.remove('selected'));
+                        document.querySelectorAll('.pet-selection-card').forEach(c => {
+                            c.classList.remove('selected', 'border-[#181111]', 'bg-gray-50');
+                            c.classList.add('border-gray-200');
+                        });
                         // 新增選中樣式
-                        this.classList.add('selected');
+                        this.classList.add('selected', 'border-[#181111]', 'bg-gray-50');
+                        this.classList.remove('border-gray-200');
                         
-                        // 儲存選擇的寵物ID
-                        bookingData.petId = parseInt(this.dataset.petId);
+                        // 儲存選擇的寵物ID（可能是數字ID或臨時ID字串）
+                        const petId = this.dataset.petId;
+                        if (petId.startsWith('temp_')) {
+                            bookingData.petId = petId;
+                        } else {
+                            bookingData.petId = parseInt(petId);
+                            bookingData.tempPetId = null; // 清除臨時寵物ID
+                        }
                         
                         // 啟用下一步按鈕
                         const nextBtn = document.getElementById('continue-to-confirmation-btn');
                         nextBtn.disabled = false;
                         nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                        
+                        // 隱藏新增寵物表單
+                        const formContainer = document.getElementById('add-pet-form-container');
+                        if (formContainer) {
+                            formContainer.classList.add('hidden');
+                        }
                     });
                 });
 
-                // 綁定 "下一步：確認訂單" 按鈕的點擊事件
-                document.getElementById('continue-to-confirmation-btn').addEventListener('click', function() {
-                     if (bookingData.petId) {
-                        document.getElementById('step-pet-selection').style.display = 'none';
-                        document.getElementById('step-4-order-confirmation').style.display = 'block';
-                        updateOrderConfirmation(); // 更新最終確認頁的資訊
-                     }
+                // 綁定照片選擇按鈕（先定義變數，以便在後續使用）
+                const selectPhotoBtn = document.getElementById('select-pet-photo-btn');
+                const photoInput = document.getElementById('new-pet-photo-input');
+                const photoPreview = document.getElementById('new-pet-photo-preview');
+
+                // 綁定「+」卡片點擊事件
+                const addPetCard = document.getElementById('add-pet-card');
+                if (addPetCard) {
+                    addPetCard.addEventListener('click', function() {
+                        const formContainer = document.getElementById('add-pet-form-container');
+                        if (formContainer) {
+                            formContainer.classList.remove('hidden');
+                            // 重置表單和預覽圖片
+                            document.getElementById('add-pet-form').reset();
+                            if (photoInput) {
+                                photoInput.value = '';
+                            }
+                            if (photoPreview) {
+                                photoPreview.src = 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=150&h=150&fit=crop&crop=center';
+                            }
+                        }
+                    });
+                }
+                
+                if (selectPhotoBtn && photoInput) {
+                    selectPhotoBtn.addEventListener('click', function() {
+                        photoInput.click();
+                    });
+                }
+                
+                // 綁定照片選擇事件
+                if (photoInput && photoPreview) {
+                    photoInput.addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            // 驗證文件類型
+                            if (!file.type.startsWith('image/')) {
+                                alert('請選擇圖片檔案');
+                                return;
+                            }
+                            
+                            // 驗證文件大小（限制為5MB）
+                            if (file.size > 5 * 1024 * 1024) {
+                                alert('圖片檔案大小不能超過5MB');
+                                return;
+                            }
+                            
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                photoPreview.src = e.target.result;
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                }
+
+                // 綁定關閉表單按鈕
+                const closeFormBtn = document.getElementById('close-add-pet-form');
+                const cancelBtn = document.getElementById('cancel-add-pet');
+                [closeFormBtn, cancelBtn].forEach(btn => {
+                    if (btn) {
+                        btn.addEventListener('click', function() {
+                            const formContainer = document.getElementById('add-pet-form-container');
+                            if (formContainer) {
+                                formContainer.classList.add('hidden');
+                                document.getElementById('add-pet-form').reset();
+                                // 重置預覽圖片
+                                if (photoPreview) {
+                                    photoPreview.src = 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=150&h=150&fit=crop&crop=center';
+                                }
+                            }
+                        });
+                    }
                 });
 
-                // 綁定返回按鈕
-                document.getElementById('back-to-time-selection-from-pet')?.addEventListener('click', function() {
-                    document.getElementById('step-pet-selection').style.display = 'none';
-                    document.getElementById('step-3-time-selection').style.display = 'block';
-                });
+                // 綁定新增寵物表單提交事件
+                const addPetForm = document.getElementById('add-pet-form');
+                if (addPetForm) {
+                    // 移除舊的事件監聽器
+                    const newForm = addPetForm.cloneNode(true);
+                    addPetForm.replaceWith(newForm);
+                    
+                    newForm.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        
+                        // 獲取表單資料
+                        const photoPreviewEl = document.getElementById('new-pet-photo-preview');
+                        const photoUrl = photoPreviewEl ? photoPreviewEl.src : 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=150&h=150&fit=crop&crop=center';
+                        
+                        const petData = {
+                            name: document.getElementById('new-pet-name').value.trim(),
+                            breed: document.getElementById('new-pet-breed').value.trim(),
+                            age: parseInt(document.getElementById('new-pet-age').value) || null,
+                            gender: document.getElementById('new-pet-gender').value || null,
+                            photoUrl: photoUrl
+                        };
+                        
+                        // 驗證必填欄位
+                        if (!petData.name || !petData.breed) {
+                            alert('請填寫寵物名稱和品種');
+                            return;
+                        }
+                        
+                        // 詢問是否要保存到檔案
+                        const saveToFile = confirm('是否要將此寵物加入到檔案中？\n\n點擊「確定」：保存到檔案\n點擊「取消」：僅本次訂單使用');
+                        
+                        let newPetId;
+                        
+                        if (saveToFile) {
+                            // 保存到檔案
+                            const newPet = {
+                                id: Date.now(),
+                                ...petData,
+                                weight: null,
+                                isNeutered: null,
+                                personalityTags: [],
+                                vaccines: [],
+                                allergies: '',
+                                medications: '',
+                                specialNeeds: ''
+                            };
+                            window.mockPets.push(newPet);
+                            newPetId = newPet.id;
+                            alert('寵物已成功加入到檔案中！');
+                        } else {
+                            // 僅本次訂單使用（臨時寵物）
+                            newPetId = 'temp_' + Date.now();
+                            bookingData.tempPet = {
+                                id: newPetId,
+                                ...petData
+                            };
+                        }
+                        
+                        // 選擇新寵物
+                        bookingData.petId = newPetId;
+                        
+                        // 重新渲染寵物列表
+                        renderPetSelectionList();
+                        
+                        // 自動選中新添加的寵物並啟用下一步按鈕
+                        setTimeout(() => {
+                            const petCard = document.querySelector(`[data-pet-id="${newPetId}"]`);
+                            if (petCard) {
+                                // 觸發點擊事件以選中寵物
+                                petCard.click();
+                            } else {
+                                // 如果找不到卡片，直接啟用按鈕
+                                const nextBtn = document.getElementById('continue-to-confirmation-btn');
+                                if (nextBtn) {
+                                    nextBtn.disabled = false;
+                                    nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                                }
+                            }
+                        }, 100);
+                        
+                        // 隱藏表單並重置
+                        const formContainer = document.getElementById('add-pet-form-container');
+                        if (formContainer) {
+                            formContainer.classList.add('hidden');
+                            // 重置表單和文件輸入
+                            document.getElementById('add-pet-form').reset();
+                            if (photoInput) {
+                                photoInput.value = '';
+                            }
+                            if (photoPreview) {
+                                photoPreview.src = 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=150&h=150&fit=crop&crop=center';
+                            }
+                        }
+                    });
+                }
+
+                // 移除舊的事件監聽器並重新綁定 "下一步：確認訂單" 按鈕的點擊事件
+                const continueBtn = document.getElementById('continue-to-confirmation-btn');
+                if (continueBtn) {
+                    const newContinueBtn = continueBtn.cloneNode(true);
+                    continueBtn.replaceWith(newContinueBtn);
+                    newContinueBtn.addEventListener('click', function() {
+                         if (bookingData.petId) {
+                            document.getElementById('step-pet-selection').style.display = 'none';
+                            document.getElementById('step-4-order-confirmation').style.display = 'block';
+                            
+                            // 更新步驟指示器到步驟5
+                            updateStepIndicator(5);
+                            
+                            updateOrderConfirmation(); // 更新最終確認頁的資訊
+                         }
+                    });
+                    
+                    // 如果已經選擇了寵物，啟用按鈕
+                    if (bookingData.petId) {
+                        newContinueBtn.disabled = false;
+                        newContinueBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    }
+                }
+
+                // 移除舊的事件監聽器並重新綁定返回按鈕
+                const backBtn = document.getElementById('back-to-time-selection-from-pet');
+                if (backBtn) {
+                    const newBackBtn = backBtn.cloneNode(true);
+                    backBtn.replaceWith(newBackBtn);
+                    newBackBtn.addEventListener('click', function() {
+                        document.getElementById('step-pet-selection').style.display = 'none';
+                        document.getElementById('step-3-time-selection').style.display = 'block';
+                        
+                        // 重新檢查並顯示價格明細和繼續按鈕（如果需要）
+                        checkCanContinueBooking();
+                        
+                        // 更新步驟指示器回到步驟3
+                        updateStepIndicator(3);
+                    });
+                }
             }
             // == END: 新增 renderPetSelectionList 函式 ==
             
@@ -12285,3 +12608,4 @@
     </script>
 </body>
 </html>
+
