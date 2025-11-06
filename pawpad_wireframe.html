@@ -9198,10 +9198,15 @@
                                 <div class="bg-white p-4 rounded-xl border border-gray-100">
                                     <div class="flex gap-4">
                                         <img src="${room.imageUrl}" class="w-20 h-20 rounded-lg object-cover">
-                                        <div class="flex-1">
-                                            <div class="flex justify-between items-start">
-                                                <h3 class="font-bold text-[#181111] truncate">${room.name}</h3>
-                                                <span class="text-xs font-semibold ${room.status === 'active' ? 'text-green-600 bg-green-100' : 'text-gray-600 bg-gray-100'} px-2 py-0.5 rounded-full">${room.status === 'active' ? '啟用中' : '已禁用'}</span>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex justify-between items-start gap-2">
+                                                <div class="flex-1 min-w-0">
+                                                    <div class="flex items-center gap-2">
+                                                        <h3 class="font-bold text-[#181111] truncate flex-1 min-w-0">${room.name}</h3>
+                                                        <span class="text-xs font-semibold ${room.serviceType === 'overnight' ? 'text-blue-600 bg-blue-100' : 'text-purple-600 bg-purple-100'} px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0">${room.serviceType === 'overnight' ? '日租' : '時租'}</span>
+                                                    </div>
+                                                </div>
+                                                <span class="text-xs font-semibold ${room.status === 'active' ? 'text-green-600 bg-green-100' : 'text-gray-600 bg-gray-100'} px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0">${room.status === 'active' ? '啟用中' : '已禁用'}</span>
                                             </div>
                                             <p class="text-sm text-[#886364] mt-1 truncate">${room.description}</p>
                                             <p class="text-sm font-bold text-[#181111] mt-2">總庫存: ${room.stock} 間</p>
