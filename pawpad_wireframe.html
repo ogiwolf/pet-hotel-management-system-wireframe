@@ -741,6 +741,11 @@
             <div id="payout-settings-page" class="page-content hidden"></div>
             <div id="payout-history-page" class="page-content hidden"></div>
             <!-- == END: 新增的金流頁面容器 == -->
+            
+            <!-- == START: 活動管理頁面容器 == -->
+            <div id="promotion-management-page" class="page-content hidden"></div>
+            <div id="promotion-edit-page" class="page-content hidden"></div>
+            <!-- == END: 活動管理頁面容器 == -->
         </div>
 
         <!-- 全螢幕模態框 (用於新增/編輯) -->
@@ -1021,6 +1026,136 @@
                 { id: 25, roomId: 3, serviceType: 'daycare', customer: '張太太', startDate: '2025-01-15', endDate: '2025-01-15', startTime: '09:00', endTime: '17:00', duration: 8 },
             ];
             
+            // == START: 活動系統假資料 ==
+            window.mockPromotions = [
+                {
+                    id: 1,
+                    name: '新客戶優惠',
+                    description: '首次預訂享優惠',
+                    type: 'coupon', // coupon, discount_amount, discount_percent, full_amount_gift, full_amount_discount
+                    status: 'active', // draft, active, paused, ended, scheduled
+                    startTime: '2025-01-01T00:00:00',
+                    endTime: '2025-12-31T23:59:59',
+                    applyTo: 'all', // all, specific_rooms, service_type
+                    roomIds: [],
+                    serviceType: null,
+                    discountAmount: 100,
+                    discountPercent: null,
+                    minPurchaseAmount: 500,
+                    fullAmountThreshold: null,
+                    giftContent: null,
+                    usageLimit: {
+                        perUser: 1,
+                        total: 1000
+                    },
+                    canCombine: false,
+                    createdAt: '2025-01-01T00:00:00',
+                    updatedAt: '2025-01-01T00:00:00',
+                    usageCount: 45
+                },
+                {
+                    id: 2,
+                    name: '週年慶大優惠',
+                    description: '全館8折優惠',
+                    type: 'discount_percent',
+                    status: 'active',
+                    startTime: '2025-11-01T00:00:00',
+                    endTime: '2025-11-30T23:59:59',
+                    applyTo: 'all',
+                    roomIds: [],
+                    serviceType: null,
+                    discountAmount: null,
+                    discountPercent: 20,
+                    minPurchaseAmount: 0,
+                    fullAmountThreshold: null,
+                    giftContent: null,
+                    usageLimit: {
+                        perUser: 3,
+                        total: 5000
+                    },
+                    canCombine: false,
+                    createdAt: '2025-10-25T00:00:00',
+                    updatedAt: '2025-10-25T00:00:00',
+                    usageCount: 123
+                },
+                {
+                    id: 3,
+                    name: '滿額送好禮',
+                    description: '滿1000送寵物玩具',
+                    type: 'full_amount_gift',
+                    status: 'active',
+                    startTime: '2025-01-01T00:00:00',
+                    endTime: '2025-12-31T23:59:59',
+                    applyTo: 'all',
+                    roomIds: [],
+                    serviceType: null,
+                    discountAmount: null,
+                    discountPercent: null,
+                    minPurchaseAmount: 0,
+                    fullAmountThreshold: 1000,
+                    giftContent: '寵物玩具組',
+                    usageLimit: {
+                        perUser: 5,
+                        total: 2000
+                    },
+                    canCombine: true,
+                    createdAt: '2025-01-01T00:00:00',
+                    updatedAt: '2025-01-01T00:00:00',
+                    usageCount: 78
+                },
+                {
+                    id: 4,
+                    name: '日租專屬優惠',
+                    description: '日租服務折200元',
+                    type: 'discount_amount',
+                    status: 'scheduled',
+                    startTime: '2025-12-01T00:00:00',
+                    endTime: '2025-12-31T23:59:59',
+                    applyTo: 'service_type',
+                    roomIds: [],
+                    serviceType: 'overnight',
+                    discountAmount: 200,
+                    discountPercent: null,
+                    minPurchaseAmount: 800,
+                    fullAmountThreshold: null,
+                    giftContent: null,
+                    usageLimit: {
+                        perUser: 2,
+                        total: 500
+                    },
+                    canCombine: false,
+                    createdAt: '2025-11-20T00:00:00',
+                    updatedAt: '2025-11-20T00:00:00',
+                    usageCount: 0
+                },
+                {
+                    id: 5,
+                    name: '滿額打折活動',
+                    description: '滿2000打9折',
+                    type: 'full_amount_discount',
+                    status: 'draft',
+                    startTime: '2025-12-15T00:00:00',
+                    endTime: '2025-12-31T23:59:59',
+                    applyTo: 'all',
+                    roomIds: [],
+                    serviceType: null,
+                    discountAmount: null,
+                    discountPercent: 10,
+                    minPurchaseAmount: 0,
+                    fullAmountThreshold: 2000,
+                    giftContent: null,
+                    usageLimit: {
+                        perUser: 1,
+                        total: 300
+                    },
+                    canCombine: false,
+                    createdAt: '2025-11-25T00:00:00',
+                    updatedAt: '2025-11-25T00:00:00',
+                    usageCount: 0
+                }
+            ];
+            // == END: 活動系統假資料 ==
+            
             window.mockComments = [
                 { 
                     id: 1, 
@@ -1105,6 +1240,8 @@
                 financeDashboard: document.getElementById('finance-dashboard-page'),
                 payoutSettings: document.getElementById('payout-settings-page'),
                 payoutHistory: document.getElementById('payout-history-page'),
+                promotionManagement: document.getElementById('promotion-management-page'),
+                promotionEdit: document.getElementById('promotion-edit-page'),
                 // == END: 新增的頁面參照 ==
             };
             const calendarModal = document.getElementById('calendar-modal');
@@ -1127,6 +1264,8 @@
                     if (pageKey === 'financeDashboard') renderFinanceDashboardPage();
                     if (pageKey === 'payoutSettings') renderPayoutSettingsPage();
                     if (pageKey === 'payoutHistory') renderPayoutHistoryPage();
+                    if (pageKey === 'promotionManagement') renderPromotionManagementPage();
+                    if (pageKey === 'promotionEdit') renderPromotionEditPage(state);
                     // == END: 新增的頁面渲染呼叫 ==
                     
                     if (pageKey === 'roomManagement') renderRoomListPage();
@@ -8162,6 +8301,16 @@
                     </div>
                     <!-- == END: 新增金流管理入口 == -->
 
+                    <!-- == START: 活動管理入口 == -->
+                    <div id="promotion-management-link" class="p-4 rounded-xl border border-gray-100 bg-white cursor-pointer hover:bg-gray-50">
+                        <h2 class="text-lg font-bold text-[#181111] mb-2">🎁 活動管理</h2>
+                        <div class="flex justify-between items-center">
+                            <p class="text-sm text-[#886364]">管理優惠活動、折價券與促銷方案</p>
+                            <span class="text-[#886364]">></span>
+                        </div>
+                    </div>
+                    <!-- == END: 活動管理入口 == -->
+
                     <!-- 房型與方案管理 -->
                     <div id="manage-rooms-link" class="p-4 rounded-xl border border-gray-100 bg-white cursor-pointer hover:bg-gray-50">
                         <h2 class="text-lg font-bold text-[#181111] mb-2">房型與方案管理</h2>
@@ -9359,6 +9508,584 @@
                     });
                 });
             }
+
+            // == START: 活動管理系統 ==
+            function renderPromotionManagementPage() {
+                const container = pages.promotionManagement;
+                const promotions = window.mockPromotions || [];
+                
+                // 狀態標籤映射
+                const statusMap = {
+                    'draft': { text: '草稿', class: 'bg-gray-100 text-gray-600' },
+                    'active': { text: '進行中', class: 'bg-green-100 text-green-600' },
+                    'paused': { text: '已暫停', class: 'bg-yellow-100 text-yellow-600' },
+                    'ended': { text: '已結束', class: 'bg-red-100 text-red-600' },
+                    'scheduled': { text: '已排程', class: 'bg-blue-100 text-blue-600' }
+                };
+                
+                // 活動類型映射
+                const typeMap = {
+                    'coupon': '折價券',
+                    'discount_amount': '折價金額',
+                    'discount_percent': '折扣百分比',
+                    'full_amount_gift': '滿額送禮',
+                    'full_amount_discount': '滿額打折'
+                };
+                
+                container.innerHTML = `
+                    <div class="p-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="flex items-center gap-3">
+                                <button id="back-to-merchant-dashboard-from-promotion" class="text-2xl text-[#886364]">‹</button>
+                                <h1 class="text-2xl font-bold text-[#181111]">活動管理</h1>
+                            </div>
+                            <button id="add-new-promotion-btn" class="btn-main h-10 px-5 text-sm w-auto">＋ 新增活動</button>
+                        </div>
+                        
+                        <!-- 狀態篩選 -->
+                        <div class="mb-4 flex gap-2 overflow-x-auto pb-2">
+                            <button class="status-filter-btn px-4 py-2 rounded-full text-sm font-medium bg-[#181111] text-white whitespace-nowrap" data-status="all">全部</button>
+                            <button class="status-filter-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap" data-status="active">進行中</button>
+                            <button class="status-filter-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap" data-status="scheduled">已排程</button>
+                            <button class="status-filter-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap" data-status="draft">草稿</button>
+                            <button class="status-filter-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap" data-status="ended">已結束</button>
+                        </div>
+                        
+                        <!-- 活動列表 -->
+                        <div id="promotion-list-container" class="space-y-4">
+                            ${promotions.map(promo => {
+                                const status = statusMap[promo.status] || statusMap['draft'];
+                                const startDate = new Date(promo.startTime).toLocaleDateString('zh-TW');
+                                const endDate = new Date(promo.endTime).toLocaleDateString('zh-TW');
+                                
+                                // 計算折扣顯示
+                                let discountDisplay = '';
+                                if (promo.type === 'discount_amount') {
+                                    discountDisplay = `折 ${promo.discountAmount} 元`;
+                                } else if (promo.type === 'discount_percent') {
+                                    discountDisplay = `打 ${100 - promo.discountPercent} 折`;
+                                } else if (promo.type === 'full_amount_gift') {
+                                    discountDisplay = `滿 ${promo.fullAmountThreshold} 送 ${promo.giftContent}`;
+                                } else if (promo.type === 'full_amount_discount') {
+                                    discountDisplay = `滿 ${promo.fullAmountThreshold} 打 ${100 - promo.discountPercent} 折`;
+                                } else {
+                                    discountDisplay = `折 ${promo.discountAmount || 0} 元`;
+                                }
+                                
+                                return `
+                                    <div class="bg-white p-4 rounded-xl border border-gray-100 promotion-item" data-status="${promo.status}">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <div class="flex-1">
+                                                <div class="flex items-center gap-2 mb-1">
+                                                    <h3 class="font-bold text-[#181111]">${promo.name}</h3>
+                                                    <span class="text-xs font-semibold ${status.class} px-2 py-0.5 rounded-full">${status.text}</span>
+                                                </div>
+                                                <p class="text-sm text-[#886364] mb-2">${promo.description}</p>
+                                                <div class="flex items-center gap-4 text-xs text-gray-500">
+                                                    <span>類型：${typeMap[promo.type] || promo.type}</span>
+                                                    <span>期間：${startDate} ~ ${endDate}</span>
+                                                    <span>使用次數：${promo.usageCount || 0}</span>
+                                                </div>
+                                                <div class="mt-2 text-sm font-medium text-[#181111]">
+                                                    ${discountDisplay}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex justify-end gap-2 mt-3">
+                                            <button class="delete-promotion-btn py-1 px-3 bg-red-100 text-red-600 rounded-full text-xs font-medium" data-promotion-id="${promo.id}">刪除</button>
+                                            <button class="edit-promotion-btn py-1 px-3 bg-gray-200 text-gray-800 rounded-full text-xs font-medium" data-promotion-id="${promo.id}">編輯</button>
+                                            ${promo.status === 'active' ? '<button class="pause-promotion-btn py-1 px-3 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium" data-promotion-id="' + promo.id + '">暫停</button>' : ''}
+                                            ${promo.status === 'paused' ? '<button class="resume-promotion-btn py-1 px-3 bg-green-100 text-green-700 rounded-full text-xs font-medium" data-promotion-id="' + promo.id + '">恢復</button>' : ''}
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                        
+                        <div class="pt-4 mt-2">
+                            <button id="back-to-dashboard-from-promotion-btn" class="flex cursor-pointer items-center justify-center w-full h-12 rounded-full bg-gray-200 text-[#181111] font-bold">返回商家專區</button>
+                        </div>
+                    </div>
+                `;
+                
+                // 綁定事件監聽器
+                attachPromotionManagementListeners();
+            }
+            
+            function attachPromotionManagementListeners() {
+                setTimeout(() => {
+                    // 返回按鈕
+                    document.getElementById('back-to-merchant-dashboard-from-promotion')?.addEventListener('click', () => {
+                        showPage('merchantDashboard');
+                    });
+                    document.getElementById('back-to-dashboard-from-promotion-btn')?.addEventListener('click', () => {
+                        showPage('merchantDashboard');
+                    });
+                    
+                    // 新增活動按鈕
+                    document.getElementById('add-new-promotion-btn')?.addEventListener('click', () => {
+                        showPage('promotionEdit', { promotionId: null });
+                    });
+                    
+                    // 編輯活動按鈕
+                    document.querySelectorAll('.edit-promotion-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const promotionId = parseInt(this.dataset.promotionId);
+                            showPage('promotionEdit', { promotionId });
+                        });
+                    });
+                    
+                    // 刪除活動按鈕
+                    document.querySelectorAll('.delete-promotion-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const promotionId = parseInt(this.dataset.promotionId);
+                            if (confirm('確定要刪除此活動嗎？')) {
+                                window.mockPromotions = window.mockPromotions.filter(p => p.id !== promotionId);
+                                renderPromotionManagementPage();
+                            }
+                        });
+                    });
+                    
+                    // 暫停/恢復活動按鈕
+                    document.querySelectorAll('.pause-promotion-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const promotionId = parseInt(this.dataset.promotionId);
+                            const promotion = window.mockPromotions.find(p => p.id === promotionId);
+                            if (promotion) {
+                                promotion.status = 'paused';
+                                promotion.updatedAt = new Date().toISOString();
+                                renderPromotionManagementPage();
+                            }
+                        });
+                    });
+                    
+                    document.querySelectorAll('.resume-promotion-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const promotionId = parseInt(this.dataset.promotionId);
+                            const promotion = window.mockPromotions.find(p => p.id === promotionId);
+                            if (promotion) {
+                                promotion.status = 'active';
+                                promotion.updatedAt = new Date().toISOString();
+                                renderPromotionManagementPage();
+                            }
+                        });
+                    });
+                    
+                    // 狀態篩選按鈕
+                    document.querySelectorAll('.status-filter-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const status = this.dataset.status;
+                            
+                            // 更新按鈕樣式
+                            document.querySelectorAll('.status-filter-btn').forEach(b => {
+                                b.classList.remove('bg-[#181111]', 'text-white');
+                                b.classList.add('bg-gray-100', 'text-gray-700');
+                            });
+                            this.classList.remove('bg-gray-100', 'text-gray-700');
+                            this.classList.add('bg-[#181111]', 'text-white');
+                            
+                            // 篩選活動
+                            const items = document.querySelectorAll('.promotion-item');
+                            items.forEach(item => {
+                                if (status === 'all' || item.dataset.status === status) {
+                                    item.classList.remove('hidden');
+                                } else {
+                                    item.classList.add('hidden');
+                                }
+                            });
+                        });
+                    });
+                }, 100);
+            }
+            
+            function renderPromotionEditPage(state) {
+                const container = pages.promotionEdit;
+                const promotionId = state?.promotionId;
+                const promotion = promotionId ? window.mockPromotions.find(p => p.id === promotionId) : null;
+                const isEditing = !!promotion;
+                
+                container.innerHTML = `
+                    <div class="p-4 overflow-y-auto max-h-full">
+                        <div class="flex justify-between items-center mb-4 sticky top-0 bg-gray-50 py-2 z-10">
+                            <button id="cancel-promotion-form-btn" class="text-lg font-bold p-2">‹ 返回</button>
+                            <h1 class="text-xl font-bold text-[#181111] flex-1 text-center">${isEditing ? '編輯活動' : '新增活動'}</h1>
+                            <div class="w-20"></div>
+                        </div>
+                        
+                        <form id="promotion-form" class="space-y-4 px-2">
+                            <!-- 基本資訊 -->
+                            <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                <h3 class="text-sm font-bold text-[#181111] mb-3">基本資訊</h3>
+                                
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="text-sm font-medium text-[#886364] block mb-1">活動名稱 *</label>
+                                        <input type="text" id="promotion-name" class="form-input-styled" value="${isEditing ? promotion.name : ''}" required>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="text-sm font-medium text-[#886364] block mb-1">活動描述</label>
+                                        <textarea id="promotion-description" class="form-input-styled h-20" placeholder="簡短描述此活動">${isEditing ? promotion.description : ''}</textarea>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="text-sm font-medium text-[#886364] block mb-1">活動狀態 *</label>
+                                        <select id="promotion-status" class="form-input-styled" required>
+                                            ${(() => {
+                                                if (!isEditing) {
+                                                    // 新增時：可以選擇所有狀態
+                                                    return `
+                                                        <option value="draft" selected>草稿</option>
+                                                        <option value="scheduled">已排程</option>
+                                                        <option value="active">進行中</option>
+                                                        <option value="paused">已暫停</option>
+                                                        <option value="ended">已結束</option>
+                                                    `;
+                                                } else {
+                                                    // 編輯時：根據當前狀態限制可選選項
+                                                    const currentStatus = promotion.status;
+                                                    let options = '';
+                                                    
+                                                    if (currentStatus === 'draft') {
+                                                        // 草稿可以改為：已排程、進行中、已結束
+                                                        options = `
+                                                            <option value="draft" selected>草稿</option>
+                                                            <option value="scheduled">已排程</option>
+                                                            <option value="active">進行中</option>
+                                                            <option value="ended">已結束</option>
+                                                        `;
+                                                    } else if (currentStatus === 'scheduled') {
+                                                        // 已排程可以改為：進行中、已暫停、已結束
+                                                        options = `
+                                                            <option value="scheduled" selected>已排程</option>
+                                                            <option value="active">進行中</option>
+                                                            <option value="paused">已暫停</option>
+                                                            <option value="ended">已結束</option>
+                                                        `;
+                                                    } else if (currentStatus === 'active') {
+                                                        // 進行中可以改為：已暫停、已結束
+                                                        options = `
+                                                            <option value="active" selected>進行中</option>
+                                                            <option value="paused">已暫停</option>
+                                                            <option value="ended">已結束</option>
+                                                        `;
+                                                    } else if (currentStatus === 'paused') {
+                                                        // 已暫停可以改為：進行中、已結束
+                                                        options = `
+                                                            <option value="paused" selected>已暫停</option>
+                                                            <option value="active">進行中</option>
+                                                            <option value="ended">已結束</option>
+                                                        `;
+                                                    } else if (currentStatus === 'ended') {
+                                                        // 已結束只能保持已結束（不應該再改回其他狀態）
+                                                        options = `
+                                                            <option value="ended" selected>已結束</option>
+                                                        `;
+                                                    }
+                                                    
+                                                    return options;
+                                                }
+                                            })()}
+                                        </select>
+                                        ${isEditing && promotion.status === 'ended' ? '<p class="text-xs text-gray-500 mt-1">已結束的活動無法再修改狀態</p>' : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 活動類型與優惠設定 -->
+                            <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                <h3 class="text-sm font-bold text-[#181111] mb-3">活動類型與優惠設定</h3>
+                                
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="text-sm font-medium text-[#886364] block mb-1">活動類型 *</label>
+                                        <select id="promotion-type" class="form-input-styled" required>
+                                            <option value="coupon" ${isEditing && promotion.type === 'coupon' ? 'selected' : ''}>折價券</option>
+                                            <option value="discount_amount" ${isEditing && promotion.type === 'discount_amount' ? 'selected' : ''}>折價金額</option>
+                                            <option value="discount_percent" ${isEditing && promotion.type === 'discount_percent' ? 'selected' : ''}>折扣百分比</option>
+                                            <option value="full_amount_gift" ${isEditing && promotion.type === 'full_amount_gift' ? 'selected' : ''}>滿額送禮</option>
+                                            <option value="full_amount_discount" ${isEditing && promotion.type === 'full_amount_discount' ? 'selected' : ''}>滿額打折</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- 動態顯示的優惠設定欄位 -->
+                                    <div id="promotion-discount-fields" class="space-y-4">
+                                        <!-- 將由 JavaScript 動態生成 -->
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 適用範圍 -->
+                            <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                <h3 class="text-sm font-bold text-[#181111] mb-3">適用範圍</h3>
+                                
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="text-sm font-medium text-[#886364] block mb-1">適用對象 *</label>
+                                        <select id="promotion-apply-to" class="form-input-styled" required>
+                                            <option value="all" ${isEditing && promotion.applyTo === 'all' ? 'selected' : ''}>全部</option>
+                                            <option value="specific_rooms" ${isEditing && promotion.applyTo === 'specific_rooms' ? 'selected' : ''}>指定房型</option>
+                                            <option value="service_type" ${isEditing && promotion.applyTo === 'service_type' ? 'selected' : ''}>服務類型</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- 動態顯示的適用範圍欄位 -->
+                                    <div id="promotion-apply-fields" class="space-y-4">
+                                        <!-- 將由 JavaScript 動態生成 -->
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 活動時間 -->
+                            <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                <h3 class="text-sm font-bold text-[#181111] mb-3">活動時間</h3>
+                                
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="text-sm font-medium text-[#886364] block mb-1">開始時間 *</label>
+                                        <input type="datetime-local" id="promotion-start-time" class="form-input-styled" value="${isEditing ? promotion.startTime.substring(0, 16) : ''}" required>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="text-sm font-medium text-[#886364] block mb-1">結束時間 *</label>
+                                        <input type="datetime-local" id="promotion-end-time" class="form-input-styled" value="${isEditing ? promotion.endTime.substring(0, 16) : ''}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 使用限制 -->
+                            <div class="bg-white p-4 rounded-xl border border-gray-100">
+                                <h3 class="text-sm font-bold text-[#181111] mb-3">使用限制</h3>
+                                
+                                <div class="space-y-4">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="text-sm font-medium text-[#886364] block mb-1">每人限用次數</label>
+                                            <input type="number" id="promotion-per-user-limit" class="form-input-styled" value="${isEditing ? promotion.usageLimit.perUser : 1}" min="1" required>
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="text-sm font-medium text-[#886364] block mb-1">總使用次數上限</label>
+                                            <input type="number" id="promotion-total-limit" class="form-input-styled" value="${isEditing ? promotion.usageLimit.total : 1000}" min="1" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" id="promotion-can-combine" class="h-4 w-4 rounded border-gray-300 text-black focus:ring-black" ${isEditing && promotion.canCombine ? 'checked' : ''}>
+                                            <span class="ml-2 text-sm text-[#886364]">可與其他優惠合併使用</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 提交按鈕 -->
+                            <div class="flex gap-3 pt-4">
+                                <button type="button" id="cancel-promotion-form-btn-2" class="flex-1 h-12 rounded-full bg-gray-200 text-[#181111] font-bold">取消</button>
+                                <button type="submit" class="flex-1 h-12 rounded-full bg-[#181111] text-white font-bold">${isEditing ? '儲存' : '建立'}</button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+                
+                // 綁定事件監聽器
+                attachPromotionEditListeners(promotion);
+            }
+            
+            function attachPromotionEditListeners(promotion) {
+                setTimeout(() => {
+                    // 返回按鈕
+                    document.getElementById('cancel-promotion-form-btn')?.addEventListener('click', () => {
+                        showPage('promotionManagement');
+                    });
+                    document.getElementById('cancel-promotion-form-btn-2')?.addEventListener('click', () => {
+                        showPage('promotionManagement');
+                    });
+                    
+                    // 活動類型變更時更新優惠設定欄位
+                    const typeSelect = document.getElementById('promotion-type');
+                    const discountFields = document.getElementById('promotion-discount-fields');
+                    const applyToSelect = document.getElementById('promotion-apply-to');
+                    const applyFields = document.getElementById('promotion-apply-fields');
+                    
+                    function updateDiscountFields() {
+                        const type = typeSelect.value;
+                        let html = '';
+                        
+                        if (type === 'coupon' || type === 'discount_amount') {
+                            html = `
+                                <div>
+                                    <label class="text-sm font-medium text-[#886364] block mb-1">折價金額 (NT$) *</label>
+                                    <input type="number" id="promotion-discount-amount" class="form-input-styled" value="${promotion?.discountAmount || ''}" min="0" required>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-[#886364] block mb-1">最低消費金額 (NT$)</label>
+                                    <input type="number" id="promotion-min-purchase" class="form-input-styled" value="${promotion?.minPurchaseAmount || 0}" min="0">
+                                </div>
+                            `;
+                        } else if (type === 'discount_percent') {
+                            html = `
+                                <div>
+                                    <label class="text-sm font-medium text-[#886364] block mb-1">折扣百分比 (%) *</label>
+                                    <input type="number" id="promotion-discount-percent" class="form-input-styled" value="${promotion?.discountPercent || ''}" min="1" max="99" required>
+                                    <p class="text-xs text-gray-500 mt-1">例如：輸入 20 表示打 8 折</p>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-[#886364] block mb-1">最低消費金額 (NT$)</label>
+                                    <input type="number" id="promotion-min-purchase" class="form-input-styled" value="${promotion?.minPurchaseAmount || 0}" min="0">
+                                </div>
+                            `;
+                        } else if (type === 'full_amount_gift') {
+                            html = `
+                                <div>
+                                    <label class="text-sm font-medium text-[#886364] block mb-1">滿額門檻 (NT$) *</label>
+                                    <input type="number" id="promotion-full-amount-threshold" class="form-input-styled" value="${promotion?.fullAmountThreshold || ''}" min="0" required>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-[#886364] block mb-1">贈品內容 *</label>
+                                    <input type="text" id="promotion-gift-content" class="form-input-styled" value="${promotion?.giftContent || ''}" required>
+                                </div>
+                            `;
+                        } else if (type === 'full_amount_discount') {
+                            html = `
+                                <div>
+                                    <label class="text-sm font-medium text-[#886364] block mb-1">滿額門檻 (NT$) *</label>
+                                    <input type="number" id="promotion-full-amount-threshold" class="form-input-styled" value="${promotion?.fullAmountThreshold || ''}" min="0" required>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-[#886364] block mb-1">折扣百分比 (%) *</label>
+                                    <input type="number" id="promotion-discount-percent" class="form-input-styled" value="${promotion?.discountPercent || ''}" min="1" max="99" required>
+                                    <p class="text-xs text-gray-500 mt-1">例如：輸入 10 表示打 9 折</p>
+                                </div>
+                            `;
+                        }
+                        
+                        discountFields.innerHTML = html;
+                    }
+                    
+                    function updateApplyFields() {
+                        const applyTo = applyToSelect.value;
+                        let html = '';
+                        
+                        if (applyTo === 'specific_rooms') {
+                            const rooms = window.mockRoomTypes || [];
+                            html = `
+                                <div>
+                                    <label class="text-sm font-medium text-[#886364] block mb-1">選擇房型 *</label>
+                                    <div class="space-y-2 max-h-40 overflow-y-auto">
+                                        ${rooms.map(room => `
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="promotion-room-checkbox h-4 w-4 rounded border-gray-300 text-black focus:ring-black" value="${room.id}" ${promotion?.roomIds?.includes(room.id) ? 'checked' : ''}>
+                                                <span class="ml-2 text-sm text-[#886364]">${room.name}</span>
+                                            </label>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        } else if (applyTo === 'service_type') {
+                            html = `
+                                <div>
+                                    <label class="text-sm font-medium text-[#886364] block mb-1">服務類型 *</label>
+                                    <select id="promotion-service-type" class="form-input-styled" required>
+                                        <option value="overnight" ${promotion?.serviceType === 'overnight' ? 'selected' : ''}>日租 (過夜寄宿)</option>
+                                        <option value="daycare" ${promotion?.serviceType === 'daycare' ? 'selected' : ''}>時租 (日間安親)</option>
+                                    </select>
+                                </div>
+                            `;
+                        }
+                        
+                        applyFields.innerHTML = html;
+                    }
+                    
+                    // 初始化欄位
+                    updateDiscountFields();
+                    updateApplyFields();
+                    
+                    // 監聽變更
+                    typeSelect.addEventListener('change', updateDiscountFields);
+                    applyToSelect.addEventListener('change', updateApplyFields);
+                    
+                    // 表單提交
+                    document.getElementById('promotion-form')?.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        
+                        const formData = {
+                            name: document.getElementById('promotion-name').value.trim(),
+                            description: document.getElementById('promotion-description').value.trim(),
+                            status: document.getElementById('promotion-status').value,
+                            type: document.getElementById('promotion-type').value,
+                            applyTo: document.getElementById('promotion-apply-to').value,
+                            startTime: document.getElementById('promotion-start-time').value + ':00',
+                            endTime: document.getElementById('promotion-end-time').value + ':00',
+                            usageLimit: {
+                                perUser: parseInt(document.getElementById('promotion-per-user-limit').value) || 1,
+                                total: parseInt(document.getElementById('promotion-total-limit').value) || 1000
+                            },
+                            canCombine: document.getElementById('promotion-can-combine').checked
+                        };
+                        
+                        // 根據活動類型設定優惠參數
+                        if (formData.type === 'coupon' || formData.type === 'discount_amount') {
+                            formData.discountAmount = parseInt(document.getElementById('promotion-discount-amount').value) || 0;
+                            formData.discountPercent = null;
+                            formData.minPurchaseAmount = parseInt(document.getElementById('promotion-min-purchase').value) || 0;
+                            formData.fullAmountThreshold = null;
+                            formData.giftContent = null;
+                        } else if (formData.type === 'discount_percent') {
+                            formData.discountPercent = parseInt(document.getElementById('promotion-discount-percent').value) || 0;
+                            formData.discountAmount = null;
+                            formData.minPurchaseAmount = parseInt(document.getElementById('promotion-min-purchase').value) || 0;
+                            formData.fullAmountThreshold = null;
+                            formData.giftContent = null;
+                        } else if (formData.type === 'full_amount_gift') {
+                            formData.fullAmountThreshold = parseInt(document.getElementById('promotion-full-amount-threshold').value) || 0;
+                            formData.giftContent = document.getElementById('promotion-gift-content').value.trim();
+                            formData.discountAmount = null;
+                            formData.discountPercent = null;
+                            formData.minPurchaseAmount = 0;
+                        } else if (formData.type === 'full_amount_discount') {
+                            formData.fullAmountThreshold = parseInt(document.getElementById('promotion-full-amount-threshold').value) || 0;
+                            formData.discountPercent = parseInt(document.getElementById('promotion-discount-percent').value) || 0;
+                            formData.discountAmount = null;
+                            formData.giftContent = null;
+                            formData.minPurchaseAmount = 0;
+                        }
+                        
+                        // 根據適用對象設定參數
+                        if (formData.applyTo === 'specific_rooms') {
+                            const checkedRooms = Array.from(document.querySelectorAll('.promotion-room-checkbox:checked')).map(cb => parseInt(cb.value));
+                            formData.roomIds = checkedRooms;
+                            formData.serviceType = null;
+                        } else if (formData.applyTo === 'service_type') {
+                            formData.serviceType = document.getElementById('promotion-service-type').value;
+                            formData.roomIds = [];
+                        } else {
+                            formData.roomIds = [];
+                            formData.serviceType = null;
+                        }
+                        
+                        // 儲存或更新活動
+                        if (promotion) {
+                            // 更新現有活動
+                            Object.assign(promotion, formData);
+                            promotion.updatedAt = new Date().toISOString();
+                        } else {
+                            // 新增活動
+                            const newPromotion = {
+                                id: Math.max(...window.mockPromotions.map(p => p.id), 0) + 1,
+                                ...formData,
+                                createdAt: new Date().toISOString(),
+                                updatedAt: new Date().toISOString(),
+                                usageCount: 0
+                            };
+                            window.mockPromotions.push(newPromotion);
+                        }
+                        
+                        showPage('promotionManagement');
+                    });
+                }, 100);
+            }
+            // == END: 活動管理系統 ==
 
 
             // --- 日曆功能 ---
@@ -11287,6 +12014,12 @@
                 if (e.target.closest('#finance-dashboard-link')) {
                     showPage('financeDashboard');
                 }
+                
+                // == START: 活動管理入口點擊事件 ==
+                if (e.target.closest('#promotion-management-link')) {
+                    showPage('promotionManagement');
+                }
+                // == END: 活動管理入口點擊事件 ==
                 // == END: 新增金流儀表板點擊事件 ==
                 if (e.target.closest('#back-to-merchant-dashboard-btn')) showPage('merchantDashboard');
                 if (e.target.closest('#manage-rooms-link')) showPage('roomManagement');
