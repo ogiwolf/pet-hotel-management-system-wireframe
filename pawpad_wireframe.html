@@ -2062,36 +2062,36 @@
                         <h2 class="text-lg font-bold text-[#181111] mb-4">預訂服務</h2>
                         
                         <!-- 步驟指示器 -->
-                        <div class="mb-6">
-                            <div class="flex items-center justify-center space-x-1">
+                        <div class="mb-4">
+                            <div class="flex items-center justify-center flex-wrap gap-x-0.5 gap-y-1.5">
                                 <div class="flex items-center">
-                                    <div class="w-8 h-8 rounded-full bg-[#181111] text-white flex items-center justify-center text-sm font-bold">1</div>
-                                    <span class="ml-2 text-sm font-medium text-[#181111]">服務類型</span>
+                                    <div class="w-6 h-6 rounded-full bg-[#181111] text-white flex items-center justify-center text-xs font-bold">1</div>
+                                    <span class="ml-1 text-xs font-medium text-[#181111] whitespace-nowrap">服務類型</span>
                                 </div>
-                                <div class="w-6 h-1 bg-gray-300"></div>
+                                <div class="w-4 h-0.5 bg-gray-300"></div>
                                 <div class="flex items-center">
-                                    <div class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-bold">2</div>
-                                    <span class="ml-2 text-sm font-medium text-gray-500">選擇房型</span>
+                                    <div class="w-6 h-6 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-xs font-bold">2</div>
+                                    <span class="ml-1 text-xs font-medium text-gray-500 whitespace-nowrap">選擇房型</span>
                                 </div>
-                                <div class="w-6 h-1 bg-gray-300"></div>
+                                <div class="w-4 h-0.5 bg-gray-300"></div>
                                 <div class="flex items-center">
-                                    <div class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-bold">3</div>
-                                    <span class="ml-2 text-sm font-medium text-gray-500">選擇時段</span>
+                                    <div class="w-6 h-6 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-xs font-bold">3</div>
+                                    <span class="ml-1 text-xs font-medium text-gray-500 whitespace-nowrap">選擇時段</span>
                                 </div>
-                                <div class="w-6 h-1 bg-gray-300"></div>
+                                <div class="w-4 h-0.5 bg-gray-300"></div>
                                 <div class="flex items-center">
-                                    <div class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-bold">4</div>
-                                    <span class="ml-2 text-sm font-medium text-gray-500">選擇寵物</span>
+                                    <div class="w-6 h-6 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-xs font-bold">4</div>
+                                    <span class="ml-1 text-xs font-medium text-gray-500 whitespace-nowrap">選擇寵物</span>
                                 </div>
-                                <div class="w-6 h-1 bg-gray-300"></div>
+                                <div class="w-4 h-0.5 bg-gray-300"></div>
                                 <div class="flex items-center">
-                                    <div class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-bold">5</div>
-                                    <span class="ml-2 text-sm font-medium text-gray-500">確認明細</span>
+                                    <div class="w-6 h-6 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-xs font-bold">5</div>
+                                    <span class="ml-1 text-xs font-medium text-gray-500 whitespace-nowrap">確認明細</span>
                                 </div>
-                                <div class="w-6 h-1 bg-gray-300"></div>
+                                <div class="w-4 h-0.5 bg-gray-300"></div>
                                 <div class="flex items-center">
-                                    <div class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-bold">6</div>
-                                    <span class="ml-2 text-sm font-medium text-gray-500">付款</span>
+                                    <div class="w-6 h-6 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-xs font-bold">6</div>
+                                    <span class="ml-1 text-xs font-medium text-gray-500 whitespace-nowrap">付款</span>
                                 </div>
                             </div>
                         </div>
@@ -3127,11 +3127,11 @@
                 console.log('更新步驟指示器到步驟:', currentStep);
                 
                 // 修正選擇器：找到步驟指示器容器下的每個步驟
-                const stepIndicators = document.querySelectorAll('.mb-6 .flex.items-center.justify-center.space-x-1 > .flex.items-center');
+                const stepIndicators = document.querySelectorAll('.mb-4 .flex.items-center.justify-center.flex-wrap > .flex.items-center');
                 console.log('找到步驟指示器:', stepIndicators.length);
                 
                 stepIndicators.forEach((indicator, index) => {
-                    const stepNumber = indicator.querySelector('.w-8.h-8');
+                    const stepNumber = indicator.querySelector('.w-6.h-6');
                     const stepText = indicator.querySelector('span');
                     
                     console.log(`步驟 ${index + 1}:`, { stepNumber, stepText });
@@ -3158,7 +3158,7 @@
                 });
                 
                 // 更新連接線
-                const connectors = document.querySelectorAll('.mb-6 .flex.items-center.justify-center.space-x-1 > .w-6.h-1');
+                const connectors = document.querySelectorAll('.mb-4 .flex.items-center.justify-center.flex-wrap > .w-4.h-0\\.5');
                 console.log('找到連接線:', connectors.length);
                 
                 connectors.forEach((connector, index) => {
