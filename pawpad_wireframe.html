@@ -2847,6 +2847,8 @@
                     // 設定預設日期後，自動計算入住天數
                     bookingData.checkinDate = today.toISOString().split('T')[0];
                     bookingData.checkoutDate = tomorrow.toISOString().split('T')[0];
+                    bookingData.dates.checkin = bookingData.checkinDate;
+                    bookingData.dates.checkout = bookingData.checkoutDate;
                     bookingData.stayDuration = 1; // 預設1晚
                     
                     console.log('預設日期已設定:', { 
@@ -2855,10 +2857,18 @@
                         duration: bookingData.stayDuration 
                     });
                     
+                    // 更新入住天數顯示
+                    updateStayDuration();
+                    
                     // 如果有選擇房型，自動更新價格顯示
                     if (bookingData.roomId) {
                         console.log('檢測到已選擇房型，自動更新價格顯示');
                         updatePriceTransparency();
+                    }
+                    
+                    // 檢查是否可以繼續預訂（如果已經選擇了服務類型和房型）
+                    if (bookingData.serviceType && bookingData.roomId) {
+                        checkCanContinueBooking();
                     }
                     
                     checkinInput.addEventListener('change', function() {
@@ -3103,8 +3113,11 @@
                                         checkoutInput.value = tomorrow.toISOString().split('T')[0];
                                         
                                         // 更新預訂資料
+                                        bookingData.checkinDate = checkinInput.value;
+                                        bookingData.checkoutDate = checkoutInput.value;
                                         bookingData.dates.checkin = checkinInput.value;
                                         bookingData.dates.checkout = checkoutInput.value;
+                                        bookingData.stayDuration = 1;
                                         
                                         // 觸發更新
                                         updateStayDuration();
@@ -3115,7 +3128,7 @@
                                 updateStepIndicator(3);
                                 
                                 // 檢查是否可以繼續
-                                checkCurrentStepCanContinue();
+                                checkCanContinueBooking();
                             }
                         }, 300); // 短暫延遲以顯示選中效果
                     });
