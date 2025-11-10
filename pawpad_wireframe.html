@@ -3054,6 +3054,47 @@
                                             <textarea id="special-requirements" placeholder="請輸入特殊需求或注意事項..." class="w-full bg-transparent border-none resize-none text-sm text-gray-600 focus:outline-none" rows="3"></textarea>
                                         </div>
                                     </div>
+                                    
+                                    <!-- 優惠券選擇 -->
+                                    <div class="border-t border-gray-100 pt-4">
+                                        <h5 class="font-medium text-[#181111] mb-3">🎁 使用優惠券</h5>
+                                        <div id="coupon-selection-container" class="space-y-3">
+                                            <button id="select-coupon-btn" class="w-full p-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-[#181111] hover:text-[#181111] transition-colors flex items-center justify-center">
+                                                <span class="mr-2">🎫</span>
+                                                <span id="coupon-selected-text">選擇優惠券</span>
+                                            </button>
+                                            <div id="selected-coupon-display" class="hidden p-3 bg-green-50 border border-green-200 rounded-lg">
+                                                <div class="flex items-center justify-between">
+                                                    <div class="flex-1">
+                                                        <p class="font-medium text-green-800" id="selected-coupon-name"></p>
+                                                        <p class="text-sm text-green-600" id="selected-coupon-code"></p>
+                                                    </div>
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="text-sm font-bold text-green-600" id="selected-coupon-discount"></span>
+                                                        <button id="remove-coupon-btn" class="text-red-600 hover:text-red-800 text-sm">移除</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- 價格明細 -->
+                                    <div class="border-t border-gray-100 pt-4">
+                                        <div class="space-y-2">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-sm text-gray-600">原價</span>
+                                                <span class="text-sm font-medium text-gray-800" id="confirmation-original-price">NT$ 0</span>
+                                            </div>
+                                            <div id="coupon-discount-row" class="hidden flex justify-between items-center">
+                                                <span class="text-sm text-green-600">優惠券折扣</span>
+                                                <span class="text-sm font-medium text-green-600" id="confirmation-coupon-discount">-NT$ 0</span>
+                                            </div>
+                                            <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+                                                <span class="text-lg font-bold text-[#181111]">總計</span>
+                                                <span class="text-xl font-bold text-green-600" id="confirmation-total-price">NT$ 0</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -4288,6 +4329,14 @@
                     }
                 }
                 
+                // 初始化優惠券顯示和價格
+                if (window.updateConfirmationPrice) {
+                    window.updateConfirmationPrice();
+                }
+                if (window.selectedCoupon && window.updateCouponDisplay) {
+                    window.updateCouponDisplay();
+                }
+                
                 console.log('訂單確認頁面明細更新完成');
             }
             
@@ -4435,7 +4484,167 @@
                     }
                 });
                 
+                // 優惠券選擇功能（全域變數，供多個函數使用）
+                if (!window.selectedCoupon) {
+                    window.selectedCoupon = null;
+                }
+                
                 // 綁定確認並付款按鈕
+                
+                // 打開優惠券選擇 modal
+                document.getElementById('select-coupon-btn')?.addEventListener('click', function() {
+                    openCouponSelectionModal();
+                });
+                
+                // 移除優惠券
+                document.getElementById('remove-coupon-btn')?.addEventListener('click', function() {
+                    window.selectedCoupon = null;
+                    if (window.updateCouponDisplay) window.updateCouponDisplay();
+                    if (window.updateConfirmationPrice) window.updateConfirmationPrice();
+                });
+                
+                // 打開優惠券選擇 modal
+                function openCouponSelectionModal() {
+                    const userCoupons = (window.userCoupons || []).filter(coupon => 
+                        coupon.status === 'available' && 
+                        new Date(coupon.expiresAt) > new Date()
+                    );
+                    
+                    if (userCoupons.length === 0) {
+                        alert('您目前沒有可用的優惠券');
+                        return;
+                    }
+                    
+                    const html = `
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold text-[#181111]">選擇優惠券</h2>
+                            <button id="modal-close-btn" class="text-2xl">&times;</button>
+                        </div>
+                        <div class="space-y-3 max-h-96 overflow-y-auto">
+                            ${userCoupons.map(coupon => {
+                                const expiresDate = new Date(coupon.expiresAt).toLocaleDateString('zh-TW');
+                                const isSelected = window.selectedCoupon && window.selectedCoupon.id === coupon.id;
+                                
+                                return `
+                                    <div class="bg-white border-2 ${isSelected ? 'border-green-500' : 'border-gray-200'} rounded-xl p-4 cursor-pointer hover:border-[#181111] transition-colors" data-coupon-id="${coupon.id}">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex-1">
+                                                <p class="font-bold text-[#181111] mb-1">${coupon.name}</p>
+                                                <p class="text-sm text-[#886364] mb-2">折 ${coupon.discountAmount} 元${coupon.minPurchaseAmount > 0 ? ` • 最低消費 ${coupon.minPurchaseAmount} 元` : ''}</p>
+                                                <div class="flex items-center gap-3 text-xs text-gray-500">
+                                                    <span>優惠碼：<span class="font-mono font-bold text-[#181111]">${coupon.couponCode}</span></span>
+                                                    <span>到期日：${expiresDate}</span>
+                                                </div>
+                                            </div>
+                                            ${isSelected ? '<span class="text-green-600 font-bold">✓ 已選擇</span>' : ''}
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                        <div class="mt-4">
+                            <button id="apply-coupon-btn" class="btn-main w-full h-10">確認使用</button>
+                        </div>
+                    `;
+                    
+                    const modal = openOverlayWithContent(html);
+                    
+                    // 綁定優惠券選擇事件
+                    modal.querySelectorAll('[data-coupon-id]').forEach(card => {
+                        card.addEventListener('click', function() {
+                            const couponId = parseInt(this.dataset.couponId);
+                            window.selectedCoupon = userCoupons.find(c => c.id === couponId);
+                            
+                            // 更新選擇狀態
+                            modal.querySelectorAll('[data-coupon-id]').forEach(c => {
+                                c.classList.remove('border-green-500');
+                                c.classList.add('border-gray-200');
+                                c.querySelector('span:last-child')?.remove();
+                            });
+                            this.classList.remove('border-gray-200');
+                            this.classList.add('border-green-500');
+                            this.querySelector('.flex-1').insertAdjacentHTML('afterend', '<span class="text-green-600 font-bold">✓ 已選擇</span>');
+                        });
+                    });
+                    
+                    // 確認使用按鈕
+                    modal.querySelector('#apply-coupon-btn')?.addEventListener('click', function() {
+                        if (window.selectedCoupon) {
+                            if (window.updateCouponDisplay) window.updateCouponDisplay();
+                            if (window.updateConfirmationPrice) window.updateConfirmationPrice();
+                            document.body.removeChild(modal);
+                        } else {
+                            alert('請選擇一張優惠券');
+                        }
+                    });
+                }
+                
+                // 更新優惠券顯示（全域函數，供其他函數調用）
+                window.updateCouponDisplay = function() {
+                    const selectBtn = document.getElementById('select-coupon-btn');
+                    const selectedDisplay = document.getElementById('selected-coupon-display');
+                    const couponName = document.getElementById('selected-coupon-name');
+                    const couponCode = document.getElementById('selected-coupon-code');
+                    const couponDiscount = document.getElementById('selected-coupon-discount');
+                    const couponText = document.getElementById('coupon-selected-text');
+                    
+                    if (window.selectedCoupon) {
+                        if (selectBtn) selectBtn.style.display = 'none';
+                        if (selectedDisplay) selectedDisplay.classList.remove('hidden');
+                        if (couponName) couponName.textContent = window.selectedCoupon.name;
+                        if (couponCode) couponCode.textContent = `優惠碼：${window.selectedCoupon.couponCode}`;
+                        if (couponDiscount) couponDiscount.textContent = `-NT$ ${window.selectedCoupon.discountAmount}`;
+                    } else {
+                        if (selectBtn) selectBtn.style.display = 'flex';
+                        if (selectedDisplay) selectedDisplay.classList.add('hidden');
+                        if (couponText) couponText.textContent = '選擇優惠券';
+                    }
+                };
+                
+                // 更新確認頁面價格（全域函數，供其他函數調用）
+                window.updateConfirmationPrice = function() {
+                    // 計算原價（從 bookingData 或確認頁面的價格顯示獲取）
+                    let originalPrice = 0;
+                    if (bookingData && bookingData.planPrice) {
+                        originalPrice = bookingData.planPrice;
+                    } else {
+                        const planPriceText = document.getElementById('confirmation-plan-price')?.textContent || 'NT$ 0';
+                        originalPrice = parseInt(planPriceText.replace(/[^0-9]/g, '')) || 0;
+                    }
+                    
+                    // 計算折扣
+                    let discount = 0;
+                    if (window.selectedCoupon) {
+                        // 檢查最低消費
+                        if (originalPrice >= window.selectedCoupon.minPurchaseAmount) {
+                            discount = window.selectedCoupon.discountAmount;
+                        } else {
+                            alert(`此優惠券需要最低消費 ${window.selectedCoupon.minPurchaseAmount} 元`);
+                            window.selectedCoupon = null;
+                            if (window.updateCouponDisplay) window.updateCouponDisplay();
+                            return;
+                        }
+                    }
+                    
+                    // 更新價格顯示
+                    const originalPriceEl = document.getElementById('confirmation-original-price');
+                    const discountRow = document.getElementById('coupon-discount-row');
+                    const discountEl = document.getElementById('confirmation-coupon-discount');
+                    const totalPriceEl = document.getElementById('confirmation-total-price');
+                    
+                    if (originalPriceEl) originalPriceEl.textContent = `NT$ ${originalPrice.toLocaleString()}`;
+                    
+                    if (discount > 0) {
+                        if (discountRow) discountRow.classList.remove('hidden');
+                        if (discountEl) discountEl.textContent = `-NT$ ${discount.toLocaleString()}`;
+                    } else {
+                        if (discountRow) discountRow.classList.add('hidden');
+                    }
+                    
+                    const totalPrice = Math.max(0, originalPrice - discount);
+                    if (totalPriceEl) totalPriceEl.textContent = `NT$ ${totalPrice.toLocaleString()}`;
+                };
+                
                 document.getElementById('confirm-and-pay-btn')?.addEventListener('click', function() {
                     console.log('確認並付款按鈕被點擊');
                     
@@ -4443,6 +4652,11 @@
                     const specialRequirements = document.getElementById('special-requirements');
                     if (specialRequirements) {
                         bookingData.specialRequirements = specialRequirements.value;
+                    }
+                    
+                    // 保存選中的優惠券
+                    if (window.selectedCoupon) {
+                        bookingData.selectedCoupon = window.selectedCoupon;
                     }
                     
                     // 進入步驟6：藍星支付
