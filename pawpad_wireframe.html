@@ -9404,26 +9404,24 @@
                                 </div>
                             </div>
                              <div>
-                                <label class="text-sm font-medium text-[#886364]">適用寵物種類</label>
-                                <div class="space-y-2 mt-2">
-                                    <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-black focus:ring-black" name="pet-type" value="dog"> <span class="ml-2 text-sm">狗</span></label>
-                                    <div id="dog-size-options" class="hidden pl-6 space-y-2">
-                                         <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300"> <span class="ml-2 text-sm">小型犬 (0-10公斤)</span></label>
-                                         <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300"> <span class="ml-2 text-sm">中型犬 (10-20公斤)</span></label>
-                                         <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300"> <span class="ml-2 text-sm">大型犬 (20公斤以上)</span></label>
+                                <label class="text-sm font-medium text-[#886364]">標籤</label>
+                                <div class="mt-2">
+                                    <div class="flex flex-wrap gap-2">
+                                        ${['小型犬', '中型犬', '大型犬', '貓', '兔子', '鳥類', '其他'].map(tag => {
+                                            const isChecked = isEditing && roomData.tags && roomData.tags.includes(tag);
+                                            return `
+                                                <label class="room-tag-checkbox inline-flex items-center cursor-pointer">
+                                                    <input type="checkbox" name="room-tags" value="${tag}" class="hidden room-tag-input" ${isChecked ? 'checked' : ''}>
+                                                    <span class="room-tag-label px-3 py-1 rounded-full text-sm transition-all ${isChecked ? 'bg-[#181111] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}">${tag}</span>
+                                                </label>
+                                            `;
+                                        }).join('')}
                                     </div>
-                                    <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300"> <span class="ml-2 text-sm">貓</span></label>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="text-sm font-medium text-[#886364]">可容納寵物數</label>
-                                    <input type="number" class="form-input-styled mt-1" value="${isEditing ? 1 : 1}">
-                                </div>
-                                <div>
-                                    <label class="text-sm font-medium text-[#886364]">房型總庫存</label>
-                                    <input type="number" class="form-input-styled mt-1" value="${isEditing ? roomData.stock : 1}">
-                                </div>
+                            <div>
+                                <label class="text-sm font-medium text-[#886364]">房型總庫存</label>
+                                <input type="number" class="form-input-styled mt-1" value="${isEditing ? roomData.stock : 1}">
                             </div>
                             
                             <div class="border-t pt-4">
@@ -9449,15 +9447,9 @@
                                         <label class="text-sm font-medium text-[#886364]">每晚價格 (NT$)</label>
                                         <input type="number" class="form-input-styled mt-1" id="base-price-overnight" value="${isEditing && roomData.serviceType === 'overnight' ? roomData.basePrice : ''}" min="0" placeholder="例如：800">
                                     </div>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label class="text-sm font-medium text-[#886364]">最短預訂天數</label>
-                                            <input type="number" class="form-input-styled mt-1" id="min-nights" value="${isEditing && roomData.serviceType === 'overnight' ? roomData.minNights : 1}" min="1">
-                                        </div>
-                                        <div>
-                                            <label class="text-sm font-medium text-[#886364]">最長預訂天數 (選填)</label>
-                                            <input type="number" class="form-input-styled mt-1" id="max-nights" value="${isEditing && roomData.serviceType === 'overnight' ? roomData.maxNights || '' : ''}" min="1" placeholder="無限制">
-                                        </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-[#886364]">最短預訂天數</label>
+                                        <input type="number" class="form-input-styled mt-1" id="min-nights" value="${isEditing && roomData.serviceType === 'overnight' ? roomData.minNights : 1}" min="1">
                                     </div>
                                 </div>
                                 
@@ -9505,6 +9497,33 @@
                         const daycareFields = formModal.querySelector('#daycare-pricing-fields');
                         overnightFields.classList.toggle('hidden', this.value !== 'overnight');
                         daycareFields.classList.toggle('hidden', this.value !== 'daycare');
+                    });
+                });
+                
+                // 標籤複選功能 - 切換標籤樣式
+                const tagCheckboxes = formModal.querySelectorAll('.room-tag-input');
+                tagCheckboxes.forEach(checkbox => {
+                    const label = checkbox.closest('.room-tag-checkbox');
+                    const labelSpan = label.querySelector('.room-tag-label');
+                    
+                    // 初始化樣式
+                    if (checkbox.checked) {
+                        labelSpan.classList.remove('bg-gray-100', 'text-gray-700');
+                        labelSpan.classList.add('bg-[#181111]', 'text-white');
+                    }
+                    
+                    // 點擊標籤時切換checkbox和樣式
+                    label.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        checkbox.checked = !checkbox.checked;
+                        
+                        if (checkbox.checked) {
+                            labelSpan.classList.remove('bg-gray-100', 'text-gray-700');
+                            labelSpan.classList.add('bg-[#181111]', 'text-white');
+                        } else {
+                            labelSpan.classList.remove('bg-[#181111]', 'text-white');
+                            labelSpan.classList.add('bg-gray-100', 'text-gray-700');
+                        }
                     });
                 });
             }
@@ -12093,10 +12112,6 @@
                 }
                 if (e.target.closest('#calendar-days')) handleDateClick(e);
                 // 管理行事曆 - 移除全域事件監聽器，改由 attachCalendarManagementListeners 處理
-                // 房型表單中的寵物類型
-                if (e.target.matches('input[name="pet-type"][value="dog"]')) {
-                    document.getElementById('dog-size-options').classList.toggle('hidden', !e.target.checked);
-                }
                 // Package management removed - packages are now integrated into room types
             });
 
