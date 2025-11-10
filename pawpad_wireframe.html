@@ -1133,7 +1133,7 @@
                     name: '滿額打折活動',
                     description: '滿2000打9折',
                     type: 'full_amount_discount',
-                    status: 'draft',
+                    status: 'scheduled',
                     startTime: '2025-12-15T00:00:00',
                     endTime: '2025-12-31T23:59:59',
                     applyTo: 'all',
@@ -9535,7 +9535,6 @@
                 
                 // 狀態標籤映射
                 const statusMap = {
-                    'draft': { text: '草稿', class: 'bg-gray-100 text-gray-600' },
                     'active': { text: '進行中', class: 'bg-green-100 text-green-600' },
                     'paused': { text: '已暫停', class: 'bg-yellow-100 text-yellow-600' },
                     'ended': { text: '已結束', class: 'bg-red-100 text-red-600' },
@@ -9566,14 +9565,33 @@
                             <button class="status-filter-btn px-4 py-2 rounded-full text-sm font-medium bg-[#181111] text-white whitespace-nowrap" data-status="all">全部</button>
                             <button class="status-filter-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap" data-status="active">進行中</button>
                             <button class="status-filter-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap" data-status="scheduled">已排程</button>
-                            <button class="status-filter-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap" data-status="draft">草稿</button>
                             <button class="status-filter-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 whitespace-nowrap" data-status="ended">已結束</button>
                         </div>
                         
                         <!-- 活動列表 -->
                         <div id="promotion-list-container" class="space-y-4">
-                            ${promotions.map(promo => {
-                                const status = statusMap[promo.status] || statusMap['draft'];
+                            ${promotions.length === 0 ? `
+                                <div class="bg-white p-8 rounded-xl border border-gray-100 text-center">
+                                    <p class="text-gray-500 text-sm">目前沒有活動</p>
+                                    <p class="text-gray-400 text-xs mt-2">點擊「新增活動」按鈕來建立第一個活動</p>
+                                </div>
+                            ` : promotions.map(promo => {
+                                // 自動更新活動狀態（已暫停除外）
+                                if (promo.status !== 'paused' && promo.startTime && promo.endTime) {
+                                    const now = new Date();
+                                    const start = new Date(promo.startTime);
+                                    const end = new Date(promo.endTime);
+                                    
+                                    if (now < start) {
+                                        promo.status = 'scheduled';
+                                    } else if (now >= start && now < end) {
+                                        promo.status = 'active';
+                                    } else {
+                                        promo.status = 'ended';
+                                    }
+                                }
+                                
+                                const status = statusMap[promo.status] || statusMap['scheduled'];
                                 const startDate = new Date(promo.startTime).toLocaleDateString('zh-TW');
                                 const endDate = new Date(promo.endTime).toLocaleDateString('zh-TW');
                                 
@@ -9611,7 +9629,7 @@
                                             </div>
                                         </div>
                                         <div class="flex justify-end gap-2 mt-3">
-                                            <button class="delete-promotion-btn py-1 px-3 bg-red-100 text-red-600 rounded-full text-xs font-medium" data-promotion-id="${promo.id}">刪除</button>
+                                            <button class="delete-promotion-btn py-1 px-3 bg-red-100 text-red-600 rounded-full text-xs font-medium" data-promotion-id="${promo.id}" data-promotion-name="${promo.name}" data-promotion-status="${promo.status}" data-promotion-usage="${promo.usageCount || 0}">刪除</button>
                                             <button class="edit-promotion-btn py-1 px-3 bg-gray-200 text-gray-800 rounded-full text-xs font-medium" data-promotion-id="${promo.id}">編輯</button>
                                             ${promo.status === 'active' ? '<button class="pause-promotion-btn py-1 px-3 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium" data-promotion-id="' + promo.id + '">暫停</button>' : ''}
                                             ${promo.status === 'paused' ? '<button class="resume-promotion-btn py-1 px-3 bg-green-100 text-green-700 rounded-full text-xs font-medium" data-promotion-id="' + promo.id + '">恢復</button>' : ''}
@@ -9658,7 +9676,28 @@
                     document.querySelectorAll('.delete-promotion-btn').forEach(btn => {
                         btn.addEventListener('click', function() {
                             const promotionId = parseInt(this.dataset.promotionId);
-                            if (confirm('確定要刪除此活動嗎？')) {
+                            const promotionName = this.dataset.promotionName || '此活動';
+                            const promotionStatus = this.dataset.promotionStatus;
+                            const promotionUsage = parseInt(this.dataset.promotionUsage) || 0;
+                            
+                            // 建立詳細的確認訊息
+                            let confirmMessage = `確定要刪除「${promotionName}」嗎？\n\n`;
+                            confirmMessage += `活動狀態：${statusMap[promotionStatus]?.text || promotionStatus}\n`;
+                            confirmMessage += `使用次數：${promotionUsage}\n\n`;
+                            
+                            if (promotionStatus === 'active') {
+                                confirmMessage += '⚠️ 此活動正在進行中，刪除後將立即失效！\n';
+                            } else if (promotionStatus === 'scheduled') {
+                                confirmMessage += '⚠️ 此活動已排程，刪除後將不會執行！\n';
+                            }
+                            
+                            if (promotionUsage > 0) {
+                                confirmMessage += `\n注意：此活動已被使用 ${promotionUsage} 次，刪除後相關記錄仍會保留。`;
+                            }
+                            
+                            confirmMessage += '\n\n此操作無法復原！';
+                            
+                            if (confirm(confirmMessage)) {
                                 window.mockPromotions = window.mockPromotions.filter(p => p.id !== promotionId);
                                 renderPromotionManagementPage();
                             }
@@ -9705,13 +9744,38 @@
                             
                             // 篩選活動
                             const items = document.querySelectorAll('.promotion-item');
+                            let visibleCount = 0;
+                            
                             items.forEach(item => {
                                 if (status === 'all' || item.dataset.status === status) {
                                     item.classList.remove('hidden');
+                                    visibleCount++;
                                 } else {
                                     item.classList.add('hidden');
                                 }
                             });
+                            
+                            // 如果篩選後沒有結果，顯示提示
+                            const container = document.getElementById('promotion-list-container');
+                            let emptyState = container.querySelector('.filter-empty-state');
+                            
+                            if (visibleCount === 0 && status !== 'all') {
+                                if (!emptyState) {
+                                    emptyState = document.createElement('div');
+                                    emptyState.className = 'filter-empty-state bg-white p-8 rounded-xl border border-gray-100 text-center';
+                                    const statusText = status === 'active' ? '進行中' : 
+                                                   status === 'scheduled' ? '已排程' : 
+                                                   status === 'ended' ? '已結束' : 
+                                                   status === 'paused' ? '已暫停' : status;
+                                    emptyState.innerHTML = `
+                                        <p class="text-gray-500 text-sm">目前沒有「${statusText}」狀態的活動</p>
+                                        <p class="text-gray-400 text-xs mt-2">試試切換其他狀態篩選</p>
+                                    `;
+                                    container.appendChild(emptyState);
+                                }
+                            } else if (emptyState) {
+                                emptyState.remove();
+                            }
                         });
                     });
                 }, 100);
@@ -9747,67 +9811,26 @@
                                         <textarea id="promotion-description" class="form-input-styled h-20" placeholder="簡短描述此活動">${isEditing ? promotion.description : ''}</textarea>
                                     </div>
                                     
+                                    ${isEditing ? `
                                     <div>
-                                        <label class="text-sm font-medium text-[#886364] block mb-1">活動狀態 *</label>
-                                        <select id="promotion-status" class="form-input-styled" required>
+                                        <label class="text-sm font-medium text-[#886364] block mb-1">活動狀態</label>
+                                        <div class="mt-1">
                                             ${(() => {
-                                                if (!isEditing) {
-                                                    // 新增時：可以選擇所有狀態
-                                                    return `
-                                                        <option value="draft" selected>草稿</option>
-                                                        <option value="scheduled">已排程</option>
-                                                        <option value="active">進行中</option>
-                                                        <option value="paused">已暫停</option>
-                                                        <option value="ended">已結束</option>
-                                                    `;
-                                                } else {
-                                                    // 編輯時：根據當前狀態限制可選選項
-                                                    const currentStatus = promotion.status;
-                                                    let options = '';
-                                                    
-                                                    if (currentStatus === 'draft') {
-                                                        // 草稿可以改為：已排程、進行中、已結束
-                                                        options = `
-                                                            <option value="draft" selected>草稿</option>
-                                                            <option value="scheduled">已排程</option>
-                                                            <option value="active">進行中</option>
-                                                            <option value="ended">已結束</option>
-                                                        `;
-                                                    } else if (currentStatus === 'scheduled') {
-                                                        // 已排程可以改為：進行中、已暫停、已結束
-                                                        options = `
-                                                            <option value="scheduled" selected>已排程</option>
-                                                            <option value="active">進行中</option>
-                                                            <option value="paused">已暫停</option>
-                                                            <option value="ended">已結束</option>
-                                                        `;
-                                                    } else if (currentStatus === 'active') {
-                                                        // 進行中可以改為：已暫停、已結束
-                                                        options = `
-                                                            <option value="active" selected>進行中</option>
-                                                            <option value="paused">已暫停</option>
-                                                            <option value="ended">已結束</option>
-                                                        `;
-                                                    } else if (currentStatus === 'paused') {
-                                                        // 已暫停可以改為：進行中、已結束
-                                                        options = `
-                                                            <option value="paused" selected>已暫停</option>
-                                                            <option value="active">進行中</option>
-                                                            <option value="ended">已結束</option>
-                                                        `;
-                                                    } else if (currentStatus === 'ended') {
-                                                        // 已結束只能保持已結束（不應該再改回其他狀態）
-                                                        options = `
-                                                            <option value="ended" selected>已結束</option>
-                                                        `;
-                                                    }
-                                                    
-                                                    return options;
-                                                }
+                                                const statusMap = {
+                                                    'active': { text: '進行中', class: 'bg-green-100 text-green-600' },
+                                                    'paused': { text: '已暫停', class: 'bg-yellow-100 text-yellow-600' },
+                                                    'ended': { text: '已結束', class: 'bg-red-100 text-red-600' },
+                                                    'scheduled': { text: '已排程', class: 'bg-blue-100 text-blue-600' }
+                                                };
+                                                const status = statusMap[promotion.status] || statusMap['scheduled'];
+                                                return `
+                                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${status.class}">${status.text}</span>
+                                                    <p class="text-xs text-gray-500 mt-1">活動狀態由系統根據時間自動判斷（已暫停除外）</p>
+                                                `;
                                             })()}
-                                        </select>
-                                        ${isEditing && promotion.status === 'ended' ? '<p class="text-xs text-gray-500 mt-1">已結束的活動無法再修改狀態</p>' : ''}
+                                        </div>
                                     </div>
+                                    ` : ''}
                                 </div>
                             </div>
                             
@@ -9862,12 +9885,40 @@
                                 <div class="space-y-4">
                                     <div>
                                         <label class="text-sm font-medium text-[#886364] block mb-1">開始時間 *</label>
-                                        <input type="datetime-local" id="promotion-start-time" class="form-input-styled" value="${isEditing ? promotion.startTime.substring(0, 16) : ''}" required>
+                                        <input type="datetime-local" id="promotion-start-time" class="form-input-styled" value="${isEditing ? (() => {
+                                            try {
+                                                const date = new Date(promotion.startTime);
+                                                if (!isNaN(date.getTime())) {
+                                                    // 轉換為本地時間的 YYYY-MM-DDTHH:mm 格式
+                                                    const year = date.getFullYear();
+                                                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                                                    const day = String(date.getDate()).padStart(2, '0');
+                                                    const hours = String(date.getHours()).padStart(2, '0');
+                                                    const minutes = String(date.getMinutes()).padStart(2, '0');
+                                                    return `${year}-${month}-${day}T${hours}:${minutes}`;
+                                                }
+                                            } catch(e) {}
+                                            return '';
+                                        })() : ''}" required>
                                     </div>
                                     
                                     <div>
                                         <label class="text-sm font-medium text-[#886364] block mb-1">結束時間 *</label>
-                                        <input type="datetime-local" id="promotion-end-time" class="form-input-styled" value="${isEditing ? promotion.endTime.substring(0, 16) : ''}" required>
+                                        <input type="datetime-local" id="promotion-end-time" class="form-input-styled" value="${isEditing ? (() => {
+                                            try {
+                                                const date = new Date(promotion.endTime);
+                                                if (!isNaN(date.getTime())) {
+                                                    // 轉換為本地時間的 YYYY-MM-DDTHH:mm 格式
+                                                    const year = date.getFullYear();
+                                                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                                                    const day = String(date.getDate()).padStart(2, '0');
+                                                    const hours = String(date.getHours()).padStart(2, '0');
+                                                    const minutes = String(date.getMinutes()).padStart(2, '0');
+                                                    return `${year}-${month}-${day}T${hours}:${minutes}`;
+                                                }
+                                            } catch(e) {}
+                                            return '';
+                                        })() : ''}" required>
                                     </div>
                                 </div>
                             </div>
@@ -10024,24 +10075,158 @@
                     typeSelect.addEventListener('change', updateDiscountFields);
                     applyToSelect.addEventListener('change', updateApplyFields);
                     
+                    // 表單驗證函數
+                    function validatePromotionForm(formData) {
+                        const errors = [];
+                        
+                        // 驗證活動名稱
+                        if (!formData.name || formData.name.trim() === '') {
+                            errors.push('活動名稱不能為空');
+                        }
+                        
+                        // 驗證時間
+                        const startTime = new Date(formData.startTime);
+                        const endTime = new Date(formData.endTime);
+                        
+                        if (!formData.startTime || isNaN(startTime.getTime())) {
+                            errors.push('請選擇開始時間');
+                        }
+                        
+                        if (!formData.endTime || isNaN(endTime.getTime())) {
+                            errors.push('請選擇結束時間');
+                        } else if (formData.startTime && !isNaN(startTime.getTime()) && endTime <= startTime) {
+                            errors.push('結束時間必須晚於開始時間');
+                        }
+                        
+                        // 驗證活動類型相關欄位
+                        if (formData.type === 'coupon' || formData.type === 'discount_amount') {
+                            if (!formData.discountAmount || formData.discountAmount <= 0) {
+                                errors.push('折價金額必須大於 0');
+                            }
+                        } else if (formData.type === 'discount_percent') {
+                            if (!formData.discountPercent || formData.discountPercent <= 0 || formData.discountPercent >= 100) {
+                                errors.push('折扣百分比必須在 1-99 之間');
+                            }
+                        } else if (formData.type === 'full_amount_gift') {
+                            if (!formData.fullAmountThreshold || formData.fullAmountThreshold <= 0) {
+                                errors.push('滿額門檻必須大於 0');
+                            }
+                            if (!formData.giftContent || formData.giftContent.trim() === '') {
+                                errors.push('贈品內容不能為空');
+                            }
+                        } else if (formData.type === 'full_amount_discount') {
+                            if (!formData.fullAmountThreshold || formData.fullAmountThreshold <= 0) {
+                                errors.push('滿額門檻必須大於 0');
+                            }
+                            if (!formData.discountPercent || formData.discountPercent <= 0 || formData.discountPercent >= 100) {
+                                errors.push('折扣百分比必須在 1-99 之間');
+                            }
+                        }
+                        
+                        // 驗證適用範圍
+                        if (formData.applyTo === 'specific_rooms') {
+                            if (!formData.roomIds || formData.roomIds.length === 0) {
+                                errors.push('選擇「指定房型」時，必須至少選擇一個房型');
+                            }
+                        }
+                        
+                        // 驗證使用限制
+                        if (!formData.usageLimit.perUser || formData.usageLimit.perUser <= 0) {
+                            errors.push('每人限用次數必須大於 0');
+                        }
+                        if (!formData.usageLimit.total || formData.usageLimit.total <= 0) {
+                            errors.push('總使用次數上限必須大於 0');
+                        }
+                        
+                        return errors;
+                    }
+                    
+                    // 顯示錯誤提示
+                    function showFormErrors(errors) {
+                        const errorMessage = errors.join('\n');
+                        alert('請修正以下問題：\n\n' + errorMessage);
+                    }
+                    
+                    // 顯示成功提示
+                    function showSuccessMessage(isEditing) {
+                        const message = isEditing ? '活動已更新成功！' : '活動已建立成功！';
+                        // 使用簡單的 alert，未來可以改為更美觀的提示
+                        alert(message);
+                    }
+                    
+                    // 根據時間自動判斷活動狀態
+                    function calculatePromotionStatus(startTime, endTime, currentStatus) {
+                        // 如果當前狀態是已暫停，保持不變
+                        if (currentStatus === 'paused') {
+                            return currentStatus;
+                        }
+                        
+                        // 必須有時間才能判斷狀態
+                        if (!startTime || !endTime) {
+                            return 'scheduled'; // 預設為已排程
+                        }
+                        
+                        const now = new Date();
+                        const start = new Date(startTime);
+                        const end = new Date(endTime);
+                        
+                        // 根據時間判斷狀態
+                        if (now < start) {
+                            return 'scheduled'; // 未開始 → 已排程
+                        } else if (now >= start && now < end) {
+                            return 'active'; // 進行中
+                        } else {
+                            return 'ended'; // 已結束
+                        }
+                    }
+                    
                     // 表單提交
                     document.getElementById('promotion-form')?.addEventListener('submit', function(e) {
                         e.preventDefault();
                         
+                        // 獲取時間輸入值並轉換為 ISO 格式
+                        const startTimeInput = document.getElementById('promotion-start-time').value;
+                        const endTimeInput = document.getElementById('promotion-end-time').value;
+                        
+                        let startTimeISO = '';
+                        let endTimeISO = '';
+                        
+                        if (startTimeInput) {
+                            const startDate = new Date(startTimeInput);
+                            if (!isNaN(startDate.getTime())) {
+                                startTimeISO = startDate.toISOString();
+                            }
+                        }
+                        
+                        if (endTimeInput) {
+                            const endDate = new Date(endTimeInput);
+                            if (!isNaN(endDate.getTime())) {
+                                endTimeISO = endDate.toISOString();
+                            }
+                        }
+                        
                         const formData = {
                             name: document.getElementById('promotion-name').value.trim(),
                             description: document.getElementById('promotion-description').value.trim(),
-                            status: document.getElementById('promotion-status').value,
                             type: document.getElementById('promotion-type').value,
                             applyTo: document.getElementById('promotion-apply-to').value,
-                            startTime: document.getElementById('promotion-start-time').value + ':00',
-                            endTime: document.getElementById('promotion-end-time').value + ':00',
+                            startTime: startTimeISO,
+                            endTime: endTimeISO,
                             usageLimit: {
                                 perUser: parseInt(document.getElementById('promotion-per-user-limit').value) || 1,
                                 total: parseInt(document.getElementById('promotion-total-limit').value) || 1000
                             },
                             canCombine: document.getElementById('promotion-can-combine').checked
                         };
+                        
+                        // 自動判斷活動狀態
+                        if (promotion) {
+                            // 編輯時：保留已暫停狀態，否則根據時間判斷
+                            formData.status = calculatePromotionStatus(startTimeISO, endTimeISO, promotion.status);
+                        } else {
+                            // 新增時：根據時間自動判斷狀態
+                            formData.status = calculatePromotionStatus(startTimeISO, endTimeISO, null);
+                        }
                         
                         // 根據活動類型設定優惠參數
                         if (formData.type === 'coupon' || formData.type === 'discount_amount') {
@@ -10083,21 +10268,40 @@
                             formData.serviceType = null;
                         }
                         
+                        // 驗證表單
+                        const errors = validatePromotionForm(formData);
+                        if (errors.length > 0) {
+                            showFormErrors(errors);
+                            return;
+                        }
+                        
                         // 儲存或更新活動
                         if (promotion) {
-                            // 更新現有活動
-                            Object.assign(promotion, formData);
+                            // 更新現有活動，保留使用次數、建立時間和 ID
+                            Object.assign(promotion, {
+                                ...formData,
+                                id: promotion.id,
+                                usageCount: promotion.usageCount,
+                                createdAt: promotion.createdAt
+                            });
                             promotion.updatedAt = new Date().toISOString();
+                            showSuccessMessage(true);
                         } else {
                             // 新增活動
+                            // 修正空陣列時的 ID 生成問題
+                            const maxId = window.mockPromotions.length > 0 
+                                ? Math.max(...window.mockPromotions.map(p => p.id), 0) 
+                                : 0;
+                            
                             const newPromotion = {
-                                id: Math.max(...window.mockPromotions.map(p => p.id), 0) + 1,
+                                id: maxId + 1,
                                 ...formData,
                                 createdAt: new Date().toISOString(),
                                 updatedAt: new Date().toISOString(),
                                 usageCount: 0
                             };
                             window.mockPromotions.push(newPromotion);
+                            showSuccessMessage(false);
                         }
                         
                         showPage('promotionManagement');
