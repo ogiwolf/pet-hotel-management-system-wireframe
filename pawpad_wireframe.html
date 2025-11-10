@@ -1044,6 +1044,10 @@
                     minPurchaseAmount: 500,
                     fullAmountThreshold: null,
                     giftContent: null,
+                    couponCode: 'NEWUSER1234',
+                    couponCodeType: 'auto',
+                    couponPrefix: 'NEWUSER',
+                    merchantId: null, // null 表示官方活動，有值表示商家活動
                     usageLimit: {
                         perUser: 1,
                         total: 1000
@@ -1069,6 +1073,7 @@
                     minPurchaseAmount: 0,
                     fullAmountThreshold: null,
                     giftContent: null,
+                    merchantId: null, // 官方活動
                     usageLimit: {
                         perUser: 3,
                         total: 5000
@@ -1094,6 +1099,7 @@
                     minPurchaseAmount: 0,
                     fullAmountThreshold: 1000,
                     giftContent: '寵物玩具組',
+                    merchantId: null, // 官方活動
                     usageLimit: {
                         perUser: 5,
                         total: 2000
@@ -1119,6 +1125,7 @@
                     minPurchaseAmount: 800,
                     fullAmountThreshold: null,
                     giftContent: null,
+                    merchantId: null, // 官方活動
                     usageLimit: {
                         perUser: 2,
                         total: 500
@@ -1144,6 +1151,7 @@
                     minPurchaseAmount: 0,
                     fullAmountThreshold: 2000,
                     giftContent: null,
+                    merchantId: null, // 官方活動
                     usageLimit: {
                         perUser: 1,
                         total: 300
@@ -1152,9 +1160,114 @@
                     createdAt: '2025-11-25T00:00:00',
                     updatedAt: '2025-11-25T00:00:00',
                     usageCount: 0
+                },
+                {
+                    id: 6,
+                    name: '快樂爪子專屬優惠',
+                    description: '首次預訂折150元',
+                    type: 'coupon',
+                    status: 'active',
+                    startTime: '2025-01-01T00:00:00',
+                    endTime: '2025-12-31T23:59:59',
+                    applyTo: 'all',
+                    roomIds: [],
+                    serviceType: null,
+                    discountAmount: 150,
+                    discountPercent: null,
+                    minPurchaseAmount: 600,
+                    fullAmountThreshold: null,
+                    giftContent: null,
+                    couponCode: 'HAPPY150',
+                    couponCodeType: 'manual',
+                    couponPrefix: '',
+                    merchantId: 1, // 快樂爪子旅館的活動
+                    usageLimit: {
+                        perUser: 1,
+                        total: 500
+                    },
+                    canCombine: false,
+                    createdAt: '2025-01-01T00:00:00',
+                    updatedAt: '2025-01-01T00:00:00',
+                    usageCount: 12
+                },
+                {
+                    id: 7,
+                    name: '貓語天堂新客優惠',
+                    description: '貓咪專屬優惠，首次預訂折100元',
+                    type: 'coupon',
+                    status: 'active',
+                    startTime: '2025-01-01T00:00:00',
+                    endTime: '2025-12-31T23:59:59',
+                    applyTo: 'all',
+                    roomIds: [],
+                    serviceType: null,
+                    discountAmount: 100,
+                    discountPercent: null,
+                    minPurchaseAmount: 500,
+                    fullAmountThreshold: null,
+                    giftContent: null,
+                    couponCode: 'CAT100',
+                    couponCodeType: 'manual',
+                    couponPrefix: '',
+                    merchantId: 2, // 貓語天堂的活動
+                    usageLimit: {
+                        perUser: 1,
+                        total: 300
+                    },
+                    canCombine: false,
+                    createdAt: '2025-01-01T00:00:00',
+                    updatedAt: '2025-01-01T00:00:00',
+                    usageCount: 8
+                },
+                {
+                    id: 8,
+                    name: '汪星人度假村開幕優惠',
+                    description: '開幕慶典，折200元',
+                    type: 'coupon',
+                    status: 'active',
+                    startTime: '2025-01-01T00:00:00',
+                    endTime: '2025-06-30T23:59:59',
+                    applyTo: 'all',
+                    roomIds: [],
+                    serviceType: null,
+                    discountAmount: 200,
+                    discountPercent: null,
+                    minPurchaseAmount: 800,
+                    fullAmountThreshold: null,
+                    giftContent: null,
+                    couponCode: 'DOG200',
+                    couponCodeType: 'manual',
+                    couponPrefix: '',
+                    merchantId: 3, // 汪星人度假村的活動
+                    usageLimit: {
+                        perUser: 1,
+                        total: 200
+                    },
+                    canCombine: false,
+                    createdAt: '2025-01-01T00:00:00',
+                    updatedAt: '2025-01-01T00:00:00',
+                    usageCount: 5
                 }
             ];
             // == END: 活動系統假資料 ==
+            
+            // == START: 使用者優惠券假資料 ==
+            window.userCoupons = [
+                // 使用者已領取的優惠券
+                // {
+                //     id: 1,
+                //     promotionId: 1,
+                //     couponCode: 'NEWUSER1234',
+                //     name: '新客戶優惠',
+                //     discountAmount: 100,
+                //     minPurchaseAmount: 500,
+                //     status: 'available', // available, used, expired
+                //     receivedAt: '2025-01-15T10:00:00',
+                //     expiresAt: '2025-12-31T23:59:59',
+                //     usedAt: null
+                // }
+            ];
+            // == END: 使用者優惠券假資料 ==
             
             window.mockComments = [
                 { 
@@ -1250,6 +1363,9 @@
             // --- 核心功能：頁面切換 ---
             window.showPage = function(pageKey, state = {}) {
                 Object.values(pages).forEach(page => page && page.classList.add('hidden'));
+                
+                // 保存當前頁面狀態，供重新渲染時使用
+                window.currentPageState = state;
                 
                 const targetPage = pages[pageKey];
                 if (targetPage) {
@@ -1968,7 +2084,64 @@
                          <p class="text-sm">立即預訂，享 85 折優惠！</p>
                     </div>
                 </div>
-
+                
+                <!-- 限時優惠區塊 -->
+                <div class="px-4 mb-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-[#181111] text-[22px] font-bold">🎁 限時優惠</h2>
+                        <button id="view-all-promotions-btn" class="text-sm text-[#886364]">查看全部 ›</button>
+                    </div>
+                    <div id="home-promotions-container" class="space-y-3">
+                        ${(() => {
+                            // 取得可領取的折價券活動（進行中且為折價券類型，只顯示官方活動）
+                            const availableCoupons = (window.mockPromotions || []).filter(promo => {
+                                if (promo.type !== 'coupon') return false;
+                                if (promo.merchantId !== null) return false; // 只顯示官方活動（merchantId === null）
+                                const now = new Date();
+                                const start = new Date(promo.startTime);
+                                const end = new Date(promo.endTime);
+                                return promo.status === 'active' || (now >= start && now < end);
+                            }).slice(0, 3); // 只顯示前3個
+                            
+                            if (availableCoupons.length === 0) {
+                                return '<p class="text-sm text-gray-500 text-center py-4">目前沒有可領取的優惠券</p>';
+                            }
+                            
+                            return availableCoupons.map(promo => {
+                                const startDate = new Date(promo.startTime).toLocaleDateString('zh-TW');
+                                const endDate = new Date(promo.endTime).toLocaleDateString('zh-TW');
+                                const userCoupons = window.userCoupons || [];
+                                const hasReceived = userCoupons.some(uc => uc.promotionId === promo.id && uc.status === 'available');
+                                
+                                return `
+                                    <div class="bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-xl p-4">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <div class="flex-1">
+                                                <h3 class="font-bold text-[#181111] mb-1">${promo.name}</h3>
+                                                <p class="text-sm text-[#886364] mb-2">${promo.description || ''}</p>
+                                                <div class="flex items-center gap-2 text-xs text-gray-600">
+                                                    <span>期間：${startDate} ~ ${endDate}</span>
+                                                </div>
+                                            </div>
+                                            <span class="text-xs font-semibold bg-green-100 text-green-600 px-2 py-0.5 rounded-full">進行中</span>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="text-lg font-bold text-[#181111]">折 ${promo.discountAmount} 元</p>
+                                                ${promo.minPurchaseAmount > 0 ? `<p class="text-xs text-gray-500">最低消費 ${promo.minPurchaseAmount} 元</p>` : ''}
+                                            </div>
+                                            ${hasReceived ? 
+                                                '<button class="h-10 px-4 text-sm bg-gray-200 text-gray-600 rounded-full" disabled>已領取</button>' :
+                                                `<button class="claim-coupon-btn btn-main h-10 px-4 text-sm" data-promotion-id="${promo.id}">立即領取</button>`
+                                            }
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('');
+                        })()}
+                    </div>
+                </div>
+                
                 <!-- 推薦區塊 -->
                 <h2 class="text-[#181111] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-2">推薦給您</h2>
                 <div class="px-4 space-y-4">
@@ -2013,6 +2186,96 @@
                     </div>
                 </div>
                 `;
+                
+                // 綁定首頁事件監聽器
+                attachHomePageListeners();
+            }
+            
+            // 首頁事件監聽器
+            function attachHomePageListeners() {
+                // 查看全部優惠券按鈕
+                document.getElementById('view-all-promotions-btn')?.addEventListener('click', function() {
+                    showPage('account');
+                    // 延遲一下讓頁面渲染完成，然後打開優惠券列表
+                    setTimeout(() => {
+                        document.getElementById('account-coupons')?.click();
+                    }, 100);
+                });
+                
+                // 領取優惠券按鈕
+                document.querySelectorAll('.claim-coupon-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const promotionId = parseInt(this.dataset.promotionId);
+                        claimCoupon(promotionId);
+                    });
+                });
+            }
+            
+            // 領取優惠券功能
+            function claimCoupon(promotionId) {
+                const promotion = window.mockPromotions.find(p => p.id === promotionId);
+                if (!promotion) {
+                    alert('活動不存在');
+                    return;
+                }
+                
+                // 檢查活動是否有效
+                const now = new Date();
+                const start = new Date(promotion.startTime);
+                const end = new Date(promotion.endTime);
+                
+                if (now < start || now >= end) {
+                    alert('活動已結束或尚未開始');
+                    return;
+                }
+                
+                if (promotion.status !== 'active') {
+                    alert('活動目前無法領取');
+                    return;
+                }
+                
+                // 檢查是否已領取
+                const userCoupons = window.userCoupons || [];
+                const existingCoupon = userCoupons.find(uc => uc.promotionId === promotionId && uc.status === 'available');
+                if (existingCoupon) {
+                    alert('您已經領取過此優惠券了');
+                    return;
+                }
+                
+                // 檢查每人限領次數
+                const userReceivedCount = userCoupons.filter(uc => uc.promotionId === promotionId).length;
+                if (userReceivedCount >= promotion.usageLimit.perUser) {
+                    alert(`您已達到此優惠券的領取上限（每人限領 ${promotion.usageLimit.perUser} 次）`);
+                    return;
+                }
+                
+                // 檢查總領取次數
+                if (promotion.usageCount >= promotion.usageLimit.total) {
+                    alert('此優惠券已被領取完畢');
+                    return;
+                }
+                
+                // 領取優惠券
+                const newCoupon = {
+                    id: userCoupons.length > 0 ? Math.max(...userCoupons.map(uc => uc.id), 0) + 1 : 1,
+                    promotionId: promotionId,
+                    couponCode: promotion.couponCode,
+                    name: promotion.name,
+                    discountAmount: promotion.discountAmount,
+                    minPurchaseAmount: promotion.minPurchaseAmount || 0,
+                    status: 'available',
+                    receivedAt: new Date().toISOString(),
+                    expiresAt: promotion.endTime,
+                    usedAt: null
+                };
+                
+                window.userCoupons.push(newCoupon);
+                promotion.usageCount = (promotion.usageCount || 0) + 1;
+                
+                alert(`領取成功！\n\n優惠碼：${promotion.couponCode}\n\n您可以在「我的優惠券」中查看和使用`);
+                
+                // 重新渲染首頁以更新按鈕狀態
+                renderHomePage();
             }
             
             function renderChatPage(state) {
@@ -2193,16 +2456,122 @@
                 });
             }
 
-            function renderDetailPage() {
+            function renderDetailPage(state) {
+                const hotel = state?.hotel;
+                
+                // 如果沒有傳遞 hotel 物件，嘗試從 mockHotels 中查找
+                let actualHotel = hotel;
+                if (!actualHotel) {
+                    // 方法1：從 window.currentPageState 獲取（如果之前保存過）
+                    if (window.currentPageState?.hotel) {
+                        actualHotel = window.currentPageState.hotel;
+                        console.log('從 window.currentPageState 獲取 hotel:', actualHotel);
+                    } else {
+                        // 方法2：根據頁面標題匹配（如果頁面已經渲染）
+                        const hotelName = document.querySelector('#detail-page h1')?.textContent?.trim();
+                        if (hotelName) {
+                            actualHotel = mockHotels.find(h => h.name === hotelName);
+                            console.log('未傳遞 hotel 物件，嘗試根據名稱查找:', hotelName, '找到:', actualHotel);
+                        }
+                        // 方法3：如果還是找不到，使用預設的「快樂爪子旅館」（id: 1）
+                        if (!actualHotel) {
+                            actualHotel = mockHotels.find(h => h.id === 1);
+                            console.log('使用預設的快樂爪子旅館:', actualHotel);
+                        }
+                    }
+                }
+                
+                const hotelName = actualHotel?.name || '快樂爪子旅館';
+                const hotelImage = actualHotel?.imageUrl || 'https://images.unsplash.com/photo-1548681528-6a5c45b66b42?q=80&w=600';
+                const hotelDescription = actualHotel?.description || '提供最溫馨舒適的環境，讓您的寵物如同在家一般自在。我們有專業的照護人員與寬敞的活動空間。';
+                
+                // 取得該商家的優惠券活動（只顯示該商家的活動）
+                const hotelId = actualHotel?.id;
+                
+                // 調試信息
+                console.log('=== 商家詳情頁調試 ===');
+                console.log('state:', state);
+                console.log('hotel (原始):', hotel);
+                console.log('actualHotel (實際使用):', actualHotel);
+                console.log('hotelId:', hotelId);
+                console.log('window.mockPromotions:', window.mockPromotions);
+                
+                const availableCoupons = (window.mockPromotions || []).filter(promo => {
+                    if (promo.type !== 'coupon') {
+                        console.log(`優惠券 ${promo.id} (${promo.name}): 不是 coupon 類型`);
+                        return false;
+                    }
+                    // 確保類型一致（都轉為數字進行比較）
+                    const promoMerchantId = promo.merchantId !== null && promo.merchantId !== undefined ? Number(promo.merchantId) : null;
+                    const currentHotelId = hotelId !== null && hotelId !== undefined ? Number(hotelId) : null;
+                    // 如果沒有 hotelId，不顯示任何優惠券
+                    if (currentHotelId === null || currentHotelId === undefined) {
+                        console.log(`優惠券 ${promo.id} (${promo.name}): 沒有 hotelId (currentHotelId=${currentHotelId})`);
+                        return false;
+                    }
+                    console.log(`優惠券 ${promo.id} (${promo.name}): promoMerchantId=${promoMerchantId}, currentHotelId=${currentHotelId}, 匹配=${promoMerchantId === currentHotelId}`);
+                    if (promoMerchantId !== currentHotelId) return false; // 只顯示該商家的活動
+                    const now = new Date();
+                    const start = new Date(promo.startTime);
+                    const end = new Date(promo.endTime);
+                    const isActive = promo.status === 'active' || (now >= start && now < end);
+                    console.log(`優惠券 ${promo.id} (${promo.name}): status=${promo.status}, isActive=${isActive}`);
+                    return isActive;
+                });
+                
+                console.log('找到的優惠券數量:', availableCoupons.length);
+                console.log('找到的優惠券:', availableCoupons);
+                console.log('==================');
+                
                 pages.detail.innerHTML = `
                 <div class="p-4 space-y-4">
-                    <h1 class="text-2xl font-bold text-center text-[#181111]">快樂爪子旅館</h1>
-                    <div class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover rounded-xl" style='background-image: url("https://images.unsplash.com/photo-1548681528-6a5c45b66b42?q=80&w=600");'></div>
+                    <h1 class="text-2xl font-bold text-center text-[#181111]">${hotelName}</h1>
+                    <div class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover rounded-xl" style='background-image: url("${hotelImage}");'></div>
                     
                     <div id="about-section" class="p-4 rounded-xl border border-gray-100 bg-white">
                          <p class="text-[#181111] text-lg font-bold">關於</p>
-                         <p class="text-[#886364] text-sm mt-2">提供最溫馨舒適的環境，讓您的寵物如同在家一般自在。我們有專業的照護人員與寬敞的活動空間。</p>
+                         <p class="text-[#886364] text-sm mt-2">${hotelDescription}</p>
                     </div>
+                    
+                    ${availableCoupons.length > 0 ? `
+                    <!-- 商家優惠券區塊 -->
+                    <div class="p-4 rounded-xl border border-orange-200 bg-gradient-to-r from-orange-50 to-red-50">
+                        <h2 class="text-lg font-bold text-[#181111] mb-3">🎁 限時優惠</h2>
+                        <div class="space-y-3">
+                            ${availableCoupons.map(promo => {
+                                const userCoupons = window.userCoupons || [];
+                                const hasReceived = userCoupons.some(uc => uc.promotionId === promo.id && uc.status === 'available');
+                                const startDate = new Date(promo.startTime).toLocaleDateString('zh-TW');
+                                const endDate = new Date(promo.endTime).toLocaleDateString('zh-TW');
+                                
+                                return `
+                                    <div class="bg-white rounded-lg p-4 border border-orange-200">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <div class="flex-1">
+                                                <h3 class="font-bold text-[#181111] mb-1">${promo.name}</h3>
+                                                <p class="text-sm text-[#886364] mb-2">${promo.description || ''}</p>
+                                                <div class="flex items-center gap-2 text-xs text-gray-600 mb-2">
+                                                    <span>期間：${startDate} ~ ${endDate}</span>
+                                                </div>
+                                                <p class="text-lg font-bold text-[#181111]">折 ${promo.discountAmount} 元</p>
+                                                ${promo.minPurchaseAmount > 0 ? `<p class="text-xs text-gray-500">最低消費 ${promo.minPurchaseAmount} 元</p>` : ''}
+                                            </div>
+                                        </div>
+                                        ${hasReceived ? 
+                                            '<button class="w-full h-10 text-sm bg-gray-200 text-gray-600 rounded-full" disabled>已領取</button>' :
+                                            `<button class="claim-coupon-detail-btn btn-main w-full h-10 text-sm" data-promotion-id="${promo.id}">立即領取</button>`
+                                        }
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                    ` : hotelId ? `
+                    <!-- 調試：顯示為什麼沒有優惠券 -->
+                    <div class="p-4 rounded-xl border border-gray-200 bg-gray-50">
+                        <p class="text-sm text-gray-600">目前沒有可領取的優惠券（商家ID: ${hotelId}）</p>
+                    </div>
+                    ` : ''}
 
                     <!-- 預訂區塊 -->
                     <div id="booking-section" class="p-4 rounded-xl border border-gray-100 bg-white">
@@ -2967,6 +3336,17 @@
                 initHotelMap();
                 attachMapListeners();
                 attachDetailDateListeners();
+                
+                // 商家詳情頁面的領取優惠券按鈕
+                document.querySelectorAll('.claim-coupon-detail-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const promotionId = parseInt(this.dataset.promotionId);
+                        claimCoupon(promotionId);
+                        // 重新渲染詳情頁面以更新按鈕狀態
+                        const state = window.currentPageState || {};
+                        renderDetailPage(state);
+                    });
+                });
             }
 
             // 綁定詳情頁日期選擇事件
@@ -5435,20 +5815,148 @@
             }
 
             function openCouponsModal() {
+                const userCoupons = window.userCoupons || [];
+                const availablePromotions = (window.mockPromotions || []).filter(promo => {
+                    if (promo.type !== 'coupon') return false;
+                    if (promo.merchantId !== null) return false; // 只顯示官方活動（merchantId === null）
+                    const now = new Date();
+                    const start = new Date(promo.startTime);
+                    const end = new Date(promo.endTime);
+                    return promo.status === 'active' || (now >= start && now < end);
+                });
+                
                 const html = `
-                    <div class="flex justify-between items-center mb-2"><h2 class="text-lg font-bold text-[#181111]">優惠券列表</h2><button id="modal-close-btn" class="text-2xl">&times;</button></div>
-                    <div class="space-y-2">
-                        <div class="bg-white border rounded-xl p-3 flex justify-between items-center">
-                            <div><p class="font-bold text-[#181111]">新用戶 85 折</p><p class="text-xs text-[#886364]">到期日：2025/12/31</p></div>
-                            <span class="text-emerald-600 font-bold">可用</span>
-                        </div>
-                        <div class="bg-white border rounded-xl p-3 flex justify-between items-center">
-                            <div><p class="font-bold text-[#181111]">滿 2000 折 200</p><p class="text-xs text-[#886364]">到期日：2025/09/30</p></div>
-                            <span class="text-emerald-600 font-bold">可用</span>
-                        </div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold text-[#181111]">優惠券</h2>
+                        <button id="modal-close-btn" class="text-2xl">&times;</button>
+                    </div>
+                    
+                    <!-- 標籤頁 -->
+                    <div class="flex gap-2 mb-4 border-b">
+                        <button class="coupon-tab-btn active px-4 py-2 text-sm font-medium border-b-2 border-[#181111] text-[#181111]" data-tab="my-coupons">我的優惠券</button>
+                        <button class="coupon-tab-btn px-4 py-2 text-sm font-medium text-gray-500" data-tab="available-coupons">可領取優惠券</button>
+                    </div>
+                    
+                    <!-- 我的優惠券標籤 -->
+                    <div id="my-coupons-tab" class="coupon-tab-content space-y-2">
+                        ${userCoupons.length === 0 ? `
+                            <div class="text-center py-8">
+                                <p class="text-sm text-gray-500">目前沒有優惠券</p>
+                                <p class="text-xs text-gray-400 mt-2">前往「可領取優惠券」標籤領取優惠券</p>
+                            </div>
+                        ` : userCoupons.map(coupon => {
+                            const expiresDate = new Date(coupon.expiresAt).toLocaleDateString('zh-TW');
+                            const statusClass = coupon.status === 'available' ? 'text-emerald-600' : 
+                                              coupon.status === 'used' ? 'text-gray-500' : 
+                                              'text-red-500';
+                            const statusText = coupon.status === 'available' ? '可用' : 
+                                             coupon.status === 'used' ? '已使用' : 
+                                             '已過期';
+                            
+                            return `
+                                <div class="bg-white border rounded-xl p-4">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div class="flex-1">
+                                            <p class="font-bold text-[#181111] mb-1">${coupon.name}</p>
+                                            <p class="text-sm text-[#886364] mb-2">折 ${coupon.discountAmount} 元${coupon.minPurchaseAmount > 0 ? ` • 最低消費 ${coupon.minPurchaseAmount} 元` : ''}</p>
+                                            <div class="flex items-center gap-3 text-xs text-gray-500">
+                                                <span>優惠碼：<span class="font-mono font-bold text-[#181111]">${coupon.couponCode}</span></span>
+                                                <button class="copy-coupon-code-btn text-blue-600" data-code="${coupon.couponCode}">複製</button>
+                                            </div>
+                                            <p class="text-xs text-gray-500 mt-1">到期日：${expiresDate}</p>
+                                        </div>
+                                        <span class="font-bold ${statusClass}">${statusText}</span>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    
+                    <!-- 可領取優惠券標籤 -->
+                    <div id="available-coupons-tab" class="coupon-tab-content hidden space-y-3">
+                        ${availablePromotions.length === 0 ? `
+                            <div class="text-center py-8">
+                                <p class="text-sm text-gray-500">目前沒有可領取的優惠券</p>
+                            </div>
+                        ` : availablePromotions.map(promo => {
+                            const startDate = new Date(promo.startTime).toLocaleDateString('zh-TW');
+                            const endDate = new Date(promo.endTime).toLocaleDateString('zh-TW');
+                            const hasReceived = userCoupons.some(uc => uc.promotionId === promo.id && uc.status === 'available');
+                            const userReceivedCount = userCoupons.filter(uc => uc.promotionId === promo.id).length;
+                            const canClaim = !hasReceived && userReceivedCount < promo.usageLimit.perUser && promo.usageCount < promo.usageLimit.total;
+                            
+                            return `
+                                <div class="bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-xl p-4">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div class="flex-1">
+                                            <h3 class="font-bold text-[#181111] mb-1">${promo.name}</h3>
+                                            <p class="text-sm text-[#886364] mb-2">${promo.description || ''}</p>
+                                            <div class="flex items-center gap-2 text-xs text-gray-600 mb-2">
+                                                <span>期間：${startDate} ~ ${endDate}</span>
+                                            </div>
+                                            <p class="text-lg font-bold text-[#181111]">折 ${promo.discountAmount} 元</p>
+                                            ${promo.minPurchaseAmount > 0 ? `<p class="text-xs text-gray-500">最低消費 ${promo.minPurchaseAmount} 元</p>` : ''}
+                                        </div>
+                                    </div>
+                                    ${canClaim ? 
+                                        `<button class="claim-coupon-modal-btn btn-main w-full h-10 text-sm" data-promotion-id="${promo.id}">立即領取</button>` :
+                                        hasReceived ? 
+                                        `<button class="w-full h-10 text-sm bg-gray-200 text-gray-600 rounded-full" disabled>已領取</button>` :
+                                        `<button class="w-full h-10 text-sm bg-gray-200 text-gray-600 rounded-full" disabled>無法領取</button>`
+                                    }
+                                </div>
+                            `;
+                        }).join('')}
                     </div>
                 `;
-                openOverlayWithContent(html);
+                
+                const modal = openOverlayWithContent(html);
+                
+                // 標籤頁切換
+                modal.querySelectorAll('.coupon-tab-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const tab = this.dataset.tab;
+                        
+                        // 更新按鈕樣式
+                        modal.querySelectorAll('.coupon-tab-btn').forEach(b => {
+                            b.classList.remove('active', 'border-[#181111]', 'text-[#181111]');
+                            b.classList.add('text-gray-500');
+                        });
+                        this.classList.add('active', 'border-[#181111]', 'text-[#181111]');
+                        this.classList.remove('text-gray-500');
+                        
+                        // 顯示對應內容
+                        modal.querySelectorAll('.coupon-tab-content').forEach(content => {
+                            content.classList.add('hidden');
+                        });
+                        modal.querySelector(`#${tab}-tab`)?.classList.remove('hidden');
+                    });
+                });
+                
+                // 複製優惠碼
+                modal.querySelectorAll('.copy-coupon-code-btn').forEach(btn => {
+                    btn.addEventListener('click', async function() {
+                        const code = this.dataset.code;
+                        try {
+                            await navigator.clipboard.writeText(code);
+                            alert('優惠碼已複製：' + code);
+                        } catch(e) {
+                            alert('複製失敗，優惠碼：' + code);
+                        }
+                    });
+                });
+                
+                // 領取優惠券（在模態框中）
+                modal.querySelectorAll('.claim-coupon-modal-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const promotionId = parseInt(this.dataset.promotionId);
+                        claimCoupon(promotionId);
+                        // 重新打開模態框以更新顯示
+                        setTimeout(() => {
+                            openCouponsModal();
+                        }, 100);
+                    });
+                });
             }
 
             // 商家中心：目前房況（圖表示意）
@@ -9597,7 +10105,12 @@
                                 
                                 // 計算折扣顯示
                                 let discountDisplay = '';
-                                if (promo.type === 'discount_amount') {
+                                if (promo.type === 'coupon') {
+                                    discountDisplay = `折價券：折 ${promo.discountAmount} 元`;
+                                    if (promo.couponCode) {
+                                        discountDisplay += ` (優惠碼：${promo.couponCode})`;
+                                    }
+                                } else if (promo.type === 'discount_amount') {
                                     discountDisplay = `折 ${promo.discountAmount} 元`;
                                 } else if (promo.type === 'discount_percent') {
                                     discountDisplay = `打 ${100 - promo.discountPercent} 折`;
@@ -9982,7 +10495,43 @@
                         const type = typeSelect.value;
                         let html = '';
                         
-                        if (type === 'coupon' || type === 'discount_amount') {
+                        if (type === 'coupon') {
+                            // 折價券：需要優惠碼
+                            html = `
+                                <div>
+                                    <label class="text-sm font-medium text-[#886364] block mb-1">優惠碼生成方式 *</label>
+                                    <select id="promotion-coupon-code-type" class="form-input-styled" required>
+                                        <option value="auto" ${promotion?.couponCodeType === 'auto' || !promotion ? 'selected' : ''}>自動生成</option>
+                                        <option value="manual" ${promotion?.couponCodeType === 'manual' ? 'selected' : ''}>手動輸入</option>
+                                    </select>
+                                </div>
+                                <div id="coupon-code-manual-field" class="${promotion?.couponCodeType === 'manual' ? '' : 'hidden'}">
+                                    <label class="text-sm font-medium text-[#886364] block mb-1">優惠碼 *</label>
+                                    <input type="text" id="promotion-coupon-code" class="form-input-styled" value="${promotion?.couponCode || ''}" placeholder="例如：NEWUSER100" maxlength="20" pattern="[A-Z0-9]+">
+                                    <p class="text-xs text-gray-500 mt-1">只能使用大寫英文字母和數字，最多20個字元</p>
+                                </div>
+                                <div id="coupon-code-auto-field" class="${promotion?.couponCodeType === 'auto' || !promotion ? '' : 'hidden'}">
+                                    <label class="text-sm font-medium text-[#886364] block mb-1">優惠碼前綴</label>
+                                    <input type="text" id="promotion-coupon-prefix" class="form-input-styled" value="${promotion?.couponPrefix || ''}" placeholder="例如：NEWUSER（選填）" maxlength="10" pattern="[A-Z0-9]*">
+                                    ${promotion?.couponCode ? `
+                                        <div class="mt-2 p-2 bg-gray-50 rounded border border-gray-200">
+                                            <p class="text-xs text-gray-600 mb-1">已生成的優惠碼：</p>
+                                            <p class="text-sm font-mono font-bold text-[#181111]">${promotion.couponCode}</p>
+                                        </div>
+                                    ` : ''}
+                                    <p class="text-xs text-gray-500 mt-1">系統將自動生成優惠碼，格式：前綴 + 隨機碼（例如：NEWUSER1234）</p>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-[#886364] block mb-1">折價金額 (NT$) *</label>
+                                    <input type="number" id="promotion-discount-amount" class="form-input-styled" value="${promotion?.discountAmount || ''}" min="0" required>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-[#886364] block mb-1">最低消費金額 (NT$)</label>
+                                    <input type="number" id="promotion-min-purchase" class="form-input-styled" value="${promotion?.minPurchaseAmount || 0}" min="0">
+                                </div>
+                            `;
+                        } else if (type === 'discount_amount') {
+                            // 折價金額：直接折扣，不需要優惠碼
                             html = `
                                 <div>
                                     <label class="text-sm font-medium text-[#886364] block mb-1">折價金額 (NT$) *</label>
@@ -10075,6 +10624,23 @@
                     typeSelect.addEventListener('change', updateDiscountFields);
                     applyToSelect.addEventListener('change', updateApplyFields);
                     
+                    // 監聽優惠碼生成方式變更
+                    discountFields.addEventListener('change', function(e) {
+                        if (e.target.id === 'promotion-coupon-code-type') {
+                            const codeType = e.target.value;
+                            const manualField = document.getElementById('coupon-code-manual-field');
+                            const autoField = document.getElementById('coupon-code-auto-field');
+                            
+                            if (codeType === 'manual') {
+                                manualField?.classList.remove('hidden');
+                                autoField?.classList.add('hidden');
+                            } else {
+                                manualField?.classList.add('hidden');
+                                autoField?.classList.remove('hidden');
+                            }
+                        }
+                    });
+                    
                     // 表單驗證函數
                     function validatePromotionForm(formData) {
                         const errors = [];
@@ -10099,7 +10665,14 @@
                         }
                         
                         // 驗證活動類型相關欄位
-                        if (formData.type === 'coupon' || formData.type === 'discount_amount') {
+                        if (formData.type === 'coupon') {
+                            if (!formData.discountAmount || formData.discountAmount <= 0) {
+                                errors.push('折價金額必須大於 0');
+                            }
+                            if (!formData.couponCode || formData.couponCode.trim() === '') {
+                                errors.push('優惠碼不能為空');
+                            }
+                        } else if (formData.type === 'discount_amount') {
                             if (!formData.discountAmount || formData.discountAmount <= 0) {
                                 errors.push('折價金額必須大於 0');
                             }
@@ -10180,6 +10753,13 @@
                         }
                     }
                     
+                    // 生成優惠碼
+                    function generateCouponCode(prefix = '') {
+                        // 生成4位隨機數字
+                        const randomNum = Math.floor(1000 + Math.random() * 9000);
+                        return prefix ? `${prefix.toUpperCase()}${randomNum}` : `COUPON${randomNum}`;
+                    }
+                    
                     // 表單提交
                     document.getElementById('promotion-form')?.addEventListener('submit', function(e) {
                         e.preventDefault();
@@ -10229,12 +10809,57 @@
                         }
                         
                         // 根據活動類型設定優惠參數
-                        if (formData.type === 'coupon' || formData.type === 'discount_amount') {
+                        if (formData.type === 'coupon') {
+                            // 折價券：需要優惠碼
                             formData.discountAmount = parseInt(document.getElementById('promotion-discount-amount').value) || 0;
                             formData.discountPercent = null;
                             formData.minPurchaseAmount = parseInt(document.getElementById('promotion-min-purchase').value) || 0;
                             formData.fullAmountThreshold = null;
                             formData.giftContent = null;
+                            
+                            // 處理優惠碼
+                            const couponCodeType = document.getElementById('promotion-coupon-code-type')?.value || 'auto';
+                            formData.couponCodeType = couponCodeType;
+                            
+                            if (couponCodeType === 'manual') {
+                                // 手動輸入優惠碼
+                                const couponCode = document.getElementById('promotion-coupon-code')?.value.trim().toUpperCase() || '';
+                                if (!couponCode) {
+                                    alert('請輸入優惠碼');
+                                    return;
+                                }
+                                formData.couponCode = couponCode;
+                                formData.couponPrefix = null;
+                            } else {
+                                // 自動生成優惠碼
+                                const prefix = document.getElementById('promotion-coupon-prefix')?.value.trim().toUpperCase() || '';
+                                if (!promotion || !promotion.couponCode) {
+                                    // 新增時生成新優惠碼
+                                    formData.couponCode = generateCouponCode(prefix);
+                                } else {
+                                    // 編輯時：如果前綴改變，重新生成；否則保留原有優惠碼
+                                    const newPrefix = prefix || null;
+                                    const oldPrefix = promotion.couponPrefix || null;
+                                    if (newPrefix !== oldPrefix) {
+                                        // 前綴改變，重新生成優惠碼
+                                        formData.couponCode = generateCouponCode(prefix);
+                                    } else {
+                                        // 前綴未變，保留原有優惠碼
+                                        formData.couponCode = promotion.couponCode;
+                                    }
+                                }
+                                formData.couponPrefix = prefix || null;
+                            }
+                        } else if (formData.type === 'discount_amount') {
+                            // 折價金額：直接折扣，不需要優惠碼
+                            formData.discountAmount = parseInt(document.getElementById('promotion-discount-amount').value) || 0;
+                            formData.discountPercent = null;
+                            formData.minPurchaseAmount = parseInt(document.getElementById('promotion-min-purchase').value) || 0;
+                            formData.fullAmountThreshold = null;
+                            formData.giftContent = null;
+                            formData.couponCode = null;
+                            formData.couponCodeType = null;
+                            formData.couponPrefix = null;
                         } else if (formData.type === 'discount_percent') {
                             formData.discountPercent = parseInt(document.getElementById('promotion-discount-percent').value) || 0;
                             formData.discountAmount = null;
@@ -10274,6 +10899,11 @@
                             showFormErrors(errors);
                             return;
                         }
+                        
+                        // 自動設置商家ID（商家後台創建的活動自動關聯到當前商家）
+                        // 假設當前登入的商家ID為1（快樂爪子旅館），實際應該從登入狀態獲取
+                        const currentMerchantId = 1; // TODO: 從登入狀態獲取實際的商家ID
+                        formData.merchantId = currentMerchantId;
                         
                         // 儲存或更新活動
                         if (promotion) {
