@@ -1930,8 +1930,88 @@
                                 </div>
                             ` : `
                                 <div class="space-y-4">
-                                    ${filteredHotels.map(hotel => `
-                                        <div class="bg-white rounded-xl border border-gray-100 overflow-hidden cursor-pointer hover:shadow-lg transition-shadow" data-hotel-id="${hotel.id}">
+                                    ${filteredHotels.map(hotel => {
+                                        // --- 檢查該旅館是否有適用的優惠活動 ---
+                                        // 邏輯：找到適用於全部或適用於該旅館支援的服務類型的活動
+                                        const applicablePromos = (window.mockPromotions || []).filter(promo => {
+                                            if (promo.status !== 'active' || promo.type === 'coupon') return false;
+                                            
+                                            // 如果適用於全部，直接返回
+                                            if (promo.applyTo === 'all') return true;
+                                            
+                                            // 如果適用於特定服務類型，檢查旅館是否支援該服務
+                                            if (promo.applyTo === 'service_type' && promo.serviceType) {
+                                                return hotel.services.includes(promo.serviceType);
+                                            }
+                                            
+                                            // 如果適用於特定房型，檢查是否有該旅館的房型（這裡簡化處理，假設有活動就顯示）
+                                            if (promo.applyTo === 'specific_rooms') {
+                                                // 檢查是否有任何房型符合該旅館支援的服務類型
+                                                const matchingRooms = window.mockRoomTypes.filter(room => 
+                                                    hotel.services.includes(room.serviceType) && 
+                                                    promo.roomIds.includes(room.id)
+                                                );
+                                                return matchingRooms.length > 0;
+                                            }
+                                            
+                                            return false;
+                                        });
+                                        
+                                        // 選擇最優惠的活動來顯示（優先顯示折扣百分比，其次折扣金額）
+                                        let bestPromo = null;
+                                        if (applicablePromos.length > 0) {
+                                            bestPromo = applicablePromos.sort((a, b) => {
+                                                // 優先顯示折扣百分比
+                                                if (a.type === 'discount_percent' && b.type !== 'discount_percent') return -1;
+                                                if (b.type === 'discount_percent' && a.type !== 'discount_percent') return 1;
+                                                // 如果都是百分比，選擇折扣更大的
+                                                if (a.type === 'discount_percent' && b.type === 'discount_percent') {
+                                                    return (b.discountPercent || 0) - (a.discountPercent || 0);
+                                                }
+                                                // 如果都是金額，選擇折扣更大的
+                                                if (a.type === 'discount_amount' && b.type === 'discount_amount') {
+                                                    return (b.discountAmount || 0) - (a.discountAmount || 0);
+                                                }
+                                                return 0;
+                                            })[0];
+                                        }
+                                        
+                                        // 生成優惠標籤
+                                        let promoTagHTML = '';
+                                        if (bestPromo) {
+                                            let promoText = '';
+                                            switch (bestPromo.type) {
+                                                case 'discount_amount':
+                                                    promoText = `現折 $${bestPromo.discountAmount}`;
+                                                    break;
+                                                case 'discount_percent':
+                                                    const off = (100 - bestPromo.discountPercent) / 10;
+                                                    const offText = Number.isInteger(off) ? off : off.toFixed(1);
+                                                    promoText = `限時 ${offText} 折`;
+                                                    break;
+                                                case 'full_amount_gift':
+                                                    promoText = `滿額送好禮`;
+                                                    break;
+                                                case 'full_amount_discount':
+                                                    const fullOff = (100 - bestPromo.discountPercent) / 10;
+                                                    promoText = `滿額 ${fullOff} 折`;
+                                                    break;
+                                                default:
+                                                    promoText = '優惠活動';
+                                            }
+                                            
+                                            if (promoText) {
+                                                promoTagHTML = `
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold bg-orange-100 text-orange-700 ml-2 align-middle">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 256 256"><path d="M240,102.48a15.94,15.94,0,0,0-7-13.17l-66.6-45.79A8,8,0,0,0,162,42.06l-38.13,26.21L85.77,42.06a8,8,0,0,0-4.43-1.45L14.74,86.43A16,16,0,0,0,8,100.08V208a16,16,0,0,0,16,16H232a16,16,0,0,0,16-16Z"></path></svg>
+                                                        ${promoText}
+                                                    </span>
+                                                `;
+                                            }
+                                        }
+                                        
+                                        return `
+                                        <div class="bg-white rounded-xl border border-gray-100 overflow-hidden cursor-pointer hover:shadow-lg transition-shadow relative ${promoTagHTML ? 'border-l-4 border-l-orange-500' : ''}" data-hotel-id="${hotel.id}">
                                             <div class="flex">
                                                 <!-- 旅館圖片 -->
                                                 <div class="w-24 h-24 bg-cover bg-center flex-shrink-0" style="background-image: url('${hotel.imageUrl}')"></div>
@@ -1939,7 +2019,10 @@
                                                 <!-- 旅館資訊 -->
                                                 <div class="flex-1 p-4">
                                                     <div class="flex justify-between items-start mb-2">
-                                                        <h3 class="font-bold text-[#181111] text-base">${hotel.name}</h3>
+                                                        <div class="flex flex-wrap items-center gap-1">
+                                                            <h3 class="font-bold text-[#181111] text-base">${hotel.name}</h3>
+                                                            ${promoTagHTML}
+                                                        </div>
                                                         <div class="flex items-center space-x-1">
                                                             <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
                                                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
@@ -1977,7 +2060,8 @@
                                                     <!-- 價格和按鈕 -->
                                                     <div class="flex justify-between items-center">
                                                         <div>
-                                                            <span class="text-lg font-bold text-[#181111]">NT$ ${hotel.price.toLocaleString()}</span>
+                                                            ${promoTagHTML ? `<span class="text-xs text-gray-400 line-through mr-1">原價</span>` : ''}
+                                                            <span class="text-lg font-bold ${promoTagHTML ? 'text-orange-600' : 'text-[#181111]'}">NT$ ${hotel.price.toLocaleString()}</span>
                                                             <span class="text-sm text-gray-500">/晚起</span>
                                                         </div>
                                                         <button class="px-4 py-2 bg-[#181111] text-white rounded-lg text-sm font-medium">
@@ -1987,7 +2071,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    `).join('')}
+                                    `;
+                                    }).join('')}
                                 </div>
                             `}
                         </div>
@@ -2145,45 +2230,110 @@
                 <!-- 推薦區塊 -->
                 <h2 class="text-[#181111] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-2">推薦給您</h2>
                 <div class="px-4 space-y-4">
-                    <div class="listing-card cursor-pointer">
-                        <div class="info-section">
-                            <div class="flex flex-col gap-1">
-                                <p class="text-[#886364] text-sm font-normal leading-normal">⭐️ 4.8 • 120 則評價</p>
-                                <p class="text-[#181111] text-base font-bold leading-tight">快樂爪子旅館</p>
-                                <p class="text-[#886364] text-sm font-normal leading-normal">台北市 • 接受犬、貓</p>
-                            </div>
-                            <div class="flex min-w-[84px] max-w-[480px] items-center justify-center overflow-hidden rounded-full h-8 px-4 bg-[#f4f0f0] text-[#181111] text-sm font-medium leading-normal w-fit">
-                                <span class="truncate">$800/晚 起</span>
-                            </div>
-                        </div>
-                        <div class="image-section" style='background-image: url("https://images.unsplash.com/photo-1548681528-6a5c45b66b42?q=80&w=600");'></div>
-                    </div>
-                     <div class="listing-card cursor-pointer">
-                        <div class="info-section">
-                            <div class="flex flex-col gap-1">
-                                <p class="text-[#886364] text-sm font-normal leading-normal">⭐️ 4.9 • 150 則評價</p>
-                                <p class="text-[#181111] text-base font-bold leading-tight">貓語天堂</p>
-                                <p class="text-[#886364] text-sm font-normal leading-normal">新北市 • 僅接受貓</p>
-                            </div>
-                            <div class="flex min-w-[84px] max-w-[480px] items-center justify-center overflow-hidden rounded-full h-8 px-4 bg-[#f4f0f0] text-[#181111] text-sm font-medium leading-normal w-fit">
-                                <span class="truncate">$650/晚 起</span>
-                            </div>
-                        </div>
-                        <div class="image-section" style='background-image: url("https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?q=80&w=800");'></div>
-                    </div>
-                     <div class="listing-card cursor-pointer">
-                        <div class="info-section">
-                            <div class="flex flex-col gap-1">
-                                <p class="text-[#886364] text-sm font-normal leading-normal">⭐️ 4.7 • 85 則評價</p>
-                                <p class="text-[#181111] text-base font-bold leading-tight">汪星人度假村</p>
-                                <p class="text-[#886364] text-sm font-normal leading-normal">台中市 • 僅接受犬</p>
-                            </div>
-                            <div class="flex min-w-[84px] max-w-[480px] items-center justify-center overflow-hidden rounded-full h-8 px-4 bg-[#f4f0f0] text-[#181111] text-sm font-medium leading-normal w-fit">
-                                <span class="truncate">$950/晚 起</span>
-                            </div>
-                        </div>
-                        <div class="image-section" style='background-image: url("https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=600");'></div>
-                    </div>
+                    ${(() => {
+                        // 取得前3個推薦旅館
+                        const recommendedHotels = mockHotels.slice(0, 3);
+                        return recommendedHotels.map(hotel => {
+                            // 檢查該旅館是否有適用的優惠活動
+                            const applicablePromos = (window.mockPromotions || []).filter(promo => {
+                                if (promo.status !== 'active' || promo.type === 'coupon') return false;
+                                if (promo.applyTo === 'all') return true;
+                                if (promo.applyTo === 'service_type' && promo.serviceType) {
+                                    return hotel.services.includes(promo.serviceType);
+                                }
+                                if (promo.applyTo === 'specific_rooms') {
+                                    const matchingRooms = window.mockRoomTypes.filter(room => 
+                                        hotel.services.includes(room.serviceType) && 
+                                        promo.roomIds.includes(room.id)
+                                    );
+                                    return matchingRooms.length > 0;
+                                }
+                                return false;
+                            });
+                            
+                            // 選擇最優惠的活動
+                            let bestPromo = null;
+                            if (applicablePromos.length > 0) {
+                                bestPromo = applicablePromos.sort((a, b) => {
+                                    if (a.type === 'discount_percent' && b.type !== 'discount_percent') return -1;
+                                    if (b.type === 'discount_percent' && a.type !== 'discount_percent') return 1;
+                                    if (a.type === 'discount_percent' && b.type === 'discount_percent') {
+                                        return (b.discountPercent || 0) - (a.discountPercent || 0);
+                                    }
+                                    if (a.type === 'discount_amount' && b.type === 'discount_amount') {
+                                        return (b.discountAmount || 0) - (a.discountAmount || 0);
+                                    }
+                                    return 0;
+                                })[0];
+                            }
+                            
+                            // 生成優惠標籤
+                            let promoTagHTML = '';
+                            if (bestPromo) {
+                                let promoText = '';
+                                switch (bestPromo.type) {
+                                    case 'discount_amount':
+                                        promoText = `現折 $${bestPromo.discountAmount}`;
+                                        break;
+                                    case 'discount_percent':
+                                        const off = (100 - bestPromo.discountPercent) / 10;
+                                        const offText = Number.isInteger(off) ? off : off.toFixed(1);
+                                        promoText = `限時 ${offText} 折`;
+                                        break;
+                                    case 'full_amount_gift':
+                                        promoText = `滿額送好禮`;
+                                        break;
+                                    case 'full_amount_discount':
+                                        const fullOff = (100 - bestPromo.discountPercent) / 10;
+                                        promoText = `滿額 ${fullOff} 折`;
+                                        break;
+                                    default:
+                                        promoText = '優惠活動';
+                                }
+                                
+                                if (promoText) {
+                                    promoTagHTML = `
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold bg-orange-100 text-orange-700 ml-2 align-middle">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 256 256"><path d="M240,102.48a15.94,15.94,0,0,0-7-13.17l-66.6-45.79A8,8,0,0,0,162,42.06l-38.13,26.21L85.77,42.06a8,8,0,0,0-4.43-1.45L14.74,86.43A16,16,0,0,0,8,100.08V208a16,16,0,0,0,16,16H232a16,16,0,0,0,16-16Z"></path></svg>
+                                            ${promoText}
+                                        </span>
+                                    `;
+                                }
+                            }
+                            
+                            // 生成寵物類型文字
+                            const petTypesText = hotel.petTypes.map(type => {
+                                const typeMap = {
+                                    'dog': '犬',
+                                    'cat': '貓',
+                                    'rabbit': '兔子',
+                                    'bird': '鳥類',
+                                    'other': '其他'
+                                };
+                                return typeMap[type] || type;
+                            }).join('、');
+                            
+                            return `
+                                <div class="listing-card cursor-pointer" data-hotel-id="${hotel.id}">
+                                    <div class="info-section">
+                                        <div class="flex flex-col gap-1">
+                                            <p class="text-[#886364] text-sm font-normal leading-normal">⭐️ ${hotel.rating} • ${hotel.reviewCount} 則評價</p>
+                                            <div class="flex flex-wrap items-center gap-1">
+                                                <p class="text-[#181111] text-base font-bold leading-tight">${hotel.name}</p>
+                                                ${promoTagHTML}
+                                            </div>
+                                            <p class="text-[#886364] text-sm font-normal leading-normal">${hotel.location} • ${petTypesText ? `接受${petTypesText}` : ''}</p>
+                                        </div>
+                                        <div class="flex min-w-[84px] max-w-[480px] items-center justify-center overflow-hidden rounded-full h-8 px-4 bg-[#f4f0f0] text-[#181111] text-sm font-medium leading-normal w-fit">
+                                            ${promoTagHTML ? `<span class="text-xs text-gray-400 line-through mr-1">原價</span>` : ''}
+                                            <span class="truncate ${promoTagHTML ? 'text-orange-600 font-bold' : ''}">$${hotel.price.toLocaleString()}/晚 起</span>
+                                        </div>
+                                    </div>
+                                    <div class="image-section" style='background-image: url("${hotel.imageUrl}");'></div>
+                                </div>
+                            `;
+                        }).join('');
+                    })()}
                 </div>
                 `;
                 
@@ -2207,6 +2357,17 @@
                     btn.addEventListener('click', function() {
                         const promotionId = parseInt(this.dataset.promotionId);
                         claimCoupon(promotionId);
+                    });
+                });
+                
+                // 推薦區塊旅館卡片點擊事件
+                document.querySelectorAll('.listing-card[data-hotel-id]').forEach(card => {
+                    card.addEventListener('click', function() {
+                        const hotelId = parseInt(this.dataset.hotelId);
+                        const hotel = mockHotels.find(h => h.id === hotelId);
+                        if (hotel) {
+                            showPage('detail', { hotel: hotel });
+                        }
                     });
                 });
             }
@@ -3622,25 +3783,93 @@
                 
                 let html = '';
                 availableRooms.forEach(room => {
-                    // 根據服務類型顯示價格
+                    // --- 1. 尋找適用於此房型的「自動折扣」活動 (非 Coupon) ---
+                    // 邏輯：狀態是 active + 不是 coupon + (適用全部 OR 適用此房型)
+                    const autoPromo = window.mockPromotions.find(p => 
+                        p.status === 'active' && 
+                        p.type !== 'coupon' && 
+                        (p.applyTo === 'all' || (p.applyTo === 'specific_rooms' && p.roomIds.includes(room.id)))
+                    );
+
+                    // --- 2. 根據活動類型生成「具體」的文案標籤 ---
+                    let promoTagHTML = '';
+                    let promoHintHTML = ''; // 額外的提示文字 (例如：滿額限制)
+
+                    if (autoPromo) {
+                        let promoText = '';
+                        
+                        // 根據類型決定顯示文字
+                        switch (autoPromo.type) {
+                            case 'discount_amount':
+                                promoText = `現折 $${autoPromo.discountAmount}`;
+                                break;
+                            case 'discount_percent':
+                                // 計算折數 (例如 20% = 8折, 15% = 85折)
+                                const off = (100 - autoPromo.discountPercent) / 10;
+                                // 如果是整數就顯示整數 (8折)，否則顯示一位小數 (8.5折)
+                                const offText = Number.isInteger(off) ? off : off.toFixed(1);
+                                promoText = `限時 ${offText} 折`;
+                                break;
+                            case 'full_amount_gift':
+                                promoText = `滿額送好禮`;
+                                promoHintHTML = `<div class="text-[10px] text-orange-600 mt-0.5">滿 $${autoPromo.fullAmountThreshold} 送 ${autoPromo.giftContent}</div>`;
+                                break;
+                            case 'full_amount_discount':
+                                const fullOff = (100 - autoPromo.discountPercent) / 10;
+                                promoText = `滿額 ${fullOff} 折`;
+                                promoHintHTML = `<div class="text-[10px] text-orange-600 mt-0.5">滿 $${autoPromo.fullAmountThreshold} 享優惠</div>`;
+                                break;
+                            default:
+                                promoText = '優惠活動';
+                        }
+                        
+                        // 生成標籤 HTML
+                        if (promoText) {
+                            promoTagHTML = `
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold bg-orange-100 text-orange-700 ml-2 align-middle">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 256 256"><path d="M240,102.48a15.94,15.94,0,0,0-7-13.17l-66.6-45.79A8,8,0,0,0,162,42.06l-38.13,26.21L85.77,42.06a8,8,0,0,0-4.43-1.45L14.74,86.43A16,16,0,0,0,8,100.08V208a16,16,0,0,0,16,16H232a16,16,0,0,0,16-16Z"></path></svg>
+                                    ${promoText}
+                                </span>
+                            `;
+                        }
+                    }
+
+                    // --- 3. 價格顯示邏輯 (保持原樣) ---
                     let priceDisplay = '';
                     if (room.serviceType === 'overnight' && room.basePrice) {
                         priceDisplay = `NT$ ${room.basePrice.toLocaleString()} / 晚`;
                     } else if (room.serviceType === 'daycare' && room.hourlyRate) {
                         const minPrice = room.hourlyRate * (room.minHours || 4);
-                        priceDisplay = `NT$ ${minPrice.toLocaleString()}起 (${room.hourlyRate.toLocaleString()}/小時，最小${room.minHours || 4}小時)`;
+                        priceDisplay = `NT$ ${minPrice.toLocaleString()}起 (${room.hourlyRate.toLocaleString()}/小時)`;
                     }
                     
+                    // --- 4. 組合 HTML (將 promoTagHTML 插入到標題旁) ---
                     html += `
-                        <div class="room-option-card p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#181111] transition-all" data-room-id="${room.id}">
-                            <div class="flex items-start">
+                        <div class="room-option-card p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-[#181111] transition-all bg-white relative overflow-hidden group" data-room-id="${room.id}">
+                            
+                            <!-- 如果有活動，加一個左側邊條裝飾 -->
+                            ${promoTagHTML ? '<div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-500"></div>' : ''}
+
+                            <div class="flex items-start ${promoTagHTML ? 'pl-2' : ''}">
                                 <img src="${room.imageUrl}" alt="${room.name}" class="w-20 h-20 rounded-lg object-cover mr-4 flex-shrink-0">
-                                <div class="flex-1">
-                                    <h4 class="font-bold text-[#181111] mb-1">${room.name}</h4>
-                                    <p class="text-sm text-gray-600 mb-2">${room.description}</p>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs text-gray-500">${room.serviceType === 'overnight' ? '日租' : '時租'}</span>
-                                        <span class="font-bold text-[#181111]">${priceDisplay}</span>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex flex-wrap items-center mb-1">
+                                        <h4 class="font-bold text-[#181111] truncate mr-1">${room.name}</h4>
+                                        <!-- 這裡插入標籤 -->
+                                        ${promoTagHTML}
+                                    </div>
+                                    
+                                    <p class="text-sm text-gray-600 mb-2 line-clamp-1">${room.description}</p>
+                                    
+                                    <!-- 這裡插入額外提示 (滿額限制等) -->
+                                    ${promoHintHTML}
+
+                                    <div class="flex items-center justify-between mt-2">
+                                        <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">${room.serviceType === 'overnight' ? '日租' : '時租'}</span>
+                                        <div class="text-right">
+                                            ${promoTagHTML ? `<span class="text-xs text-gray-400 line-through mr-1">原價</span>` : ''}
+                                            <span class="font-bold ${promoTagHTML ? 'text-orange-600' : 'text-[#181111]'}">${priceDisplay}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -12018,6 +12247,52 @@
                                     
                                     const isPreferred = room.id === bookingData.preferredRoomId;
                                     
+                                    // --- 1. 尋找適用於此房型的「自動折扣」活動 (非 Coupon) ---
+                                    const autoPromo = window.mockPromotions.find(p => 
+                                        p.status === 'active' && 
+                                        p.type !== 'coupon' && 
+                                        (p.applyTo === 'all' || (p.applyTo === 'specific_rooms' && p.roomIds.includes(room.id)))
+                                    );
+
+                                    // --- 2. 根據活動類型生成「具體」的文案標籤 ---
+                                    let promoTagHTML = '';
+                                    let promoHintHTML = '';
+
+                                    if (autoPromo) {
+                                        let promoText = '';
+                                        
+                                        switch (autoPromo.type) {
+                                            case 'discount_amount':
+                                                promoText = `現折 $${autoPromo.discountAmount}`;
+                                                break;
+                                            case 'discount_percent':
+                                                const off = (100 - autoPromo.discountPercent) / 10;
+                                                const offText = Number.isInteger(off) ? off : off.toFixed(1);
+                                                promoText = `限時 ${offText} 折`;
+                                                break;
+                                            case 'full_amount_gift':
+                                                promoText = `滿額送好禮`;
+                                                promoHintHTML = `<div class="text-[10px] text-orange-600 mt-0.5">滿 $${autoPromo.fullAmountThreshold} 送 ${autoPromo.giftContent}</div>`;
+                                                break;
+                                            case 'full_amount_discount':
+                                                const fullOff = (100 - autoPromo.discountPercent) / 10;
+                                                promoText = `滿額 ${fullOff} 折`;
+                                                promoHintHTML = `<div class="text-[10px] text-orange-600 mt-0.5">滿 $${autoPromo.fullAmountThreshold} 享優惠</div>`;
+                                                break;
+                                            default:
+                                                promoText = '優惠活動';
+                                        }
+                                        
+                                        if (promoText) {
+                                            promoTagHTML = `
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold bg-orange-100 text-orange-700 ml-2 align-middle">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 256 256"><path d="M240,102.48a15.94,15.94,0,0,0-7-13.17l-66.6-45.79A8,8,0,0,0,162,42.06l-38.13,26.21L85.77,42.06a8,8,0,0,0-4.43-1.45L14.74,86.43A16,16,0,0,0,8,100.08V208a16,16,0,0,0,16,16H232a16,16,0,0,0,16-16Z"></path></svg>
+                                                    ${promoText}
+                                                </span>
+                                            `;
+                                        }
+                                    }
+                                    
                                     // 根據服務類型顯示價格
                                     let priceDisplay = '';
                                     if (room.serviceType === 'overnight' && room.basePrice) {
@@ -12027,25 +12302,33 @@
                                     }
                                     
                                     return `
-                                        <div class="room-selection-card p-4 rounded-xl border-2 ${isPreferred ? 'border-blue-400 bg-blue-50' : 'border-gray-200'} ${isAvailable ? 'cursor-pointer hover:border-[#181111]' : 'opacity-60'} transition-all" 
+                                        <div class="room-selection-card p-4 rounded-xl border-2 ${isPreferred ? 'border-blue-400 bg-blue-50' : 'border-gray-200'} ${isAvailable ? 'cursor-pointer hover:border-[#181111]' : 'opacity-60'} transition-all bg-white relative overflow-hidden ${promoTagHTML ? 'group' : ''}" 
                                              data-room-id="${room.id}" 
                                              ${!isAvailable ? 'data-unavailable="true"' : ''}>
-                                            <div class="flex items-start">
-                                                <img src="${room.imageUrl}" alt="${room.name}" class="w-20 h-20 rounded-lg object-cover mr-4">
-                                                <div class="flex-1">
-                                                    <h3 class="font-bold text-[#181111] mb-1">
-                                                        ${room.name}
-                                                        ${isPreferred ? '<span class="text-xs bg-blue-500 text-white px-2 py-1 rounded-full ml-2">推薦</span>' : ''}
-                                                    </h3>
-                                                    <p class="text-sm text-gray-500 mb-2">${room.description}</p>
+                                            ${promoTagHTML ? '<div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-500"></div>' : ''}
+                                            <div class="flex items-start ${promoTagHTML ? 'pl-2' : ''}">
+                                                <img src="${room.imageUrl}" alt="${room.name}" class="w-20 h-20 rounded-lg object-cover mr-4 flex-shrink-0">
+                                                <div class="flex-1 min-w-0">
+                                                    <div class="flex flex-wrap items-center mb-1">
+                                                        <h3 class="font-bold text-[#181111] truncate mr-1">
+                                                            ${room.name}
+                                                            ${isPreferred ? '<span class="text-xs bg-blue-500 text-white px-2 py-1 rounded-full ml-2">推薦</span>' : ''}
+                                                        </h3>
+                                                        ${promoTagHTML}
+                                                    </div>
+                                                    <p class="text-sm text-gray-500 mb-2 line-clamp-1">${room.description}</p>
+                                                    ${promoHintHTML}
                                                     ${isAvailable ? 
                                                         `<p class="text-xs text-green-600">✅ 可訂房 (剩餘 ${availableStock} 間)</p>` :
                                                         `<p class="text-xs text-red-500">❌ 已滿房</p>`
                                                     }
                                                     <div class="mt-2">
-                                                        <div class="text-sm">
+                                                        <div class="flex items-center justify-between text-sm">
                                                             <span class="font-medium">${room.serviceType === 'overnight' ? '日租' : '時租'}</span>
-                                                            <span class="text-[#181111] font-bold ml-2">${priceDisplay}</span>
+                                                            <div class="text-right">
+                                                                ${promoTagHTML ? `<span class="text-xs text-gray-400 line-through mr-1">原價</span>` : ''}
+                                                                <span class="text-[#181111] font-bold ${promoTagHTML ? 'text-orange-600' : ''}">${priceDisplay}</span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
