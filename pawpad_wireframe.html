@@ -2261,12 +2261,20 @@
                     promotionId: promotionId,
                     couponCode: promotion.couponCode,
                     name: promotion.name,
+                    type: promotion.type || 'coupon', // 活動類型
                     discountAmount: promotion.discountAmount,
+                    discountPercent: promotion.discountPercent, // 百分比折扣
                     minPurchaseAmount: promotion.minPurchaseAmount || 0,
+                    fullAmountThreshold: promotion.fullAmountThreshold, // 滿額門檻
+                    giftContent: promotion.giftContent, // 贈品內容
+                    applyTo: promotion.applyTo, // 適用範圍
+                    roomIds: promotion.roomIds || [], // 指定房型
+                    serviceType: promotion.serviceType, // 服務類型
                     status: 'available',
                     receivedAt: new Date().toISOString(),
                     expiresAt: promotion.endTime,
-                    usedAt: null
+                    usedAt: null,
+                    orderId: null // 使用時的訂單編號
                 };
                 
                 window.userCoupons.push(newCoupon);
@@ -3063,6 +3071,15 @@
                                                 <span class="mr-2">🎫</span>
                                                 <span id="coupon-selected-text">選擇優惠券</span>
                                             </button>
+                                            <div class="flex items-center gap-2">
+                                                <div class="flex-1 border-b border-gray-300"></div>
+                                                <span class="text-xs text-gray-500">或</span>
+                                                <div class="flex-1 border-b border-gray-300"></div>
+                                            </div>
+                                            <div class="flex gap-2">
+                                                <input type="text" id="manual-coupon-code-input" placeholder="輸入優惠碼" class="flex-1 form-input-styled text-sm" maxlength="20">
+                                                <button id="apply-manual-coupon-btn" class="btn-main px-4 py-2 text-sm whitespace-nowrap">兌換</button>
+                                            </div>
                                             <div id="selected-coupon-display" class="hidden p-3 bg-green-50 border border-green-200 rounded-lg">
                                                 <div class="flex items-center justify-between">
                                                     <div class="flex-1">
@@ -3088,6 +3105,10 @@
                                             <div id="coupon-discount-row" class="hidden flex justify-between items-center">
                                                 <span class="text-sm text-green-600">優惠券折扣</span>
                                                 <span class="text-sm font-medium text-green-600" id="confirmation-coupon-discount">-NT$ 0</span>
+                                            </div>
+                                            <div id="gift-display-row" class="hidden flex justify-between items-center">
+                                                <span class="text-sm text-blue-600">🎁 贈品</span>
+                                                <span class="text-sm font-medium text-blue-600" id="confirmation-gift-content"></span>
                                             </div>
                                             <div class="flex justify-between items-center pt-2 border-t border-gray-100">
                                                 <span class="text-lg font-bold text-[#181111]">總計</span>
@@ -4503,6 +4524,137 @@
                     if (window.updateConfirmationPrice) window.updateConfirmationPrice();
                 });
                 
+                // 手動輸入優惠碼兌換
+                document.getElementById('apply-manual-coupon-btn')?.addEventListener('click', function() {
+                    const input = document.getElementById('manual-coupon-code-input');
+                    if (!input) return;
+                    
+                    const couponCode = input.value.trim().toUpperCase();
+                    if (!couponCode) {
+                        alert('請輸入優惠碼');
+                        return;
+                    }
+                    
+                    // 在活動中查找對應的優惠碼
+                    const promotion = window.mockPromotions.find(p => 
+                        p.couponCode && p.couponCode.toUpperCase() === couponCode
+                    );
+                    
+                    if (!promotion) {
+                        alert('優惠碼不存在或已失效');
+                        input.value = '';
+                        return;
+                    }
+                    
+                    // 檢查活動狀態
+                    const now = new Date();
+                    const start = new Date(promotion.startTime);
+                    const end = new Date(promotion.endTime);
+                    
+                    if (now < start || now >= end) {
+                        alert('此優惠碼已過期或尚未生效');
+                        input.value = '';
+                        return;
+                    }
+                    
+                    if (promotion.status !== 'active') {
+                        alert('此優惠碼目前無法使用');
+                        input.value = '';
+                        return;
+                    }
+                    
+                    // 檢查是否已領取（如果是 coupon 類型，需要先領取）
+                    if (promotion.type === 'coupon') {
+                        const userCoupons = window.userCoupons || [];
+                        const existingCoupon = userCoupons.find(uc => 
+                            uc.promotionId === promotion.id && 
+                            uc.couponCode === promotion.couponCode &&
+                            uc.status === 'available'
+                        );
+                        
+                        if (existingCoupon) {
+                            // 使用已領取的優惠券
+                            window.selectedCoupon = existingCoupon;
+                        } else {
+                            // 檢查是否還可以領取
+                            const userReceivedCount = userCoupons.filter(uc => uc.promotionId === promotion.id).length;
+                            if (userReceivedCount >= promotion.usageLimit.perUser) {
+                                alert(`您已達到此優惠券的領取上限（每人限領 ${promotion.usageLimit.perUser} 次）`);
+                                input.value = '';
+                                return;
+                            }
+                            
+                            if (promotion.usageCount >= promotion.usageLimit.total) {
+                                alert('此優惠券已被領取完畢');
+                                input.value = '';
+                                return;
+                            }
+                            
+                            // 自動領取並使用
+                            const newCoupon = {
+                                id: userCoupons.length > 0 ? Math.max(...userCoupons.map(uc => uc.id), 0) + 1 : 1,
+                                promotionId: promotion.id,
+                                couponCode: promotion.couponCode,
+                                name: promotion.name,
+                                type: promotion.type || 'coupon',
+                                discountAmount: promotion.discountAmount,
+                                discountPercent: promotion.discountPercent,
+                                minPurchaseAmount: promotion.minPurchaseAmount || 0,
+                                fullAmountThreshold: promotion.fullAmountThreshold,
+                                giftContent: promotion.giftContent,
+                                applyTo: promotion.applyTo,
+                                roomIds: promotion.roomIds || [],
+                                serviceType: promotion.serviceType,
+                                status: 'available',
+                                receivedAt: new Date().toISOString(),
+                                expiresAt: promotion.endTime,
+                                usedAt: null,
+                                orderId: null
+                            };
+                            
+                            window.userCoupons.push(newCoupon);
+                            promotion.usageCount = (promotion.usageCount || 0) + 1;
+                            window.selectedCoupon = newCoupon;
+                        }
+                    } else {
+                        // 非 coupon 類型的活動，直接創建一個臨時優惠券物件供結帳使用
+                        window.selectedCoupon = {
+                            id: 'temp_' + Date.now(),
+                            promotionId: promotion.id,
+                            couponCode: promotion.couponCode || '',
+                            name: promotion.name,
+                            type: promotion.type,
+                            discountAmount: promotion.discountAmount,
+                            discountPercent: promotion.discountPercent,
+                            minPurchaseAmount: promotion.minPurchaseAmount || 0,
+                            fullAmountThreshold: promotion.fullAmountThreshold,
+                            giftContent: promotion.giftContent,
+                            applyTo: promotion.applyTo,
+                            roomIds: promotion.roomIds || [],
+                            serviceType: promotion.serviceType,
+                            status: 'available',
+                            receivedAt: new Date().toISOString(),
+                            expiresAt: promotion.endTime,
+                            usedAt: null,
+                            orderId: null
+                        };
+                    }
+                    
+                    // 清空輸入框
+                    input.value = '';
+                    
+                    // 更新顯示和價格
+                    if (window.updateCouponDisplay) window.updateCouponDisplay();
+                    if (window.updateConfirmationPrice) window.updateConfirmationPrice();
+                });
+                
+                // 支援 Enter 鍵兌換
+                document.getElementById('manual-coupon-code-input')?.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        document.getElementById('apply-manual-coupon-btn')?.click();
+                    }
+                });
+                
                 // 打開優惠券選擇 modal
                 function openCouponSelectionModal() {
                     const userCoupons = (window.userCoupons || []).filter(coupon => 
@@ -4601,6 +4753,35 @@
                     }
                 };
                 
+                // 檢查優惠券是否適用於當前預訂
+                window.isPromotionApplicable = function(promo, bookingData) {
+                    // 檢查適用範圍
+                    if (promo.applyTo === 'service_type' && promo.serviceType) {
+                        // 需要匹配服務類型
+                        const bookingServiceType = bookingData.serviceType;
+                        const promoServiceType = promo.serviceType;
+                        
+                        // 服務類型映射
+                        const serviceTypeMap = {
+                            'overnight': 'overnight',
+                            'daycare': 'daycare'
+                        };
+                        
+                        if (serviceTypeMap[bookingServiceType] !== promoServiceType) {
+                            return false;
+                        }
+                    }
+                    
+                    if (promo.applyTo === 'specific_rooms' && promo.roomIds && promo.roomIds.length > 0) {
+                        // 需要匹配房型
+                        if (!bookingData.roomId || !promo.roomIds.includes(bookingData.roomId)) {
+                            return false;
+                        }
+                    }
+                    
+                    return true;
+                };
+                
                 // 更新確認頁面價格（全域函數，供其他函數調用）
                 window.updateConfirmationPrice = function() {
                     // 計算原價（從 bookingData 或確認頁面的價格顯示獲取）
@@ -4612,17 +4793,170 @@
                         originalPrice = parseInt(planPriceText.replace(/[^0-9]/g, '')) || 0;
                     }
                     
-                    // 計算折扣
+                    // 計算折扣和贈品
                     let discount = 0;
+                    let giftContent = null;
+                    let autoAppliedPromo = null;
+                    
+                    // 如果沒有選擇優惠券，檢查是否有適用的自動型活動
+                    if (!window.selectedCoupon && bookingData) {
+                        const now = new Date();
+                        const activeAutoPromos = (window.mockPromotions || []).filter(promo => {
+                            // 只檢查非 coupon 類型的活動
+                            if (promo.type === 'coupon') return false;
+                            
+                            // 檢查活動狀態和時間
+                            const start = new Date(promo.startTime);
+                            const end = new Date(promo.endTime);
+                            if (now < start || now >= end) return false;
+                            if (promo.status !== 'active') return false;
+                            
+                            // 檢查適用範圍
+                            return window.isPromotionApplicable(promo, bookingData);
+                        });
+                        
+                        // 選擇最優惠的活動（優先順序：折扣金額 > 折扣百分比 > 贈品）
+                        if (activeAutoPromos.length > 0) {
+                            // 先按類型排序，然後按折扣金額排序
+                            activeAutoPromos.sort((a, b) => {
+                                // 優先順序：discount_amount > discount_percent > full_amount_discount > full_amount_gift
+                                const priority = {
+                                    'discount_amount': 4,
+                                    'discount_percent': 3,
+                                    'full_amount_discount': 2,
+                                    'full_amount_gift': 1
+                                };
+                                
+                                const aPriority = priority[a.type] || 0;
+                                const bPriority = priority[b.type] || 0;
+                                
+                                if (aPriority !== bPriority) {
+                                    return bPriority - aPriority;
+                                }
+                                
+                                // 同類型時，比較折扣金額
+                                const aDiscount = a.discountAmount || (a.discountPercent ? originalPrice * (a.discountPercent / 100) : 0);
+                                const bDiscount = b.discountAmount || (b.discountPercent ? originalPrice * (b.discountPercent / 100) : 0);
+                                
+                                return bDiscount - aDiscount;
+                            });
+                            
+                            autoAppliedPromo = activeAutoPromos[0];
+                            
+                            // 檢查最低消費或滿額門檻
+                            if (autoAppliedPromo.minPurchaseAmount && originalPrice < autoAppliedPromo.minPurchaseAmount) {
+                                autoAppliedPromo = null;
+                            } else if (autoAppliedPromo.fullAmountThreshold && originalPrice < autoAppliedPromo.fullAmountThreshold) {
+                                autoAppliedPromo = null;
+                            }
+                        }
+                    }
+                    
                     if (window.selectedCoupon) {
+                        // 先檢查適用範圍
+                        if (!window.isPromotionApplicable(window.selectedCoupon, bookingData)) {
+                            alert('此優惠券不適用於目前的預訂內容');
+                            window.selectedCoupon = null;
+                            if (window.updateCouponDisplay) window.updateCouponDisplay();
+                            if (window.updateConfirmationPrice) window.updateConfirmationPrice();
+                            return;
+                        }
+                        
                         // 檢查最低消費
-                        if (originalPrice >= window.selectedCoupon.minPurchaseAmount) {
-                            discount = window.selectedCoupon.discountAmount;
-                        } else {
+                        if (originalPrice < window.selectedCoupon.minPurchaseAmount) {
                             alert(`此優惠券需要最低消費 ${window.selectedCoupon.minPurchaseAmount} 元`);
                             window.selectedCoupon = null;
                             if (window.updateCouponDisplay) window.updateCouponDisplay();
                             return;
+                        }
+                        
+                        // 根據活動類型計算折扣
+                        const promo = window.selectedCoupon;
+                        const promoType = promo.type || 'coupon';
+                        
+                        switch (promoType) {
+                            case 'coupon':
+                            case 'discount_amount':
+                                // 固定金額折扣
+                                discount = promo.discountAmount || 0;
+                                break;
+                                
+                            case 'discount_percent':
+                                // 百分比折扣（例如 20% off = 打8折）
+                                if (promo.discountPercent) {
+                                    discount = Math.floor(originalPrice * (promo.discountPercent / 100));
+                                }
+                                break;
+                                
+                            case 'full_amount_gift':
+                                // 滿額送禮（不折抵金額，只顯示贈品）
+                                if (originalPrice >= (promo.fullAmountThreshold || 0)) {
+                                    giftContent = promo.giftContent || '贈品';
+                                    discount = 0;
+                                } else {
+                                    alert(`此優惠需要滿 ${promo.fullAmountThreshold} 元才能享有`);
+                                    window.selectedCoupon = null;
+                                    if (window.updateCouponDisplay) window.updateCouponDisplay();
+                                    return;
+                                }
+                                break;
+                                
+                            case 'full_amount_discount':
+                                // 滿額打折（例如滿2000打9折）
+                                if (originalPrice >= (promo.fullAmountThreshold || 0)) {
+                                    if (promo.discountPercent) {
+                                        discount = Math.floor(originalPrice * (promo.discountPercent / 100));
+                                    }
+                                } else {
+                                    alert(`此優惠需要滿 ${promo.fullAmountThreshold} 元才能享有`);
+                                    window.selectedCoupon = null;
+                                    if (window.updateCouponDisplay) window.updateCouponDisplay();
+                                    return;
+                                }
+                                break;
+                                
+                            default:
+                                discount = promo.discountAmount || 0;
+                                break;
+                        }
+                    } else if (autoAppliedPromo) {
+                        // 自動套用的活動
+                        const promo = autoAppliedPromo;
+                        const promoType = promo.type || 'discount_amount';
+                        
+                        switch (promoType) {
+                            case 'discount_amount':
+                                // 固定金額折扣
+                                discount = promo.discountAmount || 0;
+                                break;
+                                
+                            case 'discount_percent':
+                                // 百分比折扣
+                                if (promo.discountPercent) {
+                                    discount = Math.floor(originalPrice * (promo.discountPercent / 100));
+                                }
+                                break;
+                                
+                            case 'full_amount_gift':
+                                // 滿額送禮
+                                if (originalPrice >= (promo.fullAmountThreshold || 0)) {
+                                    giftContent = promo.giftContent || '贈品';
+                                    discount = 0;
+                                }
+                                break;
+                                
+                            case 'full_amount_discount':
+                                // 滿額打折
+                                if (originalPrice >= (promo.fullAmountThreshold || 0)) {
+                                    if (promo.discountPercent) {
+                                        discount = Math.floor(originalPrice * (promo.discountPercent / 100));
+                                    }
+                                }
+                                break;
+                                
+                            default:
+                                discount = promo.discountAmount || 0;
+                                break;
                         }
                     }
                     
@@ -4630,15 +4964,41 @@
                     const originalPriceEl = document.getElementById('confirmation-original-price');
                     const discountRow = document.getElementById('coupon-discount-row');
                     const discountEl = document.getElementById('confirmation-coupon-discount');
+                    const giftRow = document.getElementById('gift-display-row');
+                    const giftEl = document.getElementById('confirmation-gift-content');
                     const totalPriceEl = document.getElementById('confirmation-total-price');
                     
                     if (originalPriceEl) originalPriceEl.textContent = `NT$ ${originalPrice.toLocaleString()}`;
                     
+                    // 顯示折扣（手動選擇的優惠券或自動套用的活動）
                     if (discount > 0) {
                         if (discountRow) discountRow.classList.remove('hidden');
-                        if (discountEl) discountEl.textContent = `-NT$ ${discount.toLocaleString()}`;
+                        const discountLabel = autoAppliedPromo ? '活動折扣' : '優惠券折扣';
+                        if (discountEl) {
+                            discountEl.textContent = `-NT$ ${discount.toLocaleString()}`;
+                            // 更新標籤文字
+                            const discountLabelEl = discountRow?.querySelector('span:first-child');
+                            if (discountLabelEl && autoAppliedPromo) {
+                                discountLabelEl.textContent = discountLabel;
+                            }
+                        }
                     } else {
                         if (discountRow) discountRow.classList.add('hidden');
+                    }
+                    
+                    // 顯示贈品
+                    if (giftContent) {
+                        if (giftRow) giftRow.classList.remove('hidden');
+                        if (giftEl) {
+                            const giftLabel = autoAppliedPromo ? '🎁 活動贈品' : '🎁 贈品';
+                            giftEl.textContent = giftContent;
+                            const giftLabelEl = giftRow?.querySelector('span:first-child');
+                            if (giftLabelEl && autoAppliedPromo) {
+                                giftLabelEl.textContent = giftLabel;
+                            }
+                        }
+                    } else {
+                        if (giftRow) giftRow.classList.add('hidden');
                     }
                     
                     const totalPrice = Math.max(0, originalPrice - discount);
@@ -4735,6 +5095,25 @@
                         if (isSuccess) {
                             // 付款成功 - 生成訂單編號
                             bookingData.orderNumber = 'PAW' + Date.now();
+                            
+                            // 更新優惠券狀態（如果使用了優惠券）
+                            if (bookingData.selectedCoupon) {
+                                const userCoupon = window.userCoupons.find(c => c.id === bookingData.selectedCoupon.id);
+                                if (userCoupon && userCoupon.status === 'available') {
+                                    userCoupon.status = 'used';
+                                    userCoupon.usedAt = new Date().toISOString();
+                                    userCoupon.orderId = bookingData.orderNumber;
+                                    
+                                    // 更新活動的使用次數
+                                    const promotion = window.mockPromotions.find(p => p.id === userCoupon.promotionId);
+                                    if (promotion) {
+                                        promotion.usageCount = (promotion.usageCount || 0) + 1;
+                                    }
+                                }
+                            }
+                            
+                            // 清除選中的優惠券
+                            window.selectedCoupon = null;
                             
                             // 跳轉到付款成功頁面
                             showPage('paymentSuccess');
@@ -10317,22 +10696,37 @@
                                 const startDate = new Date(promo.startTime).toLocaleDateString('zh-TW');
                                 const endDate = new Date(promo.endTime).toLocaleDateString('zh-TW');
                                 
-                                // 計算折扣顯示
+                                // 計算折扣顯示和圖標
                                 let discountDisplay = '';
+                                let typeIcon = '🎫'; // 預設圖標
+                                let typeLabel = '';
+                                
                                 if (promo.type === 'coupon') {
+                                    typeIcon = '🎫';
+                                    typeLabel = '折價券';
                                     discountDisplay = `折價券：折 ${promo.discountAmount} 元`;
                                     if (promo.couponCode) {
                                         discountDisplay += ` (優惠碼：${promo.couponCode})`;
                                     }
                                 } else if (promo.type === 'discount_amount') {
+                                    typeIcon = '🏷️';
+                                    typeLabel = '自動折扣';
                                     discountDisplay = `折 ${promo.discountAmount} 元`;
                                 } else if (promo.type === 'discount_percent') {
+                                    typeIcon = '🏷️';
+                                    typeLabel = '自動折扣';
                                     discountDisplay = `打 ${100 - promo.discountPercent} 折`;
                                 } else if (promo.type === 'full_amount_gift') {
+                                    typeIcon = '🎁';
+                                    typeLabel = '滿額贈';
                                     discountDisplay = `滿 ${promo.fullAmountThreshold} 送 ${promo.giftContent}`;
                                 } else if (promo.type === 'full_amount_discount') {
+                                    typeIcon = '🏷️';
+                                    typeLabel = '滿額折扣';
                                     discountDisplay = `滿 ${promo.fullAmountThreshold} 打 ${100 - promo.discountPercent} 折`;
                                 } else {
+                                    typeIcon = '🎫';
+                                    typeLabel = '折價券';
                                     discountDisplay = `折 ${promo.discountAmount || 0} 元`;
                                 }
                                 
@@ -10341,8 +10735,10 @@
                                         <div class="flex justify-between items-start mb-2">
                                             <div class="flex-1">
                                                 <div class="flex items-center gap-2 mb-1">
+                                                    <span class="text-lg">${typeIcon}</span>
                                                     <h3 class="font-bold text-[#181111]">${promo.name}</h3>
                                                     <span class="text-xs font-semibold ${status.class} px-2 py-0.5 rounded-full">${status.text}</span>
+                                                    <span class="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">${typeLabel}</span>
                                                 </div>
                                                 <p class="text-sm text-[#886364] mb-2">${promo.description}</p>
                                                 <div class="flex items-center gap-4 text-xs text-gray-500">
